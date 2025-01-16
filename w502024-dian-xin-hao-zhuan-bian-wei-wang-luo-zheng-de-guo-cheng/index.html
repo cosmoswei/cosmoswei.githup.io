@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W50/2024】电信号转变为网络帧的过程 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W50/2024】电信号转变为网络帧的过程</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-12-15</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在学习网络编程时，我们通常会关注内核网络协议栈的相关知识。然而，回到 OSI 七层模型的角度，数据链路层究竟是如何运作的呢？网线中的电信号是如何转化为网络数据帧和数据包的？本文将对此进行简要探讨。</p>
+<!-- more -->
+<p>电信号转变为帧的过程，是通过网络适配器（网卡）来完成的。网卡将物理层的比特流（0和1）按照协议要求，解析并组装成一个个帧。以下是详细解释和一个简单的例子：</p>
+<h2 id="比特流和帧的关系">比特流和帧的关系</h2>
+<p>比特流：电信号通过高低电压（或光纤的光开光关）形成一个连续的0和1。</p>
+<ul>
+<li>例如：1100110010101011。</li>
+</ul>
+<p>帧：是数据链路层的传输单元，包含控制信息和实际数据的结构化包。</p>
+<ul>
+<li>帧的结构一般如下：</li>
+</ul>
+<pre><code>[帧头 | 数据载荷 | 帧尾]
+</code></pre>
+<h2 id="电信号如何被解析">电信号如何被解析</h2>
+<p>物理层的任务是接收比特流，将其同步并提供给数据链路层。以下步骤解释解析过程：</p>
+<p>步骤1：比特流的物理传输，网卡从网线接收一段电信号，高电平表示1，低电平表示0。示例：1100110010101011。</p>
+<hr>
+<p>步骤2：比特流同步，为了正确划分比特，网卡采用时钟信号来同步读取数据。每个比特会占用固定时间，比如1微秒，同步后的比特流：1100110010101011。</p>
+<hr>
+<p>步骤3：比特流分组，根据协议定义，将比特流划分为帧。以太网帧的结构如下：</p>
+<pre><code>[前导码 | 帧头 | 数据 | 帧尾]
+</code></pre>
+<ul>
+<li>前导码：用于同步通信，通常是7字节的10101010，紧接着是1字节的10101011。</li>
+<li>帧头（Header）：包含目标MAC地址、源MAC地址和帧类型。</li>
+<li>数据（Payload）：承载实际的数据（如IP包）。</li>
+<li>帧尾（FCS）：帧校验序列，用于检测传输错误。</li>
+</ul>
+<hr>
+<h2 id="案例">案例</h2>
+<p>具体组装帧的例子，假设我们发送一个简单的数据 Hello，帧的比特流可能是：</p>
+<ol>
+<li>前导码：用于接收方的同步。</li>
+</ol>
+<ul>
+<li>比特流：10101010 10101010 10101010 10101010 10101010 10101010 10101010 10101011。</li>
+</ul>
+<ol start="2">
+<li>帧头：</li>
+</ol>
+<ul>
+<li>目标MAC地址：00-14-22-01-23-45（转成二进制：00000000 00010100 00100010 00000001 00100011 01000101）。</li>
+<li>源MAC地址：00-16-17-22-33-44（转成二进制：00000000 00010110 00010111 00100010 00110011 01000100）。</li>
+<li>帧类型：0800（IPv4，转成二进制：00001000 00000000）。</li>
+</ul>
+<ol start="3">
+<li>数据部分：发送的实际内容，比如Hello：</li>
+</ol>
+<ul>
+<li>
+<p>H = 01001000</p>
+</li>
+<li>
+<p>e = 01100101</p>
+</li>
+<li>
+<p>l = 01101100</p>
+</li>
+<li>
+<p>l = 01101100</p>
+</li>
+<li>
+<p>o = 01101111</p>
+</li>
+</ul>
+<ol start="4">
+<li>帧尾：</li>
+</ol>
+<ul>
+<li>帧校验序列（FCS）：一种基于CRC的校验码，例如：10101010 10100101。</li>
+</ul>
+<p>完整帧：</p>
+<pre><code>[前导码] [目标MAC | 源MAC | 帧类型] [数据] [FCS]
+</code></pre>
+<p>对应比特流：</p>
+<pre><code>10101010 10101010 10101010 10101010 10101010 10101010 10101010 10101011 		# 前导码
+00000000 00010100 00100010 00000001 00100011 01000101												# 帧头,目标MAC地址
+00000000 00010110 00010111 00100010 00110011 01000100 											# 帧头,源MAC地址
+00001000 00000000 																													# 帧类型
+01001000 01100101 01101100 01101100 01101111 												        #数据部分
+10101010 10100101 																								          # 帧校验序列（FCS）
+</code></pre>
+<h2 id="接收端如何处理帧">接收端如何处理帧</h2>
+<ol>
+<li>解码电信号：将高低电平转换成比特流。</li>
+<li>校验帧完整性：根据FCS检查数据是否有错误。</li>
+<li>解析帧内容：从帧中提取目标MAC地址，如果匹配本设备，继续处理。提取数据部分，将其交给上层（如网络层）。</li>
+</ol>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w482024-spring-mian-shi-chang-kan-chang-xin/">
+              <h3 class="post-title">
+                下一篇：【W48/2024】Spring 面试常看常新
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

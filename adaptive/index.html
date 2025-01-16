@@ -1,0 +1,508 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W44/2024】双端流控：自适应的负载均衡与流量控制 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W44/2024】双端流控：自适应的负载均衡与流量控制</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-11-03</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://cosmoswei.github.io/NbGSsfmKvb/">
+                    palmx
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在分布式系统中，如何合理分配请求、保障服务的高可用性与稳定性，是每一位架构师必须面对的挑战。负载均衡（Loadbalance）与流量控制（FlowControl）正是解决这一问题的两大利器。</p>
+<p>负载均衡侧重于资源分配，通过动态调度请求，使多台服务器负载趋于均衡，从而提升系统吞吐量和容错能力；而流量控制则更加关注请求限制，防止单一服务因高并发或恶意流量而过载，确保系统整体的可持续运行。</p>
+<!-- more -->
+<p>在这篇文章中，我们将探讨负载均衡和流量控制的基本原理与典型算法，并结合实际场景，解析它们在不同分布式架构中的应用方式，以及如何共同构筑高性能、高可靠的系统。</p>
+<h2 id="经典的负载均衡与流控">经典的负载均衡与流控</h2>
+<h3 id="负载均衡">负载均衡</h3>
+<p>负载均衡是一种分布式系统技术，旨在最大化资源利用率、提高系统吞吐量、减少响应时间，并确保系统的高可用性。常见的负载均衡算法有 Hash 算法、随机算法、轮询算法，以及在随机与轮询基础上加上权重，也就有了权重随机算法与权重轮询算法，接下来，我们来简单的来看看这些算法。</p>
+<h4 id="hash-算法">Hash 算法</h4>
+<p>Hash 算法根据请求的某些属性，如用户 IP、请求 URL 等计算哈希值，将请求分配到固定的服务器。保证同一用户或相同属性的请求总是分配到同一台服务器（会话粘性）。但是本文要介绍的，是它的优化版本——一致性 Hash 算法，原理是将服务器和请求的哈希值映射到一个环形哈希空间中，请求分配到离它最近的服务器。这样的话，服务器动态加入或移除时，只有部分请求需要重新分配，迁移量较小，详细内容，你可以这篇<a href="https://developer.aliyun.com/article/1082388">文章</a>。使用一致性 Hash 的核心代码如下：</p>
+<pre><code class="language-java">private final ConcurrentHashMap&lt;String, ConsistentHashSelector&gt; selectors = new ConcurrentHashMap&lt;&gt;();
+
+@Override
+protected PalmxSocketAddress doChoose(List&lt;PalmxSocketAddress&gt; socketAddressList, String serviceName) {
+  Map&lt;String, PalmxSocketAddress&gt; serviceAddressesMap = socketAddressList.stream()
+    .collect(Collectors.toMap(palmxSocketAddress -&gt; palmxSocketAddress.getAddress().getHostAddress(), Function.identity()));
+  List&lt;String&gt; serviceAddresses = Lists.newArrayList(serviceAddressesMap.keySet());
+  int identityHashCode = System.identityHashCode(serviceAddresses);
+  // build rpc service name by rpcRequest
+  ConsistentHashSelector selector = selectors.get(serviceName);
+  // check for updates
+  if (selector == null || selector.identityHashCode != identityHashCode) {
+    selectors.put(serviceName, new ConsistentHashSelector(serviceAddresses, 160, identityHashCode));
+    selector = selectors.get(serviceName);
+  }
+  String selectAddressStr = selector.select(serviceName);
+  return serviceAddressesMap.get(selectAddressStr);
+}
+</code></pre>
+<h4 id="随机算法">随机算法</h4>
+<p>随机算法会随机选择一台服务器处理请求。这种算法实现简单，但可能出现分配不均的问题。其核心代码如下：</p>
+<pre><code class="language-java">@Override
+protected PalmxSocketAddress doChoose(List&lt;PalmxSocketAddress&gt; socketAddressList, String serviceName) {
+  int size = socketAddressList.size();
+  ThreadLocalRandom random = ThreadLocalRandom.current();
+  return socketAddressList.get(random.nextInt(size));
+}
+</code></pre>
+<h4 id="轮询算法">轮询算法</h4>
+<p>轮询算法是将请求依次分配给每台服务器，依次循环。它简单易实现，不考虑服务器的性能和当前负载。适用于服务器性能均等、任务处理时间接近。其核心代码如下：</p>
+<pre><code class="language-java">private final Map&lt;String, AtomicInteger&gt; positions = new ConcurrentHashMap&lt;&gt;();
+
+@Override
+protected PalmxSocketAddress doChoose(List&lt;PalmxSocketAddress&gt; socketAddressList, String serviceName) {
+  if (!positions.containsKey(serviceName)) {
+    positions.put(serviceName, new AtomicInteger((new Random()).nextInt(1000)));
+  }
+  AtomicInteger position = positions.get(serviceName);
+  int pos = Math.abs(position.incrementAndGet());
+  return socketAddressList.get(pos % socketAddressList.size());
+}
+</code></pre>
+<h4 id="加权随机算法">加权随机算法</h4>
+<p>加权随机算法是在随机算法的基础上加上权重，权重越高，随机的概率越高，接收的请求越多。一般根据每台节点服务器的具体性能来分配权重。其核心代码如下：</p>
+<pre><code class="language-java">@Override
+protected PalmxSocketAddress doChoose(List&lt;PalmxSocketAddress&gt; serverNodes, String serviceName) {
+  List&lt;PalmxSocketAddress&gt; palmxSocketAddresses = serviceNodes.get(serviceName);
+  if (null == palmxSocketAddresses) {
+    serviceNodes.put(serviceName, serverNodes);
+    palmxSocketAddresses = serverNodes;
+  }
+  int weightSum = 0;
+  int totalWeight = 0;
+  for (PalmxSocketAddress node : serverNodes) {
+    totalWeight += node.getWeight();
+  }
+  int randomWeight = random.nextInt(totalWeight);
+  for (PalmxSocketAddress palmxSocketAddress : palmxSocketAddresses) {
+    weightSum += palmxSocketAddress.getWeight();
+    if (randomWeight &lt; weightSum) {
+      return palmxSocketAddress;
+    }
+  }
+  return serverNodes.get(0);
+}
+</code></pre>
+<h4 id="加权轮询算法">加权轮询算法</h4>
+<p>加权轮询是在轮询算法的基础上，为每台服务器分配一个权重，权重越高，接收的请求越多。它适用于适用于服务器性能不均的场景，考虑不同服务器的处理能力。其核心代码如下：</p>
+<pre><code class="language-java">@Override
+protected PalmxSocketAddress doChoose(List&lt;PalmxSocketAddress&gt; socketAddressList, String serviceName) {
+
+  List&lt;PalmxSocketAddress&gt; palmxSocketAddresses = serviceNodes.get(serviceName);
+  if (null == palmxSocketAddresses) {
+    serviceNodes.put(serviceName, socketAddressList);
+    palmxSocketAddresses = socketAddressList;
+  }
+
+  // 权重之和
+  Integer totalWeight = 0;
+  PalmxSocketAddress nodeOfMaxWeight; // 保存轮询选中的节点信息
+
+  // 刷新节点
+  super.refreshServiceNodes(socketAddressList, serviceName);
+
+  synchronized (palmxSocketAddresses) {
+    for (PalmxSocketAddress serverNode : palmxSocketAddresses) {
+      totalWeight += serverNode.getEffectiveWeight();
+    }
+    // 选出当前权重最大的节点
+    PalmxSocketAddress tempNodeOfMaxWeight = palmxSocketAddresses.get(0);
+    for (PalmxSocketAddress serverNode : palmxSocketAddresses) {
+      if (serverNode.isAvailable()) {
+        serverNode.onInvokeSuccess();//提权
+      } else {
+        serverNode.onInvokeFault();//降权
+      }
+      tempNodeOfMaxWeight = tempNodeOfMaxWeight.compareTo(serverNode) &gt; 0 ? tempNodeOfMaxWeight : serverNode;
+    }
+    // 必须new个新的节点实例来保存信息，否则引用指向同一个堆实例，后面的set操作将会修改节点信息
+    nodeOfMaxWeight = new PalmxSocketAddress(tempNodeOfMaxWeight.getAddress(),
+                                             tempNodeOfMaxWeight.getPort(), tempNodeOfMaxWeight.getWeight(),
+                                             tempNodeOfMaxWeight.isAvailable());
+    nodeOfMaxWeight.setEffectiveWeight(tempNodeOfMaxWeight.getEffectiveWeight());
+    nodeOfMaxWeight.setCurrentWeight(tempNodeOfMaxWeight.getCurrentWeight());
+    // 调整当前权重比：按权重（effectiveWeight）的比例进行调整，确保请求分发合理。
+    tempNodeOfMaxWeight.setCurrentWeight(tempNodeOfMaxWeight.getCurrentWeight() - totalWeight);
+    palmxSocketAddresses.forEach(serverNode -&gt; serverNode.setCurrentWeight(serverNode.getCurrentWeight() + serverNode.getEffectiveWeight()));
+  }
+  return nodeOfMaxWeight;
+}
+</code></pre>
+<p>加权轮询基本是广泛应用于分布式系统的算法，Nginx 的默认实现就是他，它能平滑得将请求分配到带权重的节点上，关于加权轮询算法，如何“平滑加权”你可以看这篇<a href="https://mp.weixin.qq.com/s/wPajqCl27CegaG9yamG4Ig">文章</a>。</p>
+<h3 id="流量控制">流量控制</h3>
+<p>在软件架构中，流控是一种控制资源使用和保护系统安全的重要机制，它通过限制在一定时间内可以处理的请求数量，来防止系统过载。限流主要有两个目的，一是防止系统过载，确保系统在高负载情况下仍能保持稳定运行；二是保证服务质量，为所有用户提供公平的服务，避免某些用户占用过多资源，下面来介绍几种常见的流控算法实现。</p>
+<h4 id="计数器算法">计数器算法</h4>
+<p>计数器算法是最简单的流控算法，它通过在一段时间内，对请求进行计数，当请求数量超过阈值时，对请求进行限制，其核心代码如下：</p>
+<pre><code class="language-java">@Override
+public boolean canPass() {
+
+  long nowTime = System.currentTimeMillis();
+  // 在当前的事件窗口
+  if (nowTime &lt; lastTime + interval) {
+    long accumulatorCount = accumulator.incrementAndGet();
+    return accumulatorCount &lt;= flowControlCount;
+  } else {
+    // 不在当前的事件窗口
+    synchronized (this) {
+      if (nowTime &gt; lastTime + interval) {
+        accumulator.set(0);
+        lastTime = nowTime;
+      }
+    }
+    return true;
+  }
+}
+</code></pre>
+<h4 id="滑动窗口算法">滑动窗口算法</h4>
+<p>滑动窗口算法是对计数器算法的优化，其优化了在跨时间段请求超过阈值的问题，主要思路是将计数器的固定时间段进行切割，再统计最近时间段内的请求数量，从而达到“滑动窗口的目的”，其核心代码如下：</p>
+<pre><code class="language-java">@Override
+public boolean canPass() {
+  lock.lock();
+  try {
+    cleanExpiredRequests();
+    // 通过则添加时间戳到列表
+    if (requestTimestamps.size() &lt; getFlowControlCount()) {
+      cleanExpiredRequests();
+      requestTimestamps.offer(System.currentTimeMillis());
+      return true;
+    }
+    return false;
+  } finally {
+    lock.unlock();
+  }
+}
+
+private void cleanExpiredRequests() {
+  long currentTime = System.currentTimeMillis();
+  while (!requestTimestamps.isEmpty()
+         &amp;&amp; currentTime - requestTimestamps.peek() &gt; interval * 1000L) {
+    requestTimestamps.poll();
+  }
+}
+</code></pre>
+<p>知名微服务流控框架 Sentinel 对滑动窗口进行了优化，达到了“高优先级请求最终通过”的效果</p>
+<blockquote>
+<p><a href="https://sentinelguard.io/zh-cn/blog/sentinel-1-5-0-release.html">Sentinel 1.5.0</a> 对底层的滑动窗口统计结构进行了升级，添加了“占用”机制，允许在当前 QPS 已经达到限流阈值时，同个资源高优先级的请求提前占用未来时间窗口的配额数，等待到对应时间窗口到达时直接通过，从而可以实现“最终通过”的效果而不是被立即拒绝；而同个资源低优先级的请求则不能占用未来的配额，阈值达到时就会被限流。</p>
+<p>Sentinel 1.5.0 引入了 FutureBucketLeapArray，这是一种特殊的滑动窗口，仅维持当前时间以后的格子，从而可以用于统计未来被预先占用的配额数目。Sentinel 将普通的滑动窗口与 FutureBucketLeapArray 组合成可占用的滑动窗口 OccupiableBucketLeapArray，从而实现了“部分高优先级请求最终通过”的效果。</p>
+</blockquote>
+<h4 id="令牌桶算法">令牌桶算法</h4>
+<p>令牌桶算法的原理是系统会以一个恒定的速度往桶里放入令牌，而如果请求需要被处理，则需要先从桶里获取一个令牌，当桶里没有令牌可取时，则拒绝服务。实现方式是，计算当前请求时间与上次请求时间的差值，再算出这个时间段内会产生多少令牌，再根据令牌个数判断能否执行请求。其核心代码如下：</p>
+<pre><code class="language-java">@Override
+public boolean canPass() {
+
+  long nowTime = System.currentTimeMillis();
+  long diff = nowTime - lastTime;
+
+  //计算时间段内的令牌数
+  int innerTokens = (int) (diff * rate / 1000);
+  int all = tokens.get() + innerTokens;
+
+  // 剩余令牌
+  tokens.set(Math.min(capacity, all));
+
+  log.info(&quot;tokens = {}, capacity = {}&quot;, tokens.get(), capacity);
+
+  // 没有令牌
+  if (tokens.get() &lt;= 0) {
+    return false;
+  } else {
+    // 还有令牌
+    tokens.decrementAndGet();
+    lastTime = nowTime;
+    return true;
+  }
+}
+</code></pre>
+<h4 id="漏桶算法">漏桶算法</h4>
+<p>漏桶算法其实很简单，可以粗略的认为就是注水漏水过程，往桶中以任意速率流入水，以一定速率流出水，当水超过桶容量（capacity）则丢弃，因为桶容量是不变的，保证了整体的速率。在实现上，可以计算当前时间与上次请求时间的差值作为漏水量，之后在水位跟桶容量进行比较。其核心代码如下：</p>
+<pre><code class="language-java">@Override
+public boolean canPass() {
+
+  lock.lock();
+
+  try {
+    if (water.get() == 0) {
+      lastTime = System.currentTimeMillis();
+      water.addAndGet(1);
+      return true;
+    }
+    // 将时间差值 * QPS 为需要漏掉的水，降低漏桶水位线
+    int waterLeaked = ((int) ((System.currentTimeMillis() - lastTime) / 1000)) * leakRate;
+    int waterLeft = water.get() - waterLeaked;
+    water.set(Math.max(0, waterLeft));
+    // 水未满，放行
+    if (water.get() &lt; capacity) {
+      lastTime = System.currentTimeMillis();
+      water.addAndGet(1);
+      return true;
+    }
+    return false;
+  } finally {
+    lock.unlock();
+  }
+}
+</code></pre>
+<p>可以看出漏桶算法能强行限制数据的传输速率。</p>
+<h2 id="自适应的负载均衡与流控">自适应的负载均衡与流控</h2>
+<p>在经典的负载均衡与流控中，那些经典算法已经能经过的大量的生产环境验证，能够很好的满足生产应用稳定运行，但是有一个前提，那就是网络必须一直稳定，当网络发生变化时。比如 10ms 延迟的节点变成了500ms 延迟，固定的算法就不起作用了。在这个场景下，有与响应时间变长。应该降低这个节点的权重，或者说降低这个节点的流控阈值，当前的负载均衡与流控算法是做不到这一点的，那么，有没有一种办法可以实现这个功能呢？是有的，那就是自适应负载均衡与流控。</p>
+<h3 id="自适应负载均衡">自适应负载均衡</h3>
+<p>目前业内负载均衡都是基于权重做权重轮训或者权重随机算法，比如说 Dubbo 的默认负载均衡算法是权重随机算法，Nginx 是权重轮训算法，它们都是在客户端实现的，从中可以看出，这些在算法都默认的客户端的调用是均衡且一致的，也就是说，这些算法依赖于对服务端的场外判断，给某些服务器好的机器做更高的权重，反之给更低的权重，在虚拟机时代这样没什么问题，因为虚拟的的 IP 大多数时候都是固定的，在云原生时代，服务器的 IP 大多不是固定的，如果没有特定的服务器 Tag 的话，在指定负载均衡是需要频繁的配置负载权重，这无疑会增加服务的发布成本，所以在业内提出了一种新的负载均衡算法——P2C。</p>
+<h4 id="p2c-算法">P2C 算法</h4>
+<p>P2C 在 <a href="https://cn.dubbo.apache.org/zh-cn/overview/what/core-features/load-balance/">Dubbo</a> 中有广泛使用，主要思路如下是对于每次调用，从可用的 provider 列表中做两次随机选择，选出两个节点 providerA 和 providerB。再比较 providerA 和 providerB 两个节点，选择其“当前正在处理的连接数”较小的那个节点。P2C 负载均衡算法相对于传统的轮询和随机算法具有更好的性能和效果，能够更精确地根据节点的实际情况进行负载均衡，提高系统的可用性和性能。它在分布式系统中广泛应用，Dubbo 的 P2C 算法如下：</p>
+<pre><code class="language-java">private &lt;T&gt; Invoker&lt;T&gt; selectByP2C(List&lt;Invoker&lt;T&gt;&gt; invokers, Invocation invocation) {
+  int length = invokers.size();
+  if (length == 1) {
+    return invokers.get(0);
+  }
+
+  if (length == 2) {
+    return chooseLowLoadInvoker(invokers.get(0), invokers.get(1), invocation);
+  }
+
+  int pos1 = ThreadLocalRandom.current().nextInt(length);
+  int pos2 = ThreadLocalRandom.current().nextInt(length - 1);
+  if (pos2 &gt;= pos1) {
+    pos2 = pos2 + 1;
+  }
+
+  return chooseLowLoadInvoker(invokers.get(pos1), invokers.get(pos2), invocation);
+}
+</code></pre>
+<p>P2C 算法是连接数作为判断依据，但是服务节点的负载状态往往并不是只跟连接数有关，还有 CPU、内存、带宽等，所以为了更科学的体现节点负载，需要把这些因素考虑进来，所以对 P2C 算法做了负载，这就是自适应负载均衡。</p>
+<h4 id="自适应算法">自适应算法</h4>
+<p>自适应负载均衡的定义很简单，在 P2C 算法基础上，选择二者中 load 最小的那个节点，具体在 Dubbo 中的实现是这样的：</p>
+<pre><code class="language-java">private &lt;T&gt; Invoker&lt;T&gt; chooseLowLoadInvoker(Invoker&lt;T&gt; invoker1, Invoker&lt;T&gt; invoker2, Invocation invocation){
+  int weight1 = getWeight(invoker1, invocation);
+  int weight2 = getWeight(invoker2, invocation);
+  int timeout1 = getTimeout(invoker1, invocation);
+  int timeout2 = getTimeout(invoker2, invocation);
+  long load1 = Double.doubleToLongBits(
+    adaptiveMetrics.getLoad(getServiceKey(invoker1, invocation), weight1, timeout1));
+  long load2 = Double.doubleToLongBits(
+    adaptiveMetrics.getLoad(getServiceKey(invoker2, invocation), weight2, timeout2));
+
+  if (load1 == load2) {
+    // The sum of weights
+    int totalWeight = weight1 + weight2;
+    if (totalWeight &gt; 0) {
+      int offset = ThreadLocalRandom.current().nextInt(totalWeight);
+      if (offset &lt; weight1) {
+        return invoker1;
+      }
+      return invoker2;
+    }
+    return ThreadLocalRandom.current().nextInt(2) == 0 ? invoker1 : invoker2;
+  }
+  return load1 &gt; load2 ? invoker2 : invoker1;
+}
+</code></pre>
+<p>大致的意思是根据权重，超时，负载，来计算要选出的节点，主要是负载，它总是尝试将请求转发到负载最小的节点。其中要用到的 rt，load，curTime 需要在 AdaptiveMetrics 中从服务节点获取或计算，具体你可以看<a href="https://mp.weixin.qq.com/s/41TbZG6Qn1R3OfSQEhf5xg#:~:text=chooseLowLoadInvoker">这里</a>。</p>
+<h3 id="自适应流量控制">自适应流量控制</h3>
+<p>聊了自适应负载均衡，但是还在站在服务调用方的角度来说的。那么服务提供方呢？是不是也要做自适应处理？与网络情况在负载均衡中的重要地位不同，流控只关注服务提供方节点自身的状态。根据自身的动态负载，来调节流控阈值，这就是自适应流控。Dubbo 在当前的版本中并没有提供稳定的自适应流控，但是在社区中有<a href="https://github.com/apache/dubbo/pull/10642">提案</a>。在 <a href="https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control/#p2c%E7%AE%97%E6%B3%95:~:text=%E5%B0%8F%E7%9A%84%E9%82%A3%E4%B8%AA%E3%80%82-,%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81,-%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1">Dubbo</a> 框架内实现了两种自适应限流算法，分别是基于启发式平滑的 HeuristicSmoothingFlowControl 和基于窗口的 AutoConcurrencyLimier，下面来分别介绍。</p>
+<p><strong>HeuristicSmoothingFlowControl 算法实现</strong></p>
+<p>当服务端收到一个请求时，首先判断 CPU 的使用率是否超过 50%。如果没有超过 50%，则接受这个请求进行处理。如果超过 50%，说明当前的负载较高，便从 HeuristicSmoothing 算法中获得当前的 maxConcurrency 值。如果当前正在处理的请求数量超过了这个值，则拒绝该请求。</p>
+<p><strong>AutoConcurrencyLimier 算法实现</strong></p>
+<ul>
+<li>AutoConcurrency 的算法使用过程和 HeuristicSmoothing 类似。最大区别是：AutoConcurrency 是基于窗口的。每当窗口内积累了一定量的采样数据时，才利用窗口内的数据来更新得到 maxConcurrency。 其次，利用 exploreRatio 来对剩余的容量进行探索。</li>
+<li>另外，每隔一段时间都会自动缩小 max_concurrency 并持续一段时间，以处理 noLoadLatency 上涨的情况。因为估计 noLoadLatency 时必须先让服务处于低负载的状态，因此对 maxConcurrency 的缩小是难以避免的。</li>
+<li>由于 max_concurrency &lt; concurrency 时，服务会拒绝掉所有的请求，限流算法将 “排空所有的经历过排队的等待请求的时间” 设置为 2*latency，以确保 minLatency 的样本绝大部分时没有经过排队等待的。</li>
+</ul>
+<p>简单来说，HeuristicSmoothing 是一个自适应的计数器流控，AutoConcurrency 是一个自适应的滑动窗口流控。</p>
+<h2 id="传输层的自适应">传输层的自适应*</h2>
+<p>TCP 有一项能力叫拥塞控制，通过逐步增减队列大小来控制流量，这种拥塞控制在 TCP 请求时，有一个逐步扩大或缩小的过程，这就有一定的时间成本，所以如果有一个自适应的拥塞控制，那么就可以免掉这个过程，实现快速的进行流量控制，但是在 TCP 协议中，已经将拥塞控制写进内核的协议栈中无法轻易更改，改动成本太大了，那么有没有一种方式可以解决这一问题呢？在最近兴起的 HTTP3 协议，不失为一种解决方式，HTTP3 在传输层使用 UDP 协议，并在应用层实现可靠性，拥塞控制、安全性等功能，所以这就为修改 HTTP3 协议提供了一种新的解决思路，在HTTP3的拥塞控制算法中，实现自适应限流、或者说，自适应拥塞控制。Google BBR 是怎么做的呢？BBR 的设计思路：控制时机提前，不再等到丢包时再进行暴力限制，而是控制稳定的发包速度，尽量榨干带宽，却又不让报文在中间设备的缓存队列上累积。为了得到稳定的发包速度，BBR 使用 TCP Pacing 进行发包控制，因此 BBR 的实现也需要底层支持 TCP Pacing; 为了榨干带宽，BBR 会周期性地去探测是否链路条件变好了，如果是，则加大发送速率; 为了不让报文在中间设备的缓存队列上累积，BBR 会周期性地探测链路的最小 RTT，并使用该最小 RTT 计算发包速率。</p>
+<h2 id="自适应的扩展">自适应的扩展</h2>
+<p>不管自适应负载均衡与流控功能多么强大，多么有效，最终都要落到负载权重变化，与限流阈值变化，这两个值都体现了服务端机器的性能以及状态，所以说，自适应负载均衡与自适应流控并不是新的种类，用 Java 的话来说，自适应并不是新的实现方式，而是一种与原有能力的组合，比如说自适应-权重-随机负载均衡，比如说自适应-滑动窗口流控。将自适应能力与原有算法组合，才是自适应算法的最实践。</p>
+<p>在 Dubbo 的负载均衡模块中，有一项功能是权重热身机制，它是通过运行时间与热身时间的比值动态调整权重。如果服务运行时间不足热身时间，通过 calculateWarmupWeight 方法计算一个动态的权重值，这确保新启动的服务节点不会立即分配过多流量，避免因初始化不完全导致问题。 Dubbo 的负载均衡会给予他更低的权重，在经过一段时间稳定运行后在提升权重至最大值，AbstractLoadBalance#getWeight，核心代码如下：</p>
+<pre><code class="language-java">/**
+   * Get the weight of the invoker's invocation which takes warmup time into account
+   * if the uptime is within the warmup time, the weight will be reduce proportionally
+   *
+   * @param invoker    the invoker
+   * @param invocation the invocation of this invoker
+   * @return weight
+*/
+protected int getWeight(Invoker&lt;?&gt; invoker, Invocation invocation) {
+  // 省略...
+  long timestamp = invoker.getUrl().getParameter(TIMESTAMP_KEY, 0L);
+  if (timestamp &gt; 0L) {
+    long uptime = System.currentTimeMillis() - timestamp;
+    if (uptime &lt; 0) {
+      return 1;
+    }
+    int warmup = invoker.getUrl().getParameter(WARMUP_KEY, DEFAULT_WARMUP);
+    if (uptime &gt; 0 &amp;&amp; uptime &lt; warmup) {
+      weight = calculateWarmupWeight((int) uptime, warmup, weight);
+      // 省略...
+      return Math.max(weight, 0);
+}
+/**
+   * Calculate the weight according to the uptime proportion of warmup time
+   * the new weight will be within 1(inclusive) to weight(inclusive)
+   *
+   * @param uptime the uptime in milliseconds
+   * @param warmup the warmup time in milliseconds
+   * @param weight the weight of an invoker
+   * @return weight which takes warmup into account
+*/
+static int calculateWarmupWeight(int uptime, int warmup, int weight) {
+  int ww = (int) (uptime / ((float) warmup / weight));
+  return ww &lt; 1 ? 1 : (Math.min(ww, weight));
+}
+</code></pre>
+<p>那么，可不可以更灵活的动态计算负载均衡自适应权重与自适应限流阈值呢？笔者会在下一篇<a href="https://cosmoswei.github.io/rule-engine/">文章</a>中介绍。</p>
+<h2 id="参考文章">参考文章</h2>
+<ol>
+<li>Java 实现负载均衡算法：https://www.cnblogs.com/dennyLee2025/p/16128477.html</li>
+<li>自己编写平滑加权轮询算法：https://mp.weixin.qq.com/s/wPajqCl27CegaG9yamG4Ig</li>
+<li>Java 实现平滑加权轮询算法：https://mp.weixin.qq.com/s/BEqjs3jeE3-PumixPCvg-A</li>
+<li>Dubbo 路由及负载均衡性能优化：https://mp.weixin.qq.com/s/qmn-OC10AOaIekiCCKhnBg</li>
+<li>三大限流算法的原理与实战：https://www.cnblogs.com/crazymakercircle/p/15187184.html</li>
+<li>Sentinel 系列之滑动窗口、漏桶：https://www.cnblogs.com/kingsleylam/p/17742533.html</li>
+<li>Sentinel 系列之令牌桶：https://www.cnblogs.com/kingsleylam/p/17779906.html</li>
+<li>基于 Sentinel 的动态限流实践：https://mp.weixin.qq.com/s/lFuXVBUW_PkrBp4NoAFTig</li>
+<li>自适应负载均衡与限流：https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control</li>
+<li>自适应限流：https://github.com/apache/dubbo/pull/10642</li>
+<li>自适应负载均衡：https://github.com/apache/dubbo/pull/10745</li>
+<li>我试图给你分享一种自适应的负载均衡：https://mp.weixin.qq.com/s/41TbZG6Qn1R3OfSQEhf5xg</li>
+<li>BBR-基于拥塞的拥塞控制：https://arthurchiao.art/blog/bbr-paper-zh/</li>
+<li>什么是 QoS？QoS 是如何工作的？：https://info.support.huawei.com/info-finder/encyclopedia/zh/QoS.html</li>
+<li>Micrometer 使用介绍：https://www.tony-bro.com/posts/1386774700/index.html</li>
+<li>第一个 Dubbo Filter：https://cn.dubbo.apache.org/zh-cn/blog/2018/07/01/第一个-dubbo-filter/</li>
+</ol>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/rule-engine/">
+              <h3 class="post-title">
+                下一篇：【W44/2024】配置驱动：灵活的配置指标与评分体系
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W48/2024】Spring 面试常看常新 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W48/2024】Spring 面试常看常新</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-12-06</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>Spring 是面试中的重要部分，其中有几个关键问题在面试中出现的频率特别高，比如 Spring Bean 的生成流程，SpringBoot 的启动流程，Spring 循环依赖，笔者对于这些知识点总是记了忘，忘了记，所以对这些知识点做一个汇总。</p>
+<!-- more -->
+<h2 id="spring-生成-bean-流程">Spring 生成 Bean 流程</h2>
+<p>以单例对象为例子，说一个 Bean 的极简流程以及其目的</p>
+<ol>
+<li>获取 Bean定义：扫描工程内所有被标记的 Bean，获取其类型，名称，属性，构造方法等信息，存在一个 Map里</li>
+<li>生成实例：这一步也很简单，遍历上述 Map，利用 Bean 定义里的无参构造方法创建对象，和 new 对象同理</li>
+<li>属性装填：刚创建的对象所有属性都是默认值，需要我们给它装填上需要的内容</li>
+<li>初始化：如果这个 Bean 实现了 InitializingBean 接口，则会调用你写在 afterPropertiesSet 方法里的内容。</li>
+</ol>
+<p>上面四步是核心功能，Spring 为了增强对这些 Bean 的修改能力，在 2，3，4 步骤的前后都预留了处理点，Spring 自己或用户都可以通过编写 Bean 后置处理器（BeanPostProcessor）来实现自己的目的，这些处理器会在对应的处理点被执行，从而完成对Bean的修改。Spring 中的后置处理器分为两大类：BeanFactoryPostProcessor 和 BeanPostProcessor，BeanFactoryPostProcessor 针对 Bean工厂，调整 Bean 工厂的属性、影响 Bean 定义，注意此时还没有 Bean 进行实例化。 BeanPostProcessor 则更直接的作用于 Bean实例生成过程中的修改 。</p>
+<p>如图：</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/cosmoswei/images/main/202412051834459.png" alt="" loading="lazy"></figure>
+<h2 id="spring-boot-启动流程">Spring Boot 启动流程</h2>
+<p>为什么  SpringApplication.run 可以启动一个 Web 应用？步骤如下：</p>
+<ol>
+<li>初始化 SpringApplication 信息。</li>
+<li>加载配置文件（application.properties）、环境变量。</li>
+<li>创建 Spring 上下文。</li>
+<li>预初始化上下文，读取配置类，BeanDefinition。</li>
+<li>刷新容器，加载 IOC 容器。</li>
+<li>加载自动配置类，解析@Import。</li>
+<li>启动 Web 服务器，onRefresh()。</li>
+</ol>
+<p>将启动类作为配置类进行读取，其中会启动 Spring 事件监听，也会发布很多事件（9次）。</p>
+<p>详细如图：</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/cosmoswei/images/main/202412051911627.png" alt="" loading="lazy"></figure>
+<h2 id="spring-boot-自动配置">Spring Boot 自动配置</h2>
+<p>Spring Boot 自动配置是 Spring Boot 框架的一项核心特性，它可以基于应用程序的依赖关系和配置信息，自动配置应用程序所需的 Spring Bean。Spring Boot 自动配置是通过条件化配置实现的，这意味着只有在特定条件下才会应用这些配置。这些条件可以是应用程序的依赖关系、配置值、环境变量等等。</p>
+<p>loadFactoryNames() 方法的作用是：加载所有使用了 @EnableAutoConfiguration 注解的自动配置类的全限定类名，并返回一个 List 类型的对象，其中包含了所有的候选自动配置类的全限定类名。</p>
+<pre><code class="language-java">public static List&lt;String&gt; loadFactoryNames(Class&lt;?&gt; factoryType, @Nullable ClassLoader classLoader) {
+  ClassLoader classLoaderToUse = classLoader;
+  if (classLoaderToUse == null) {
+    classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
+  }
+
+  String factoryTypeName = factoryType.getName();
+  return (List)loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
+}
+</code></pre>
+<p>debug 如图：</p>
+<img src="https://raw.githubusercontent.com/cosmoswei/images/main/202412060016403.png" style="zoom:33%;" />
+<p>loadSpringFactories 方法是去 &quot;META-INF/spring.factories&quot; 真正的获取自动配置。</p>
+<p>SpringBoot 自动配置就是基于SpringFactories 机制获取对应依赖META-INF目录下的 spring.factories 文件中的需要自动配置的类的全限定名信息，然后根据这些信息将我们需要的使用的 Bean 对象放到 IOC 容器中，当我们需要使用时，通过依赖注入机制直接注入使用即可。当然如果再追问具体的实现细节，可以根据我们的分析流程讲讲具体的代码实现。</p>
+<h2 id="spring-boot-循环依赖">Spring Boot 循环依赖</h2>
+<p>循环依赖：多个对象之间存在循环的引用关系，在初始化过程当中，就会出现&quot;先有蛋还是先有鸡&quot;的问题。</p>
+<p>1、一种是使用@Lazy注解：解决构造方法造成的循环依赖问题。</p>
+<p>2、另一种是使用三级缓存</p>
+<ul>
+<li>
+<p>一级缓存：缓存最终的单例池对象：</p>
+<pre><code class="language-JAVA">private final Map&lt;String,Object&gt;singletonObjects=neWConcurrentHashMap&lt;&gt;(256);
+</code></pre>
+</li>
+<li>
+<p>二级缓存：缓存初始化的对象，对于对象之间的普通引用，二级缓存会保存 new 出来的不完整对象，这样当单例池中找到不依赖的属性时，就可以先从二级缓存中获取到不完整对象，完成对象创建，在后续的依赖注入过程中，将单例池中对象的引用关系调整完成。</p>
+<pre><code class="language-java">private final Map&lt;String,Object&gt;:earlySingletonObjects=newConcurrentHashMap&lt;&gt;(16);
+</code></pre>
+</li>
+<li>
+<p>三级缓存：缓存对象的ObjectFactory，如果引用的对象配置了AOP,那在单例池中最终就会需要注入动态代理对象，而不是原对象。而生成动态代理是要在对象初始化完成之后才开始的。于是Spig增加三级缓存，保存所有对象的动态代理配置信息。在发现有循环依赖时，将这个对象的动态代理信息获取出来，提前进行AOP,生成动态代理。</p>
+<pre><code class="language-java">private final Map&lt;String,ObjectFactory&lt;?&gt;&gt;singletonFactories=newHashMap&lt;&gt;(16)
+</code></pre>
+</li>
+</ul>
+<p>核心代码就在 org.springframework.beans.factory.support.DefaultSingletonBeanRegistry 的getSingleton,方法当中。</p>
+<pre><code class="language-java">@Nullable
+protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+  // 一级缓存
+  Object singletonObject = this.singletonObjects.get(beanName);
+  if (singletonObject == null &amp;&amp; this.isSingletonCurrentlyInCreation(beanName)) {
+    // 二级缓存
+    singletonObject = this.earlySingletonObjects.get(beanName);
+    if (singletonObject == null &amp;&amp; allowEarlyReference) {
+      synchronized(this.singletonObjects) {
+        // 双重检测锁
+        singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null) {
+          singletonObject = this.earlySingletonObjects.get(beanName);
+          if (singletonObject == null) {
+            ObjectFactory&lt;?&gt; singletonFactory = (ObjectFactory)this.singletonFactories.get(beanName);
+            if (singletonFactory != null) {
+              // 三级缓存
+              singletonObject = singletonFactory.getObject();
+              this.earlySingletonObjects.put(beanName, singletonObject);
+              this.singletonFactories.remove(beanName);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return singletonObject;
+}
+</code></pre>
+<p>三级缓存不单单是解决循环依赖，但是在循环依赖中很有作用。</p>
+<h2 id="参考文章">参考文章</h2>
+<ol>
+<li>SpringBean 生成流程详解：https://blog.csdn.net/u011709538/article/details/129303025</li>
+<li>了解 SpringBoot 启动过程：https://cloud.tencent.com/developer/article/2131866</li>
+<li>SpringBoot 自动配置：https://juejin.cn/post/7046554366068654094</li>
+<li>SpringBoot 自动配置原理详解：https://juejin.cn/post/7228780174312751161</li>
+</ol>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w462024-completablefuture-ru-men-jiao-cheng/">
+              <h3 class="post-title">
+                下一篇：【W46/2024】CompletableFuture 入门教程
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

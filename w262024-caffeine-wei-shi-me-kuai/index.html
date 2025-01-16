@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W26/2024】Caffeine 性能高效的秘密（Kimi） | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W26/2024】Caffeine 性能高效的秘密（Kimi）</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-06-25</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在业务开发中，Caffeine 基本上是默认的缓存库，为什么它会这么快？为什么它这么受开开发者推崇？</p>
+<!-- more -->
+<h3 id="caffeine为什么快">Caffeine为什么快？</h3>
+<p>Caffeine 是一个高性能的 Java 缓存库，它提供了多种类型的缓存，包括本地缓存、加载缓存、引用缓存等。Caffeine 之所以快，主要归功于以下几个方面：</p>
+<ol>
+<li>
+<p><strong>内存映射文件（MMap）</strong>：Caffeine 利用了 Java 的 NIO 包中的内存映射文件技术，通过将数据直接映射到内存中，避免了传统 I/O 操作中的一些开销，比如从用户空间复制到内核空间的开销。</p>
+</li>
+<li>
+<p><strong>细粒度锁</strong>：Caffeine 使用了分段锁（Segment locks）来允许并发访问，这意味着在多线程环境下，Caffeine 可以更有效地处理缓存的读写操作，减少了锁的争用。</p>
+</li>
+<li>
+<p><strong>无锁编程技术</strong>：Caffeine 在某些场景下使用了无锁编程技术，例如使用原子变量和 CAS（Compare-And-Swap）操作，这可以减少锁的开销，提高性能。</p>
+</li>
+<li>
+<p><strong>灵活的回收策略</strong>：Caffeine 提供了多种缓存回收策略，如基于时间的回收（LRU、MRU、LFU 等），以及基于引用的回收策略。这些策略可以根据具体需求进行配置，以优化缓存的使用效率。</p>
+</li>
+<li>
+<p><strong>自定义加载和驱逐策略</strong>：Caffeine 允许开发者自定义缓存的加载和驱逐行为，这意味着可以根据应用的特定需求来优化缓存的性能。</p>
+</li>
+<li>
+<p><strong>异步加载</strong>：Caffeine 支持异步加载缓存数据，这可以提高缓存的响应速度，尤其是在处理大量数据时。</p>
+</li>
+<li>
+<p><strong>缓存预热</strong>：Caffeine 支持缓存预热，可以在应用启动时预先加载缓存，从而提高应用的启动速度和响应速度。</p>
+</li>
+<li>
+<p><strong>自动刷新</strong>：Caffeine 可以配置为自动刷新缓存中的条目，这有助于保持缓存数据的新鲜度，同时避免了数据的过期问题。</p>
+</li>
+<li>
+<p><strong>内存感知</strong>：Caffeine 能够感知 JVM 的内存使用情况，并根据可用内存动态调整缓存大小，以避免内存溢出。</p>
+</li>
+<li>
+<p><strong>JVM调优</strong>：Caffeine 针对现代多核处理器和JVM进行了优化，利用了JVM的并发特性和内存管理策略，以提高缓存操作的性能。</p>
+</li>
+</ol>
+<p>由于这些设计和实现上的优势，Caffeine 成为了一个在性能和功能上都相当出色的 Java 缓存库。</p>
+<h3 id="相较于guava-cache-有什么优势">相较于Guava Cache 有什么优势？</h3>
+<p>Caffeine 相较于 Guava Cache 具有以下优势:</p>
+<ol>
+<li>
+<p><strong>更高的性能</strong>：Caffeine 在处理缓存操作时，尤其是高并发情况下，提供了比 Guava 更快的读写性能。</p>
+</li>
+<li>
+<p><strong>更高的缓存命中率</strong>：Caffeine 采用了先进的缓存逐出算法，例如 W-TinyLFU (Window-Tiny Least Frequently Used)，这有助于提高缓存的命中率。</p>
+</li>
+<li>
+<p><strong>自动刷新</strong>：Caffeine 支持在指定时间后自动刷新缓存项，即使缓存项仍然有效，也可以重新加载最新数据。</p>
+</li>
+<li>
+<p><strong>内存管理</strong>：Caffeine 提供了更精细的内存管理策略，例如可以设置缓存的最大权重，以及基于引用的缓存逐出策略。</p>
+</li>
+<li>
+<p><strong>丰富的配置选项</strong>：Caffeine 提供了丰富的配置选项，包括但不限于过期策略、缓存加载器、监听器、统计信息收集等。</p>
+</li>
+<li>
+<p><strong>异步加载</strong>：Caffeine 支持异步加载缓存项，这有助于提高应用的响应速度，尤其是在处理复杂或耗时的数据加载操作时。</p>
+</li>
+<li>
+<p><strong>与JSR-107的兼容性</strong>：Caffeine 支持 JSR-107 规范，这意味着它可以更容易地集成到支持该规范的应用程序中。</p>
+</li>
+<li>
+<p><strong>Guava适配器</strong>：Caffeine 提供了与 Guava Cache 兼容的适配器，使得从 Guava Cache 迁移到 Caffeine 变得容易。</p>
+</li>
+<li>
+<p><strong>内存感知</strong>：Caffeine 能够感知 JVM 的内存使用情况，并根据可用内存动态调整缓存大小。</p>
+</li>
+<li>
+<p><strong>简洁而强大的API</strong>：Caffeine 的API设计简洁直观，易于使用，同时功能强大。</p>
+</li>
+</ol>
+<p>Caffeine 的这些优势使其成为许多现代 Java 应用程序的首选缓存解决方案。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w262024-redis-di-ceng-shu-ju-jie-gou/">
+              <h3 class="post-title">
+                下一篇：【W26/2024】Redis 底层数据结构
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

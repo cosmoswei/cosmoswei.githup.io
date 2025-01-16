@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W23/2024】Java 中的线程同步 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W23/2024】Java 中的线程同步</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-06-05</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>Java 中的线程同步方式令人眼花撩乱，JDK提供的工具与方法学习与使用起来容易混淆，本文通过Object、Thread、Lock、Lock Support几个类类帮你梳理这些概念，希望对你有帮助。</p>
+<!-- more -->
+<h3 id="object">Object</h3>
+<p>wait，notify</p>
+<pre><code class="language-java">public class Example {
+    public synchronized void waitForCondition() {
+        while (!condition) {
+            try {
+                wait(); // 释放锁并等待
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        // 条件满足，执行操作
+    }
+    
+    public synchronized void changeCondition() {
+        // 改变条件
+        condition = true;
+        notify(); // 唤醒等待的线程
+    }
+}
+</code></pre>
+<h3 id="thread">Thread</h3>
+<p>sleep、yield</p>
+<pre><code class="language-java">public static void main(String[] args) {
+  Runnable runnable = () -&gt; {
+    for (int i = 0; i &lt;= 100; i++) {
+      System.out.println(Thread.currentThread().getName() + &quot;-----&quot; + i);
+      if (i % 20 == 0) {
+        Thread.yield();
+      }
+    }
+  };
+  new Thread(runnable, &quot;栈长&quot;).start();
+  new Thread(runnable, &quot;小蜜&quot;).start();
+}
+</code></pre>
+<h3 id="lock">Lock</h3>
+<p>await、lock</p>
+<pre><code class="language-java">Lock lock = new ReentrantLock();
+Condition condition = lock.newCondition();
+
+lock.lock();
+try {
+    while (conditionNotMet) {
+        condition.await();
+    }
+    // 条件已满足，执行操作
+} finally {
+    lock.unlock();
+}
+</code></pre>
+<h3 id="locksupport">LockSupport</h3>
+<p>park</p>
+<pre><code class="language-java">public class LockSupportExample {
+    public static void main(String[] args) {
+        final Thread threadA = new Thread(() -&gt; {
+            System.out.println(&quot;线程A等待信号&quot;);
+            LockSupport.park();  // 线程A停下来等待
+            System.out.println(&quot;线程A收到信号&quot;);
+        });
+
+        final Thread threadB = new Thread(() -&gt; {
+            System.out.println(&quot;线程B发送信号&quot;);
+            LockSupport.unpark(threadA);  // 唤醒线程A
+        });
+
+        threadA.start();
+        threadB.start();
+    }
+}
+</code></pre>
+<h3 id="如何唤醒">如何唤醒？</h3>
+<ol>
+<li>sleep:
+<ul>
+<li>sleep() 是 Thread 类的一个静态方法，它使当前线程暂停执行指定的时间长度，让出CPU给其他线程。</li>
+<li>sleep() 方法不会释放任何锁，因此它不会影响其他线程对锁的获取。</li>
+<li>由于 sleep() 不会释放锁，所以它不能被 notify` 或 notifyAll唤醒，因为这些方法与锁有关。</li>
+</ul>
+</li>
+<li>wait:
+<ul>
+<li>wait()是Object类的一个实例方法，它使当前线程等待，直到它被另一个线程通过调用同一个对象的 notify 或 notifyAll方法唤醒。</li>
+<li>当线程调用 wait() 时，它会释放当前对象的锁，并进入等待状态。</li>
+<li>wait() 必须在同步方法或同步块中调用。</li>
+</ul>
+</li>
+<li>await:
+<ul>
+<li>await()是 java.util.concurrent.locks.Condition 接口的一个方法，通常与显式的锁（如 ReentrantLock）一起使用。</li>
+<li>当线程调用 await()时，它会释放与条件相关的锁，并进入等待状态。</li>
+<li>await() 可以被相同Condition 对象上的 signal 或 signalAll方法唤醒。</li>
+</ul>
+</li>
+<li>park：
+<ul>
+<li>park() 并不是传统意义上的锁。它不会去竞争什么资源，只是纯粹地阻塞线程。而且，它还有一个非常酷的特性——不易产生死锁。因为park() 在等待过程中，如果接收到了unpark()的信号，它会立刻返回，这就避免了像synchronized 那样容易陷入死锁的问题。</li>
+</ul>
+</li>
+<li>yield：
+<ul>
+<li>yield() 的调用并不保证当前线程一定会被挂起或暂停执行，也不保证线程调度器会立即调度其他线程来运行。它仅仅是一个提示，实际的行为取决于线程调度器的实现和当前系统的线程状态。</li>
+<li>yield() 本身并不涉及线程间的等待和唤醒机制，它并不需要被其他线程唤醒。当一个线程调用 yield()后，如果线程调度器决定接受这个提示，当前线程可能会被暂停执行，其他线程（如果有的话）可能会被调度来运行。如果线程调度器决定不接受这个提示，当前线程可能不会立即放弃CPU时间片，而是继续执行。</li>
+</ul>
+</li>
+</ol>
+<p>参考文档：</p>
+<p>多线程 Thread.yield 方法到底有什么用：https://blog.csdn.net/youanyyou/article/details/84282668</p>
+<p>深入理解Lock Support：https://zhuanlan.zhihu.com/p/677641685</p>
+<p>JDK1.8源码分析之LockSupport（一）：https://www.cnblogs.com/leesf456/p/5347293.html</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/mo-pai-ge-chong-gui-ze-yin-qing/">
+              <h3 class="post-title">
+                下一篇：【W20/2024】摸排各种“规则“引擎
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

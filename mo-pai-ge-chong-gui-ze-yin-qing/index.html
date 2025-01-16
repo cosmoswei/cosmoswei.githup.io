@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W20/2024】摸排各种“规则“引擎 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W20/2024】摸排各种“规则“引擎</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-05-18</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>作为一个开发者，在架构设计与代码优化中，可能会听到一些高大上的名词，比如说规则引擎，流程引擎，工作流程引擎等，我被这些技术弄的眼花缭乱，这几种引擎是做什么的？它们有什么区别？有这些问题，我马上去网上查找资料，去问 ChatGPT，但是网上的博客也只是对这几个“引擎”做了分别介绍，没有做一个统一的归纳，本文就是对这些概念做一次梳理，并指出它们的的设计理念与背后的设计模式，希望对你在学习规则引擎的时候有帮助。</p>
+<!-- more -->
+<p>先说结论，下面给出一张表，来对比各种”引擎“。</p>
+<table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>编排内容</th>
+<th style="text-align:left">设计模式</th>
+<th>开源项目</th>
+<th>业务落地</th>
+<th>可编排人群</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>规则引擎</td>
+<td>条件编排，对象实例信息进行编排</td>
+<td style="text-align:left">策略模式</td>
+<td>drools</td>
+<td>费用计价、风控</td>
+<td>开发、产品</td>
+</tr>
+<tr>
+<td>流程引擎</td>
+<td>操作编排，编排操作节点步骤，例如编排多个规则。</td>
+<td style="text-align:left">模版模式</td>
+<td>liteFlow</td>
+<td>单元模块节点编排</td>
+<td>开发、产品</td>
+</tr>
+<tr>
+<td>工作流引擎</td>
+<td>流程编排，编排流程走向、状态。</td>
+<td style="text-align:left">责任链模式</td>
+<td>activiti</td>
+<td>流程审批</td>
+<td>用户</td>
+</tr>
+<tr>
+<td>表单引擎</td>
+<td>录入编排，编排录入信息</td>
+<td style="text-align:left">适配器模式</td>
+<td>tDuck</td>
+<td>请假单，活动模板。</td>
+<td>开发</td>
+</tr>
+</tbody>
+</table>
+<h3 id="策略模式-规则引擎">策略模式-规则引擎</h3>
+<p>在日常开发中，使用作为条件判断的 if else 不可避免，在条件判断内容比较少时可能不会引起注意，但是在条件判断复杂时，堆叠、嵌套太多的 if else 会让代码的可读性与可维护性，在我的日常开发中，单判断条件在 3 个以下时，我会使用 if else，当在 3 至 5 个时，我会使用 switch 关键字作为条件判断，当有 5 至 10 个条件判断时，我会使用策略模式解决 if 过多的问题，当拓展至无上限的条件判断时，我就会使用规则引擎了。所以我使用规则引擎的目的就是解决 if else 过多的问题。 当然，规则引擎的应用场景不仅仅是前面那些，下面给出一些经典的业务应用场景：</p>
+<table>
+<thead>
+<tr>
+<th>业务领域</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>财务决策</td>
+<td>贷款发放，征信系统</td>
+</tr>
+<tr>
+<td>库存管理</td>
+<td>及时的供应链路</td>
+</tr>
+<tr>
+<td>票价计算</td>
+<td>航空，传播，火车及其他公共汽车运输</td>
+</tr>
+<tr>
+<td>生产采购系统</td>
+<td>产品原材料采购管理</td>
+</tr>
+<tr>
+<td>风控系统</td>
+<td>风控规则计算，风险评估</td>
+</tr>
+<tr>
+<td>促销平台系统</td>
+<td>满减，打折，加价购</td>
+</tr>
+<tr>
+<td>反欺诈项目</td>
+<td>银行贷款、征信验证</td>
+</tr>
+<tr>
+<td>资质系统</td>
+<td>供应链、商家资质</td>
+</tr>
+</tbody>
+</table>
+<p>做一点总结的话，规则引擎做无状态的“规则”判定，与规则引擎的上下文状态无关，只对参数有关。规则引擎中比较知名的开源框架是drools，这是一篇我觉得还不错的drools中文入门教程：https://www.cnblogs.com/ityml/p/15993391.html。规则引擎的编辑，常常使开发或者产品进行编排，控制详细的条件约束。</p>
+<h3 id="模版模式-流程引擎">模版模式-流程引擎</h3>
+<p>使用流程引擎是为了编排单元化的模块节点，比如用户在进行抽奖操作时，以传统的硬编码的方式是把抽奖方法的每一步骤操作是一步一步写，使用这种方法是模块的复用性与扩展性不足，写出的代码难以维护，在进行抽奖操作时，会进行一致性校验、活动准入、风控检查、库存检查、抽奖、奖励发放等步骤，但是另一个活动不需要进行风控检查，或者不需要进行库存检查、这个抽奖接口就不能复用了，想要扩展这个接口只能根据不同的业务区分不同的抽奖策略，或者 copy 出来一个抽奖接口，去掉其中的库存、风控校验。显然这样的代码可维护性很差，以后要同时维护两个或者跟多的抽奖接口。引入抽奖引擎后可以将前面说到的流程编排化，当在执行不同的抽奖时，只需要前面的各种步骤抽出单元模块来，可以编排出不同的抽奖流程来，以此来维护代码的可维护性。流程引擎所使用的设计模式跟模版模式很像、使流程按不同的模版执行，也跟责任链模式很像，编排一条责任链，节点链式执行。</p>
+<p>与规则引擎编排条件不同，流程引擎跟多的是编排执行步骤。一个可以帮助区分的是，流程引擎编排步骤，这些具体的步骤里使用的规则引擎进行条件判断，进行内容条件处理。流程引擎的编辑，常常使开发或者产品进行编排，控制操作的具体执行内容。</p>
+<p>流程引擎比较知名的开源框架是LiteFlow，其官网的文档就很适合学习：https://liteflow.cc/pages/5816c5/</p>
+<h3 id="小结">小结</h3>
+<p>规则引擎与流程引擎在的差异体现在，规则引擎以过程为导向，根据一些条件，得出一个结果，复杂度体现在条件的组合；流程引擎以结果为导向，根据一个结果，需要执行那些流程；复杂度在于流程执行的内容。举个例子，根据一些特征，四条腿，身上有毛，跑得快，耐力好等条件，可以得出它是一匹马，这是规则引擎，反之根据一匹马，它会做吃草，跑步，站立睡觉等行为，这是马会执行的一些流程，这是流程引擎。</p>
+<h3 id="责任链模式-工作流引擎">责任链模式-工作流引擎</h3>
+<p>工作流引擎常常跟流程引擎混淆，因为在设计审批流程处理时，常常使用工作流引擎，“审批流程”与流程引擎在字面上有几分相似，但是其中相差还是挺大的，与前面提到的流程引擎不同，工作流引擎真的使用在“工作”中，比如请假审批、权限申请中，能够编辑各种审批节点，比如说流程的会签、或签，流程退回等操作。可见这种“工作流”的编辑，完全交由用户手中。与规则引擎和流程引擎不同，工作流引擎的执行内容是有状态的，依赖上下游节点的内容，才能进行正确的处理。</p>
+<p>一篇很不错的工作流引擎学习文档是：https://www.cnblogs.com/duck-and-duck/p/14436373.html</p>
+<h3 id="适配器模式-表单引擎">适配器模式-表单引擎</h3>
+<p>表单引擎并不是通俗意义上的引擎，你可能听都没听过，这是我自己想出来的一个概念，它也跟编排内容有关，就放在这篇文章了。</p>
+<p>在业务开发中，前端与后端的交互，后端之间的交互，参数往往难以统一，在一个成熟的业务开发系统中，其参数可以是固定的，也可能会在业务扩展与功能迭代中加几个参数，加参数的一个不好影响是需要做代码之间的兼容，或者常常是仅仅加了一个参数之后就要测试，发版，这会影响项目迭代效率，所以我设计了一个“表单引擎”，用来处理各种异构数据模型参数的校验、转换。这些参数的流转，校验也可以实现编排化，使用Map数据结构来接收前端传入的参数，使用前面提到的规则引擎进行校验，使用 JsonPath 技术进行后端异构数据模型参数的转化，更进一步可以由后端的编排配置来控制前端的组件展示，来实现表单录入的灵活编排。</p>
+<p>表单引擎是我自己想出来的概念，所以并没有开源框架可供学习；了解前面表单引擎的内容后，可以拿它套进一个设计模式中去---适配器模式，使用适配器设计模式的思想，来适配上下游不同的参数。</p>
+<blockquote>
+<p>优秀的架构师，即使是业务要求快速上线，也留好了充分的扩展空间。</p>
+</blockquote>
+<h3 id="参考链接">参考链接</h3>
+<ol>
+<li>老板要我开发一个简单的工作流引擎：https://www.cnblogs.com/duck-and-duck/p/14436373.html</li>
+<li>理解规则引擎，让代码更容易维护：https://www.bilibili.com/video/BV1mg4y1R7WP</li>
+<li>规则引擎框架LiteFlow：https://zhuanlan.zhihu.com/p/514881728</li>
+<li>学会用规则引擎Drools：https://juejin.cn/post/7208968811389665338</li>
+<li>Drools 规则引擎应用 看这一篇就够了：https://www.cnblogs.com/ityml/p/15993391.html</li>
+<li>LiteFlow官网：https://liteflow.cc/pages/5816c5/</li>
+</ol>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w202024-rpc-diao-yong-zhong-de-xu-lie-hua-wen-ti/">
+              <h3 class="post-title">
+                下一篇：【W20/2024】RPC调用中的序列化问题
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

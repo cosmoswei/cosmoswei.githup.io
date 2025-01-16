@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W41/2024】图传搭建教程 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W41/2024】图传搭建教程</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-10-08</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>一个技术博客的图床必不可少，这是一个使用 PicGO+Github 搭建图床的教程。</p>
+<!-- more -->
+<h2 id="一配置github">一，配置Github</h2>
+<h4 id="1创建仓库例如images">1，创建仓库：例如images</h4>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210171211.png" alt="" loading="lazy"></figure>
+<h4 id="2生成token">2，生成Token</h4>
+<h5 id="step1setting">step1：Setting</h5>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210171250.png" alt="" loading="lazy"></figure>
+<h5 id="step2developer-setting">step2：Developer setting</h5>
+<figure data-type="image" tabindex="3"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210171756.png" alt="" loading="lazy"></figure>
+<h5 id="step3personal-access-tokens-generate-new-token">step3：Personal access tokens + Generate new token</h5>
+<figure data-type="image" tabindex="4"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210172014.png" alt="" loading="lazy"></figure>
+<h5 id="step4note设置repo权限">step4：Note+设置Repo权限</h5>
+<p>【注意】：Token有时间限制</p>
+<figure data-type="image" tabindex="5"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210172127.png" alt="" loading="lazy"></figure>
+<h5 id="step5generate-token">step5：Generate token</h5>
+<h2 id="二配置picgo">二，配置PicGO</h2>
+<p>1，下载安装并运行PicGo</p>
+<p>https://github.com/Molunerfinn/PicGo/releases</p>
+<p>2，配置图床</p>
+<figure data-type="image" tabindex="6"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210171528.png" alt="" loading="lazy"></figure>
+<h2 id="三使用">三，使用</h2>
+<p>1，截屏使用</p>
+<p>截屏快捷键：Ctrl+Alt+A</p>
+<p>上传快捷键：Ctrl+Shift+P</p>
+<p>粘贴快捷键：Ctrl+V</p>
+<p>2，上传图片</p>
+<figure data-type="image" tabindex="7"><img src="https://raw.githubusercontent.com/cosmoswei/images/master/20211210172648.png" alt="" loading="lazy"></figure>
+<p>上传完成直接粘贴</p>
+<p>即可使用</p>
+<p>【教程链接】：https://www.flighty.cn/html/tutorial/20200217_576.html</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w292024-synchronized-ru-men/">
+              <h3 class="post-title">
+                下一篇：【W29/2024】synchronized 入门
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

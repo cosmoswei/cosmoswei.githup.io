@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W29/2024】synchronized 入门 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W29/2024】synchronized 入门</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-07-19</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>synchronized 是 Java 中的一种关键字，用于实现同步，保证在多线程环境下，只有一个线程可以访问代码块或方法，确保线程安全。</p>
+<!-- more -->
+<h3 id="作用">作用</h3>
+<ol>
+<li><strong>互斥访问</strong>：防止多个线程同时访问临界区代码，从而避免并发问题。</li>
+<li><strong>内存可见性</strong>：确保一个线程修改的共享变量对其他线程可见。</li>
+</ol>
+<h3 id="使用方式">使用方式</h3>
+<p><code>synchronized</code> 可以用来修饰方法或代码块，主要有以下两种使用方式：</p>
+<ol>
+<li>
+<p><strong>修饰实例方法</strong>：</p>
+<pre><code class="language-java">public synchronized void method() {
+    // 需要同步的代码
+}
+</code></pre>
+<p>当一个线程调用该方法时，会自动获得该对象实例的锁，其他线程在获得锁之前无法调用这个方法或其他被 <code>synchronized</code> 修饰的实例方法。</p>
+</li>
+<li>
+<p><strong>修饰静态方法</strong>：</p>
+<pre><code class="language-java">public static synchronized void staticMethod() {
+    // 需要同步的代码
+}
+</code></pre>
+<p>当一个线程调用该方法时，会自动获得该类的类锁，其他线程在获得类锁之前无法调用这个静态方法或其他被 <code>synchronized</code> 修饰的静态方法。</p>
+</li>
+<li>
+<p><strong>修饰代码块</strong>：</p>
+<pre><code class="language-java">public void method() {
+    synchronized(this) {
+        // 需要同步的代码
+    }
+}
+</code></pre>
+<p><code>synchronized(this)</code> 锁定的是当前对象实例。如果锁定一个特定的对象，可以用 <code>synchronized(特定对象)</code>。</p>
+</li>
+</ol>
+<h3 id="原理">原理</h3>
+<p><code>synchronized</code> 关键字可以用来修饰静态方法和实例方法，但它们的锁机制是不同的：</p>
+<ol>
+<li><strong>实例方法上的 <code>synchronized</code></strong>：锁住的是当前实例对象（<code>this</code>），即对象的监视器锁（monitor lock）。</li>
+<li><strong>静态方法上的 <code>synchronized</code></strong>：锁住的是当前类的类对象（<code>Class</code>），即类的监视器锁。</li>
+</ol>
+<p>当 <code>synchronized</code> 修饰静态方法时，锁的信息不放在对象的头信息里，而是放在类对象的头信息里。具体来说，静态方法的锁是类的 <code>Class</code> 对象上的锁。</p>
+<p><code>synchronized</code> 的底层实现依赖于对象的监视器（Monitor），每个对象都有一个监视器。当一个线程试图访问被 <code>synchronized</code> 修饰的代码时，它必须首先获得对象的监视器。</p>
+<ol>
+<li><strong>对象头</strong>：每个 Java 对象的头部有两部分信息，第一部分是 Mark Word，用于存储对象的标志位，包括锁标志位、GC 分代年龄等。</li>
+<li><strong>Monitor</strong>：每个对象都有一个与之关联的监视器，<code>synchronized</code> 关键字会尝试获得对象的监视器锁。一个线程进入 <code>synchronized</code> 方法或块时，如果对象的监视器可用，则该线程进入临界区，并将监视器锁定；否则，线程会被阻塞，直到监视器变为可用。</li>
+<li><strong>锁的状态</strong>：对象的锁有四种状态：无锁状态、偏向锁状态、轻量级锁状态和重量级锁状态。锁的状态会随着竞争的激烈程度而升级，但不会降级。这种机制被称为锁的升级。</li>
+</ol>
+<p>而对于静态方法，锁的信息放在类对象的头信息里。无论是实例方法还是静态方法，Java 都会确保同一个类的不同实例方法同步访问时不会发生并发问题，而静态方法锁住的是整个类，这意味着在静态同步方法执行期间，其他线程不能执行任何其他静态同步方法。</p>
+<h3 id="示例">示例</h3>
+<pre><code class="language-java">public class SynchronizedExample {
+    private int count = 0;
+
+    // synchronized 修饰实例方法
+    public synchronized void increment() {
+        count++;
+    }
+
+    // synchronized 修饰代码块
+    public void decrement() {
+        synchronized(this) {
+            count--;
+        }
+    }
+
+    // synchronized 修饰静态方法
+    public static synchronized void staticMethod() {
+        // 静态同步方法
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public static void main(String[] args) {
+        SynchronizedExample example = new SynchronizedExample();
+
+        // 创建线程1
+        Thread t1 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; 1000; i++) {
+                example.increment();
+            }
+        });
+
+        // 创建线程2
+        Thread t2 = new Thread(() -&gt; {
+            for (int i = 0; i &lt; 1000; i++) {
+                example.decrement();
+            }
+        });
+
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(example.getCount());
+    }
+}
+</code></pre>
+<p>在这个示例中，<code>increment</code> 方法被 <code>synchronized</code> 修饰，保证了 <code>count</code> 变量在多线程环境下的安全递增。<code>decrement</code> 方法使用同步代码块，实现了相同的效果。</p>
+<p>在一个类中，如果有两个 <code>synchronized</code> 方法，它们不会同时去获得对象实例的锁。具体来说，当一个线程进入某个 <code>synchronized</code> 方法时，它会获得对象实例的锁，而其他线程在获得该对象的锁之前，无法进入任何其他被 <code>synchronized</code> 修饰的方法。也就是说，这两个 <code>synchronized</code> 方法在同一时间只能有一个被执行。</p>
+<h3 id="示例-2">示例</h3>
+<pre><code class="language-java">public class SyncExample {
+    public synchronized void method1() {
+        System.out.println(&quot;Method 1 start&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(&quot;Method 1 end&quot;);
+    }
+
+    public synchronized void method2() {
+        System.out.println(&quot;Method 2 start&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(&quot;Method 2 end&quot;);
+    }
+
+    public synchronized static void method3() {
+        System.out.println(&quot;Method 3 start&quot;);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(&quot;method 3 end&quot;);
+    }
+
+    public static void main(String[] args) {
+        SyncExample example = new SyncExample();
+        Thread t1 = new Thread(example::method1);
+        Thread t2 = new Thread(example::method2);
+        Thread t3 = new Thread(SyncExample::method3);
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
+</code></pre>
+<h3 id="结果分析">结果分析</h3>
+<p>在上述代码中，两个线程 <code>t1</code> 和 <code>t2</code> 分别调用 <code>method1</code> 和 <code>method2</code>。由于两个方法都被 <code>synchronized</code> 修饰，它们在同一时间只能有一个被执行。</p>
+<p>输出结果可能是：</p>
+<pre><code>Method 1 start
+Method 3 start
+Method 1 end
+method 3 end
+Method 2 start
+Method 2 end
+</code></pre>
+<p>无论顺序如何，都表明两个方法不会同时执行，因为它们共享同一个对象锁。</p>
+<h3 id="原因">原因</h3>
+<p>当一个线程调用某个 <code>synchronized</code> 方法时，它会获得该对象的监视器锁。直到该线程退出 <code>synchronized</code> 方法并释放锁之后，其他线程才能获得锁并进入其他 <code>synchronized</code> 方法。这种机制保证了同一时间只能有一个线程能够访问任何 <code>synchronized</code> 方法，从而避免线程间的竞争条件。</p>
+<h3 id="结论">结论</h3>
+<ul>
+<li>如果一个类有多个 <code>synchronized</code> 方法，同一时间只有一个 <code>synchronized</code> 方法可以被执行。</li>
+<li>当一个线程执行某个 <code>synchronized</code> 方法时，其他线程必须等待，直到该线程释放对象锁后才能执行其他 <code>synchronized</code> 方法。</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w262024-suan-zi-andsuo-yin-andwei-ci-xia-tui/">
+              <h3 class="post-title">
+                下一篇：【W26/2024】算子&amp;索引&amp;谓词下推
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

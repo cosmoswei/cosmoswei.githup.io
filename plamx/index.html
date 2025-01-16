@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W01/2025】Palmx：一个次世代的 RPC 框架 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W01/2025】Palmx：一个次世代的 RPC 框架</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2025-01-01</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>基于 Netty 实现的一个的 RPC 框架，使用 Zookeeper 作为服务注册中心，手动实现了几个简单的负载均衡算，然后封装了多种序列算法，与 Spring Framework 集成，实现了基于注解驱动的服务自动注册和一键式启动服务器的功能。</p>
+<!-- more -->
+<p>项目地址：https://github.com/cosmoswei/palmx</p>
+<h2 id="基本功能">基本功能</h2>
+<h3 id="配置文件">配置文件</h3>
+<p>在类路径下添加 palmx.properties，可以配置 Zookeeper 相关的连接信息、序列化方式、负载均衡算法、服务器端口号，具体如下所示：</p>
+<pre><code class="language-Properties">palmx.zookeeper.host=ubuntu.qaab8h9.wsl
+palmx.zookeeper.port=2181
+palmx.zookeeper.root-node=palmx
+palmx.serialization.type=kryo
+palmx.load-balancer=round-robin
+palmx.server.port=8081
+</code></pre>
+<h3 id="服务注册与发现">服务注册与发现</h3>
+<p>服务注册与发现是一个RPC框架的最基本能力，本项目使用 Zookeeper 作为服务注册中心，当使用 @EnablePalmx 注解启动服务时，使用 @PalmxService 注解类的接口，会被注册到 Zookeeper 注册中心，例如：</p>
+<pre><code class="language-Java">@PalmxService
+public class DemoServiceImpl implements DemoService {
+
+    @Override
+    public String demoSleepSecond(long l) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return &quot;DemoServiceImpl success&quot; + System.currentTimeMillis() % 10000;
+    }
+}
+</code></pre>
+<p>使用 @PalmxClient 注解会被 Palmx 代理，去调用远端的服务，例如：</p>
+<pre><code class="language-Java">@PalmxClient
+private DemoService demoService;
+</code></pre>
+<h3 id="序列化">序列化</h3>
+<p>序列化是在网络通信中的重要技术，程序中的类实例无法在网络中传输，所以需要将它序列化成二进制数据，才能在网络中传输。本项目封装了多种序列算法（Object Stream、Jackson、Kryo、protostuff）</p>
+<p>供选择，在 palmx.properties 配置文件中指定 palmx.serialization.type 属性可以指定程序的序列化算法，比如</p>
+<pre><code class="language-Properties">palmx.serialization.type=kryo
+</code></pre>
+<h3 id="负载均衡">负载均衡</h3>
+<p>负载均衡是 RPC 框架中一个常见且重要的技术，当服务的生产者有多个时，需要从这些服务提供者中，通过特定的算法，选择一个生产者进行消费，以达到实现更高的吞吐以及资源利用率的目的。其中，主要的技术细节在特定的算法中，常见的算法有随机算法，轮询算法，在这两个算法的基础上加上权重，就有了加权随机与加权轮询算法，此外，一致性Hash算法在一些特定的场景也发挥了巨大作用。本项目也支持了上述负载均衡算法，通过在 palmx.properties 配置文件中指定 palmx.load-balancer 属性可以指定程序的负载算法，比如：</p>
+<pre><code class="language-properties">palmx.load-balancer=round-robin
+</code></pre>
+<p>除了上面的经典算法之外，本项目还支持了一种新的负载均衡算法---自适应负载均衡，会在接下来的高级特征篇中介绍。</p>
+<h3 id="流量控制">流量控制</h3>
+<p>流控是通过特定算法对服务端输入流量进行限制的一种手段，当入口流量超过系统的负载时，会对程序造成大的影响，所以需要对输入流量进行限制。流控的主要技术细节在流量控制算法中，经典的流量控制算法有计数器、滑动窗口、令牌桶、漏桶，本项目也支持了上述负载算法，通过在服务接口中指定服务算法与元数据可以对接口进行流量控制，比如：</p>
+<pre><code class="language-java">@PalmxService(flowControlLimitCount = 200000, flowControlLimitType = FlowControlType.SLIDING_WINDOW)
+public class DemoServiceImpl implements DemoService {
+
+    @Override
+    public String hello(String str) {
+        return &quot;helll&quot; + str;
+    }
+}
+</code></pre>
+<p>上面的配置会对对 DemoServiceImpl 接口进行流控，流控算法为滑动窗口，限流数值为每秒最多请求 200000 次。在此之上，本项目还支持了一种新的流控算法---自适应流量控制，会在接下来的高级特征篇中介绍。</p>
+<h2 id="快速开始">快速开始</h2>
+<blockquote>
+<p>本项目并没有发布到maven 中央仓库，所以需要先在本地打包，之后再引入依赖。</p>
+</blockquote>
+<p>代码拉取：</p>
+<pre><code class="language-shell">git clone https://github.com/cosmoswei/palmx
+</code></pre>
+<p>本地打包：</p>
+<pre><code class="language-Shell"> mvn clean install 
+</code></pre>
+<p>引入依赖：</p>
+<pre><code class="language-XML">&lt;dependency&gt;
+    &lt;groupId&gt;me.xuqu&lt;/groupId&gt;
+    &lt;artifactId&gt;palmx&lt;/artifactId&gt;
+    &lt;version&gt;2.4-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3 id="使用">使用</h3>
+<p>在服务端启动类上加上 @EnablePalmx 注解</p>
+<pre><code class="language-Java">@SpringBootApplication
+@EnablePalmx
+public class ProviderRun {
+    public static void main(String[] args) {
+        SpringApplication.run(ProviderRun.class, args);
+    }
+}
+</code></pre>
+<p>服务提供者</p>
+<pre><code class="language-Java">@PalmxService
+public class DemoServiceImpl implements DemoService {
+
+    @Override
+    public String demoSleepSecond(long l) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(l);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return &quot;success, currentTimeMillis IS &quot; + System.currentTimeMillis() % 1000;
+    }
+}
+</code></pre>
+<p>服务消费者</p>
+<pre><code class="language-Java">@Component
+public class PalmxService {
+
+    @PalmxClient
+    private DemoService demoService;
+
+    public String invokeTest() {
+        return &quot;invokeTest = &quot; + demoService.demoSleepSecond(1L);
+    }
+}
+</code></pre>
+<h3 id="样例">样例</h3>
+<p>本项目提供了参考案例可供使用：<a href="https://github.com/cosmoswei/palmx-samples">palmx-samples</a>，可以帮助你里快速启动本项目。</p>
+<h2 id="高级特性">高级特性</h2>
+<p>除了 RPC 基础的能力之外，本项目的主要亮点是一些高级特性，这些高级特性在其它 RPC 框架稳定版本中是没有的，本项目对其进行的支持。</p>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/cosmoswei/images/main/202501081628093.png" alt="" loading="lazy"></figure>
+<h3 id="传输协议quic">传输协议：QUIC</h3>
+<p>自从 2012 年 Google 前瞻性地提出 QUIC 传输协议，历经 10 年迭代，HTTP/3 凭借其对 QUIC 协议的深度整合以及从 TCP 向 UDP 的底层连接转型。截止到2022年11⽉，全球已有超过四分之⼀的网站部署了 HTTP/3 技术，如下图。⼀个崭新的⾼速、⾼效⽹络时代正逐步拉开帷幕。</p>
+<figure data-type="image" tabindex="2"><img src="https://raw.githubusercontent.com/cosmoswei/images/main/202411041618604.png" alt="" loading="lazy"></figure>
+<p>在当前的开源网络通信领域中，诸如 Netty、NGINX 以及 gRPC 等主流框架正竞相投入资源研发各的 HTTP/3 实现方案，HTTP/3 协议本⾝所蕴含的诸多优势不容忽视，例如摒弃队头阻塞问题、实现 0RTT 握手延迟、连接迁移等特性，这些都极大地提升了通信效率，将 HTTP/3 入 RPC 有助于构建出性能更卓越的应用系统。通过在 palmx.properties 配置文件中指定 palmx.load-balancer 属性可以指定程序的负载算法，比如：</p>
+<pre><code class="language-properties">palmx.quic-enable=ture
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/quic/">高效传输：以 quic 构建高效传输通道</a>，里面解释为什么要使用 quic 以及 quic  的最佳实践。</p>
+<h3 id="异步读写io_uring">异步读写：io_uring</h3>
+<p>从 2019 年 Linux 在 5.1 版本发布 io_uring 开始，许多框架都使用了这一项技术，比如A、B、C，但是这项技术并没有在 Java 生态中大规模使用，幸运的是 Netty 社区，目前正在孵化使用 io_uring 的项目，详情访问： <a href="https://github.com/netty/netty-incubator-transport-io_uring">netty/netty-incubator-transport-io_uring</a>，里面提供了新的读写模型 IOUringEventLoop，本项目也基于这项技术实现了 io_uring，通过在 palmx.properties 配置文件中指定 palmx.io_uring-enable 属性可以开启 io_uring 作为读写事件模型，比如：</p>
+<pre><code class="language-properties">palmx.io_uring-enable=ture
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/iouring/">异步读写：窥见未来的系统调用——io_uring</a>，里面解释为什么要使用 io_uring 以及 io_uring 的最佳实践。</p>
+<h3 id="自适应负载均衡">自适应负载均衡</h3>
+<p>自适应负载均衡试图自适应的去衡量服务提供者机器的吞吐能力，然后将流量尽可能分配到吞吐能力高的机器上，以提高系统整体的性能。通过在 palmx.properties 配置文件中指定 palmx.load-balancer 属性可以指定程序使用自适应负载均衡算法，例如：</p>
+<pre><code class="language-properties">palmx.load-balancer=adaptive
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/adaptive/">双端流控：自适应的负载均衡与流量控制</a>，里面解释为什么要使用自适应负载均衡。</p>
+<h3 id="自适应流量控制">自适应流量控制</h3>
+<p>从理论上讲，服务端机器的处理能力是存在上限的，对于一台服务端机器，当短时间内出现大量的请求调用时，会导致处理不及时的请求积压，使机器过载，在可能存在过载风险时，拒绝掉一部分请求反而是更好的选择。通常情况下，是通过在服务端设置静态的最大并发值实现的，但是在处理能力会动态变化的局面下，这个值难以计算。基于以上原因，需要一种自适应的算法，其可以动态调整服务端机器的最大并发值，使其可以在保证机器不过载的前提下，尽可能多的处理接收到的请求。在本项目中，通过在 palmx.properties 配置文件中指定 palmx.load-balancer 属性可以指定程序的负载算法，比如：</p>
+<pre><code class="language-properties">palmx.adaptive-flow-control-enable=true
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/adaptive/">双端流控：自适应的负载均衡与流量控制</a>，里面解释为什么要使用自适应流量控制及自适应流量控制的使用。</p>
+<h3 id="配置化评分体系">配置化评分体系</h3>
+<p>上述的自适应负载均衡与流量控制，是通过服务服务端的实际负载，评估出一个值来控制机器的最大并发量，通常情况下是根据一个算法来确定这个并发量，但是在实际的应用中，这个算法的通用性不强，本项目的方案是通过规则引擎配置具体的机器最大并发量计算算法，得到最能体现当前机器最大并发量的分数，通过这个分数可以更好的实现自适应适应负债均衡与流量控制，在 palmx.properties 配置文件中指定 metric-qos-rule-path 属性可以指定规则规则路径，比如：</p>
+<pre><code class="language-properties">palmx.metric-qos-rule-path=drl/customMetric.drl
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/rule-engine/">配置驱动：灵活的配置指标与评分体系</a>，里面解释为什么要使用 配置化评分体系以及配置化评分体系的最佳实践。</p>
+<h3 id="虚拟线程">虚拟线程*</h3>
+<p>Java 在 JDK21 中正式推出了虚拟线程，它是一种轻量级线程，开发者可以不使用内核线程的情况下，实现用户态线程。大大提高了 Java项目的并发能力。所以本项目也支持使用虚拟线程的方式提高系统性能。通过在 palmx.properties 配置文件中指定 palmx.load-balancer 属性可以指定程序的负载算法，比如：</p>
+<pre><code class="language-properties">palmx.virtual-thread-enable=true
+</code></pre>
+<p>关于这项技术的详细介绍，你可以参考这篇文章：<a href="https://cosmoswei.github.io/virtual-thread/">超高并发：虚拟线程在 IO 中的机遇</a>，里面解释为什么要使用虚拟线程以及虚拟线程的最佳实践。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w522024-xian-dai-cao-zuo-xi-tong-14-wang-luo-xie-yi-zhan-yu-xi-tong-zhuan-zai/">
+              <h3 class="post-title">
+                下一篇：【W52/2024】现代操作系统#14网络协议栈与系统（转载）
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

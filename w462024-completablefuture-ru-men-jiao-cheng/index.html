@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W46/2024】CompletableFuture 入门教程 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W46/2024】CompletableFuture 入门教程</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-11-17</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://cosmoswei.github.io/CDR8dVgiUV/">
+                    入门教程
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>CompletableFuture 是 Java 中一个强大的工具，用于创建和管理异步任务。</p>
+<!-- more -->
+<h2 id="初始化">初始化</h2>
+<p>CompletableFuture 是 Java 中一个强大的工具，用于创建和管理异步任务。它有多种初始化方式，可以根据具体需求选择适合的方式。以下是常见的几种方式：</p>
+<h4 id="1-使用静态工厂方法"><strong>1. 使用静态工厂方法</strong></h4>
+<p>CompletableFuture 提供了几个静态方法来快速创建实例。</p>
+<p>(1) CompletableFuture.completedFuture(T value)</p>
+<p>​	•	创建一个已经完成的 CompletableFuture，并设置其结果为给定值。</p>
+<p>​	•	适用于同步场景或需要提供初始值的任务。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.completedFuture(&quot;Initial Value&quot;);
+
+System.out.println(future.join()); *// 输出: Initial Value*
+</code></pre>
+<p>(2) CompletableFuture.supplyAsync(Supplier<T> supplier)</p>
+<p>​	•	异步地执行 Supplier，返回一个结果。</p>
+<p>​	•	默认使用 ForkJoinPool.commonPool。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.supplyAsync(() -&gt; {
+  return &quot;Async Task Result&quot;;
+});
+
+System.out.println(future.join()); *// 输出: Async Task Result*
+</code></pre>
+<p>(3) CompletableFuture.supplyAsync(Supplier<T> supplier, Executor executor)</p>
+<p>​	•	异步地执行 Supplier，使用自定义线程池。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.supplyAsync(() -&gt; {
+
+  return &quot;Custom Executor Result&quot;;
+
+}, Executors.newCachedThreadPool());
+
+System.out.println(future.join()); *// 输出: Custom Executor Result*
+</code></pre>
+<p>(4) CompletableFuture.runAsync(Runnable runnable)</p>
+<p>​	•	异步地执行 Runnable，不返回结果。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;Void&gt; future = CompletableFuture.runAsync(() -&gt; {
+
+  System.out.println(&quot;Running an async task!&quot;);
+
+});
+
+future.join();
+</code></pre>
+<p>(5) CompletableFuture.runAsync(Runnable runnable, Executor executor)</p>
+<p>​	•	异步地执行 Runnable，使用自定义线程池。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;Void&gt; future = CompletableFuture.runAsync(() -&gt; {
+
+  System.out.println(&quot;Task with custom executor!&quot;);
+
+}, Executors.newFixedThreadPool(2));
+
+future.join();
+</code></pre>
+<h4 id="2-使用构造方法创建"><strong>2. 使用构造方法创建</strong></h4>
+<p>CompletableFuture 也可以通过构造方法直接创建实例，随后手动完成任务。</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = new CompletableFuture&lt;&gt;();
+
+// 在某处手动完成任务
+new Thread(() -&gt; {
+    try {
+        Thread.sleep(1000);
+        future.complete(&quot;Manually Completed!&quot;);
+    } catch (InterruptedException e) {
+        future.completeExceptionally(e);
+    }
+}).start();
+
+System.out.println(future.join()); // 输出: Manually Completed!
+</code></pre>
+<h4 id="3-使用-anyof-和-allof"><strong>3. 使用 anyOf 和 allOf</strong></h4>
+<p>这些方法用于组合多个 CompletableFuture。</p>
+<p>(1) CompletableFuture.anyOf</p>
+<p>​	•	返回一个新的 CompletableFuture，其结果是第一个完成的任务的结果。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future1 = CompletableFuture.supplyAsync(() -&gt; &quot;Task 1&quot;);
+
+CompletableFuture&lt;String&gt; future2 = CompletableFuture.supplyAsync(() -&gt; &quot;Task 2&quot;);
+
+
+
+CompletableFuture&lt;Object&gt; result = CompletableFuture.anyOf(future1, future2);
+
+System.out.println(result.join()); *// 输出: Task 1 或 Task 2*
+</code></pre>
+<p>(2) CompletableFuture.allOf</p>
+<p>​	•	返回一个新的 CompletableFuture，当所有任务都完成时才完成。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future1 = CompletableFuture.supplyAsync(() -&gt; &quot;Task 1&quot;);
+
+CompletableFuture&lt;String&gt; future2 = CompletableFuture.supplyAsync(() -&gt; &quot;Task 2&quot;);
+
+CompletableFuture&lt;Void&gt; all = CompletableFuture.allOf(future1, future2);
+
+all.join(); *// 等待所有任务完成*
+
+System.out.println(future1.join() + &quot; &amp; &quot; + future2.join()); *// 输出: Task 1 &amp; Task 2*
+</code></pre>
+<h4 id="4-使用异步任务链生成"><strong>4. 使用异步任务链生成</strong></h4>
+<p>通过方法链式调用创建复杂的异步任务。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;Void&gt; chain = CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+  .thenApply(result -&gt; result + &quot; -&gt; Step 2&quot;)
+  .thenAccept(finalResult -&gt; System.out.println(&quot;Final Result: &quot; + finalResult));
+
+chain.join();
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code>Final Result: Step 1 -&gt; Step 2
+</code></pre>
+<h4 id="5-从已有结果或异常创建"><strong>5. 从已有结果或异常创建</strong></h4>
+<p>(1) CompletableFuture.completedFuture</p>
+<p>​	•	返回已完成的 CompletableFuture。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.completedFuture(&quot;Already Done!&quot;);
+
+System.out.println(future.join()); *// 输出: Already Done!*
+</code></pre>
+<p>(2) 使用 CompletableFuture.failedFuture（Java 9+）</p>
+<p>​	•	返回一个已完成的 CompletableFuture，但带有异常。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.failedFuture(new RuntimeException(&quot;Failure!&quot;));
+
+future.exceptionally(ex -&gt; {
+
+  System.out.println(&quot;Caught exception: &quot; + ex.getMessage());
+
+  return null;
+
+}).join();
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code>Caught exception: Failure!
+</code></pre>
+<p><strong>总结</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>方法</strong></th>
+<th><strong>异步执行</strong></th>
+<th><strong>是否使用默认线程池</strong></th>
+<th><strong>是否需要手动完成</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>completedFuture</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+</tr>
+<tr>
+<td>supplyAsync</td>
+<td>是</td>
+<td>是（可指定）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>runAsync</td>
+<td>是</td>
+<td>是（可指定）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>手动完成（构造方法）</td>
+<td>否</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>anyOf/allOf</td>
+<td>取决于内部任务</td>
+<td>否</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<h2 id="过程接口">过程接口</h2>
+<p>CompletableFuture 提供了许多方法来处理异步任务链。这些方法的主要区别在于是否接收上一步的结果、是否返回新的结果，以及是否异步执行。以下是 thenApply、thenAccept、thenRun、thenRunAsync 和 thenCompose 的详细区别及示例：</p>
+<p><strong>1. thenApply</strong></p>
+<ul>
+<li>
+<p>用途：接收上一步的结果，并返回处理后的新结果。</p>
+</li>
+<li>
+<p>返回值：一个新的 CompletableFuture，包含处理后的结果。</p>
+</li>
+<li>
+<p>示例：</p>
+</li>
+</ul>
+<pre><code class="language-java">public class ThenApplyExample {
+    public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+            .thenApply(result -&gt; {
+                System.out.println(&quot;Processing result: &quot; + result);
+                return result + &quot; -&gt; Step 2&quot;;
+            }).thenApply(finalResult -&gt; {
+                System.out.println(&quot;Final result: &quot; + finalResult);
+                return finalResult + &quot; -&gt; Done&quot;;
+            }).join();
+    }
+}
+</code></pre>
+<ul>
+<li>输出:****</li>
+</ul>
+<pre><code>Processing result: Step 1
+Final result: Step 1 -&gt; Step 2
+</code></pre>
+<ol start="2">
+<li><strong>thenAccept</strong></li>
+</ol>
+<ul>
+<li>
+<p>用途：接收上一步的结果，但不返回新结果（只执行某些操作）。</p>
+</li>
+<li>
+<p>返回值：CompletableFuture<Void>，表示该步骤完成但没有返回值。</p>
+</li>
+<li>
+<p>示例：</p>
+</li>
+</ul>
+<pre><code class="language-java">public class ThenAcceptExample {
+    public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+            .thenAccept(result -&gt; {
+                System.out.println(&quot;Received result: &quot; + result);
+            }).join();
+    }
+}
+</code></pre>
+<ul>
+<li><strong>输出:</strong></li>
+</ul>
+<pre><code>Received result: Step 1
+</code></pre>
+<p><strong>3. thenRun</strong></p>
+<ul>
+<li>
+<p>用途：不接收上一步的结果，仅在上一步完成后执行一个任务。</p>
+</li>
+<li>
+<p>返回值：CompletableFuture<Void>，表示该步骤完成但没有返回值。</p>
+</li>
+<li>
+<p>示例:</p>
+</li>
+</ul>
+<pre><code class="language-java">public class ThenRunExample {
+    public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+            .thenRun(() -&gt; {
+                System.out.println(&quot;Step 1 completed. Running follow-up task.&quot;);
+            }).join();
+    }
+}
+</code></pre>
+<p><strong>输出:</strong></p>
+<pre><code>Step 1 completed. Running follow-up task.
+</code></pre>
+<p><strong>4. thenRunAsync</strong></p>
+<ul>
+<li>
+<p>用途：与 thenRun 相同，但会在新的线程中异步执行任务。</p>
+</li>
+<li>
+<p>返回值：CompletableFuture<Void>，表示该步骤完成但没有返回值。</p>
+</li>
+<li>
+<p>示例:</p>
+</li>
+</ul>
+<pre><code class="language-java">public class ThenRunAsyncExample {
+    public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+            .thenRunAsync(() -&gt; {
+                System.out.println(Thread.currentThread().getName() + &quot;: Running follow-up task.&quot;);
+            }).join();
+    }
+}
+</code></pre>
+<ul>
+<li>输出:</li>
+</ul>
+<pre><code>ForkJoinPool.commonPool-worker-1: Running follow-up task.
+</code></pre>
+<p><strong>5. thenCompose</strong></p>
+<ul>
+<li>
+<p>用途：接收上一步的结果，并返回一个新的 CompletableFuture，可用于动态连接新的异步任务。</p>
+</li>
+<li>
+<p>返回值：一个由新任务返回的 CompletableFuture。</p>
+</li>
+<li>
+<p>示例:</p>
+</li>
+</ul>
+<pre><code class="language-java">public class ThenComposeExample {
+    public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -&gt; &quot;Step 1&quot;)
+            .thenCompose(result -&gt; CompletableFuture.supplyAsync(() -&gt; {
+                System.out.println(&quot;Processing result: &quot; + result);
+                return result + &quot; -&gt; Step 2&quot;;
+            })).thenAccept(finalResult -&gt; {
+                System.out.println(&quot;Final result: &quot; + finalResult);
+            }).join();
+    }
+}
+</code></pre>
+<ul>
+<li>输出:</li>
+</ul>
+<pre><code class="language-java">Processing result: Step 1
+Final result: Step 1 -&gt; Step 2
+</code></pre>
+<p><strong>区别对比总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>接收上一步结果</th>
+<th>返回新结果</th>
+<th>是否异步</th>
+<th>常用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>thenApply</td>
+<td>是</td>
+<td>是</td>
+<td>否</td>
+<td>转换并返回新结果</td>
+</tr>
+<tr>
+<td>thenAccept</td>
+<td>是</td>
+<td>否</td>
+<td>否</td>
+<td>处理结果但不返回新值</td>
+</tr>
+<tr>
+<td>thenRun</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>不关心结果，直接执行后续任务</td>
+</tr>
+<tr>
+<td>thenRunAsync</td>
+<td>否</td>
+<td>否</td>
+<td>是</td>
+<td>不关心结果，异步执行后续任务</td>
+</tr>
+<tr>
+<td>thenCompose</td>
+<td>是</td>
+<td>是（嵌套）</td>
+<td>是（异步）</td>
+<td>动态链接新的异步任务</td>
+</tr>
+</tbody>
+</table>
+<p><strong>如何选择？</strong></p>
+<ol>
+<li>需要转换结果：用 thenApply。</li>
+<li>只需要处理结果：用 thenAccept。</li>
+<li>只需要执行任务，不需要输入或输出：用 thenRun 或 thenRunAsync。</li>
+<li>需要动态生成新的任务链：用 thenCompose。</li>
+</ol>
+<h2 id="其他">其他</h2>
+<ol>
+<li>提供默认值或快速失败机制</li>
+</ol>
+<p>在复杂的异步链中，completedFuture 可以用来提供默认值，避免异步任务失败时中断整个链。</p>
+<p>示例：设置默认值</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; future = CompletableFuture.supplyAsync(() -&gt; {
+    throw new RuntimeException(&quot;Task failed!&quot;);
+}).exceptionally(ex -&gt; &quot;Default Value&quot;);
+
+System.out.println(future.join()); // 输出: Default Value
+</code></pre>
+<p>示例：快速失败</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; failedFuture = CompletableFuture.completedFuture(&quot;Fallback Value&quot;)
+    .thenCompose(result -&gt; CompletableFuture.failedFuture(new RuntimeException(&quot;Quick Fail&quot;)));
+
+failedFuture.exceptionally(ex -&gt; {
+    System.out.println(&quot;Caught exception: &quot; + ex.getMessage());
+    return null;
+}).join();
+// 输出: Caught exception: Quick Fail
+</code></pre>
+<ol start="2">
+<li>延迟任务</li>
+</ol>
+<p>虽然 completedFuture 本身是立即完成的，但可以与 thenCompose 和 delayedExecutor 结合，模拟延迟任务。</p>
+<p><strong>示例：延迟执行</strong></p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; delayedTask = CompletableFuture.completedFuture(&quot;Delayed Task&quot;)
+    .thenCompose(result -&gt; CompletableFuture.supplyAsync(() -&gt; result, 
+        CompletableFuture.delayedExecutor(3, TimeUnit.SECONDS)));
+
+System.out.println(&quot;Waiting...&quot;);
+System.out.println(delayedTask.join()); // 3秒后输出: Delayed Task
+</code></pre>
+<ol start="3">
+<li>与异常处理结合</li>
+</ol>
+<p>使用 completedFuture 可以快速创建异常流，测试下游任务如何处理。</p>
+<p>示例：模拟异常流</p>
+<pre><code class="language-java">CompletableFuture&lt;String&gt; failedFuture = CompletableFuture.failedFuture(new RuntimeException(&quot;Simulated Failure&quot;));
+
+failedFuture.exceptionally(ex -&gt; {
+    System.out.println(&quot;Handled exception: &quot; + ex.getMessage());
+    return &quot;Fallback Result&quot;;
+}).thenAccept(result -&gt; System.out.println(&quot;Result: &quot; + result));
+
+// 输出:
+// Handled exception: Simulated Failure
+// Result: Fallback Result
+</code></pre>
+<h2 id="forkjoin-入门">ForkJoin 入门</h2>
+<h4 id="介绍">介绍</h4>
+<p>ForkJoinPool 是 Java 7 引入的一种线程池，专门设计用来支持大规模并行任务的执行，特别适合递归分治算法。与普通线程池不同，它以任务分解（fork）和任务合并（join）的方式高效利用线程资源。</p>
+<p>ForkJoinPool 的特点</p>
+<p>​	1.	工作窃取算法：每个线程都有自己的双端队列（Deque）；如果某个线程完成了自己的任务，它会尝试“窃取”其他线程的任务来执行，从而最大化线程的利用率。</p>
+<p>​	2.	递归任务支持：提供 ForkJoinTask 的子类 RecursiveTask 和 RecursiveAction，分别用于有返回值和无返回值的递归任务。</p>
+<p>​	3.	轻量级任务调度：任务的管理和调度开销比传统线程池小，因为它采用的是任务窃取而不是队列的全局锁。</p>
+<p>​	4.	高吞吐量：适合 CPU 密集型任务，最大化利用多核处理器。</p>
+<h4 id="基本用法">基本用法</h4>
+<p>以下是使用 ForkJoinPool 和 RecursiveTask 实现并行计算的例子：</p>
+<pre><code class="language-java">class SumTask extends RecursiveTask&lt;Long&gt; {
+    private static final int THRESHOLD = 10; // 任务分割的阈值
+    private final int start;
+    private final int end;
+
+    public SumTask(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Long compute() {
+        if ((end - start) &lt;= THRESHOLD) {
+            // 小任务直接计算
+            long sum = 0;
+            for (int i = start; i &lt;= end; i++) {
+                sum += i;
+            }
+            return sum;
+        } else {
+            // 大任务拆分
+            int mid = (start + end) / 2;
+            SumTask leftTask = new SumTask(start, mid);
+            SumTask rightTask = new SumTask(mid + 1, end);
+
+            // 分别执行
+            leftTask.fork();
+            rightTask.fork();
+
+            // 合并结果
+            return leftTask.join() + rightTask.join();
+        }
+    }
+}
+
+public class ForkJoinExample {
+    public static void main(String[] args) {
+        ForkJoinPool pool = new ForkJoinPool();
+
+        SumTask task = new SumTask(1, 1000);
+        long result = pool.invoke(task);
+
+        System.out.println(&quot;Sum: &quot; + result); // 输出: Sum: 500500
+    }
+}
+</code></pre>
+<h4 id="测试">测试</h4>
+<pre><code class="language-java">public class WorkStealingBenchmark {
+
+    public static void main(String[] args) {
+
+        System.out.printf(&quot;%-10s %-30s %-10s%n&quot;, &quot;Loop Count&quot;, &quot;Description&quot;, &quot;Time (ms)&quot;);
+        withoutWorkStealing(100000);
+        withWorkStealing(100000);
+        System.out.println(&quot;[warmup done]&quot;);
+        long[] times = new long[]{1_000, 100_000, 10_000_000, 1_000_000_000};
+        for (long cnt : times) {
+            withoutWorkStealing(cnt);
+            withWorkStealing(cnt);
+        }
+        System.out.println(&quot;[benchmark done]&quot;);
+    }
+
+    public static void withWorkStealing(long loopCnt) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool(8);
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i &lt; loopCnt; i++) {
+            int taskId = i;
+            forkJoinPool.execute(() -&gt; {
+                if (taskId % 5 == 0) { // 重任务
+                    heavyComputation();
+                } else { // 轻任务
+                    lightComputation();
+                }
+            });
+        }
+
+        forkJoinPool.shutdown();
+        while (!forkJoinPool.isTerminated()) {
+            // 等待所有任务完成
+        }
+
+        long endTime = System.currentTimeMillis();
+        System.out.printf(&quot;%-10d %-30s %-10d%n&quot;, loopCnt, &quot;With Work Stealing&quot;, (endTime - startTime));
+    }
+
+    public static void withoutWorkStealing(long loopCnt) {
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i &lt; loopCnt; i++) {
+            int taskId = i;
+            executor.execute(() -&gt; {
+                if (taskId % 5 == 0) { // 重任务
+                    heavyComputation();
+                } else { // 轻任务
+                    lightComputation();
+                }
+            });
+        }
+
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            // 等待所有任务完成
+        }
+
+        long endTime = System.currentTimeMillis();
+        System.out.printf(&quot;%-10d %-30s %-10d%n&quot;, loopCnt, &quot;Without Work Stealing&quot;, (endTime - startTime));
+    }
+
+    private static void heavyComputation() {
+        for (int i = 0; i &lt; 1_000_000; i++) {
+            Math.sqrt(i);
+        }
+    }
+
+    private static void lightComputation() {
+        for (int i = 0; i &lt; 100_000; i++) {
+            Math.sqrt(i);
+        }
+    }
+
+</code></pre>
+<p>输出如下：</p>
+<pre><code>Loop Count Description                    Time (ms) 
+100000     Without Work Stealing          124       
+100000     With Work Stealing             41        
+[warmup done]
+1000       With Work Stealing             5         
+10000      With Work Stealing             11        
+100000     With Work Stealing             80        
+1000000    With Work Stealing             403       
+10000000   With Work Stealing             2945      
+100000000  With Work Stealing             32283     
+1000       Without Work Stealing          4         
+10000      Without Work Stealing          11        
+100000     Without Work Stealing          41        
+1000000    Without Work Stealing          326       
+10000000   Without Work Stealing          11129     
+100000000  Without Work Stealing          267523    
+[benchmark done]
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w462024-curl-ru-men-jiao-cheng/">
+              <h3 class="post-title">
+                下一篇：【W46/2024】cURL 入门教程
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

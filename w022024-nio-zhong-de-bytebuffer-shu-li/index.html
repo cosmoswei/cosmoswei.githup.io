@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W02/2024】NIO 中的 ByteBuffer 梳理 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W02/2024】NIO 中的 ByteBuffer 梳理</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-01-12</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在学习和使用 Netty 框架时，许多资料都会指出 Netty 的 ByteBuf 相较于Java 原生的 ByteBuffer，有不少优化和性能提升，但是一般是片面的指出其中几点，没有对它们之间的差异做全知全貌的解释，这篇博客，就带你完整得认识它们的不同。</p>
+<!-- more -->
+<h2 id="java的bytebuffer和netty的bytebuf的区别">Java的ByteBuffer和Netty的ByteBuf的区别</h2>
+<p>Java的ByteBuffer和Netty的ByteBuf有以下区别：</p>
+<ol>
+<li>API设计：Java的ByteBuffer使用的是传统的指针风格的API，而Netty的ByteBuf使用了更加灵活和易用的链式调用风格的API。Netty的ByteBuf提供了更多的读写方法和操作，使得编程更加方便。</li>
+<li>内存管理：Java的ByteBuffer使用JVM的垃圾回收机制来管理内存，而Netty的ByteBuf使用了内存池来重用内存，减少了内存分配和回收的开销。</li>
+<li>零拷贝：Netty的ByteBuf支持零拷贝操作，它提供了一系列的读写方法，可以直接操作底层的字节数组，避免了数据的拷贝。而Java的ByteBuffer在进行读写操作时，需要进行数据的拷贝。</li>
+<li>引用计数：Netty的ByteBuf使用了引用计数来跟踪缓冲区的引用情况，可以通过增加引用计数来避免不必要的内存拷贝。而Java的ByteBuffer没有引用计数的机制。</li>
+<li>扩展性：Netty的ByteBuf提供了一系列的扩展方法，可以方便地进行自定义的扩展。用户可以根据自己的需求，通过继承和实现相应的接口来扩展ByteBuf的功能。而Java的ByteBuffer没有提供类似的扩展机制。</li>
+</ol>
+<p>Netty的ByteBuf相比Java的ByteBuffer在性能、灵活性和易用性方面都有较大的优势，特别适合在网络编程中使用。</p>
+<h2 id="netty的bytebuf-做了哪些优化">Netty的ByteBuf 做了哪些优化？</h2>
+<p>Neety的ByteBuf做了以下优化：</p>
+<ol>
+<li>内存分配：Neety的ByteBuf使用了内存池来重用内存，减少了内存分配和回收的开销。它使用了两个内存池，一个用于小型缓冲区，另一个用于大型缓冲区。</li>
+<li>零拷贝：Neety的ByteBuf支持零拷贝操作，它提供了一系列的读写方法，可以直接操作底层的字节数组，避免了数据的拷贝。</li>
+<li>引用计数：Neety的ByteBuf使用了引用计数来跟踪缓冲区的引用情况。当一个缓冲区被多个地方引用时，可以通过增加引用计数来避免不必要的内存拷贝。当引用计数为0时，缓冲区会被释放。</li>
+<li>缓冲区类型：Neety的ByteBuf支持不同的缓冲区类型，包括堆缓冲区、直接缓冲区和复合缓冲区。这些不同类型的缓冲区可以根据具体的使用场景选择，以提高性能。</li>
+<li>扩展性：Neety的ByteBuf提供了一系列的扩展方法，可以方便地进行自定义的扩展。用户可以根据自己的需求，通过继承和实现相应的接口来扩展ByteBuf的功能。</li>
+</ol>
+<p>这些优化使得Neety的ByteBuf在网络编程中具有更好的性能和灵活性。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w022024-huo-yan-tu-chatgpt/">
+              <h3 class="post-title">
+                下一篇：【W02/2024】火焰图（ChatGPT）
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

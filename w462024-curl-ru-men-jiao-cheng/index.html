@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W46/2024】cURL 入门教程 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W46/2024】cURL 入门教程</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-11-14</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://cosmoswei.github.io/CDR8dVgiUV/">
+                    入门教程
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>cURL 是一个利用 URL 语法在命令行下工作的文件传输工具，1997 年首次发行。它支持文件上传和下载，所以是综合传输工具，但按传统，习惯称cURL为下载工具。</p>
+<!-- more -->
+<p>cURL 支持的通信协议有 FTP、FTPS、HTTP、HTTPS、TFTP、SFTP、Gopher、SCP、Telnet、DICT、FILE、LDAP、LDAPS、IMAP、POP3、SMTP 和 RTSP。</p>
+<h2 id="get">GET</h2>
+<pre><code class="language-Bash">// 类似于ping 命令；ping 使用imcp协议，curl 使用基于 tcp 的 http 协议
+curl  baidu.com
+</code></pre>
+<ul>
+<li>cURL 默认发送 GET 请求</li>
+</ul>
+<h2 id="post">POST</h2>
+<ul>
+<li>curl -X -POST URL</li>
+<li>curl -XPOST URL</li>
+<li>curl-XPOST URL -d 数据，例如：</li>
+</ul>
+<pre><code class="language-Bash">curl -XPOST https://jsonplaceholder.typicode.com/posts -d '{&quot;title&quot;:&quot;蛋蛋老师&quot;}'
+</code></pre>
+<h2 id="put">PUT</h2>
+<pre><code class="language-Bash">curl -XPUT https:/jsonplaceholder.typicode.com/posts/1 -d '{“update&quot;:&quot;更新视频&quot;}'
+</code></pre>
+<h2 id="delete">DELETE</h2>
+<pre><code class="language-Bash">curl -XDELETE https://jsonplaceholder.typicode.com/posts/1
+</code></pre>
+<h2 id="header">HEADER</h2>
+<p>curl URL -H 首部</p>
+<pre><code class="language-Bash">curl -XPOST https://jsonplaceholder.typicode.com/posts -H 'Content-Type:application/json' -d '{&quot;titte&quot;,&quot;技术蛋老师&quot;}'
+</code></pre>
+<p>多个首部</p>
+<pre><code class="language-Bash">curl -XPOST https://jsonplaceholder.typicode.com/posts -H 'Content-Type:application/json' -H 'A-cc-dept:ap-ation/json' -d '{&quot;titte,技术蛋老师&quot;}'
+</code></pre>
+<p>获取响应首部</p>
+<pre><code class="language-Bash">curl -I https://jsonplaceholder.typicode.com/posts
+</code></pre>
+<h2 id="下载文件">下载文件</h2>
+<pre><code class="language-Bash">curl -O https://i0.hdslb.com/bfs/archive/ca375eb31fa90b8e23b88ed3433c2f60de1c2e6e.png
+curl -o bb.png https://i0.hdslb.com/bfs/archive/ca375eb31fa90b8e23b88ed3433c2f60de1c2e6e.png
+</code></pre>
+<p>限速下载文件</p>
+<pre><code class="language-Bash">curl --limit-rate 100k -o bb.iso https://releases.ubuntu.com/22.04/ubuntu-22.04-desktop-amd64.iso
+</code></pre>
+<h2 id="ftp">FTP</h2>
+<p>下载</p>
+<pre><code class="language-Bash">curl -u 用户名:密码 -O ftp:/server/egg.avi
+</code></pre>
+<p>上传</p>
+<pre><code class="language-Bash">curl -u 用户名:密码 -T 文件 ftp/server
+</code></pre>
+<h2 id="其他">其他</h2>
+<p>跟随重定向</p>
+<pre><code class="language-Bash">curl https://www.bilibili.com -L
+</code></pre>
+<p>连接消息信息</p>
+<pre><code class="language-Bash">curl -v -L https://www.bilibili.com
+</code></pre>
+<p>使用代理</p>
+<pre><code class="language-Bash">curl --proxy &quot;http://egg:123@127.0.0.1:1234&quot; URL
+</code></pre>
+<p>参考:</p>
+<p>https://blog.csdn.net/angle_chen123/article/details/120675472</p>
+<p>https://www.bilibili.com/video/BV1n94y1U7Eu</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/quic/">
+              <h3 class="post-title">
+                下一篇：【W44/2024】高效传输：以 QUIC 构建高效传输通道
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

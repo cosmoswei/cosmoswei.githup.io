@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W07/2024】Dubbo 调用流程源码简要梳理 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W07/2024】Dubbo 调用流程源码简要梳理</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-02-18</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>最近在梳理 Dubbo 是怎么跟 Netty 结合在一起，响应来自客户端的网络请求的，针对 Dubbo 3.3 版本的 Triple 协议做了一个简要分析。</p>
+<!-- more -->
+<h3 id="一-服务暴露服务端">一 、服务暴露（服务端）</h3>
+<p>Dubbo 服务暴露是将“配置”的服务传到 ZK</p>
+<blockquote>
+<p>org.apache.dubbo.config.bootstrap.DubboBootstrap#start()</p>
+</blockquote>
+<p>暴露服务时会启动Netty</p>
+<p>Dubbo 启动时开启 Netty Bootstrap</p>
+<blockquote>
+<ol>
+<li>org.apache.dubbo.config.ServiceConfig#export</li>
+<li>org.apache.dubbo.config.ServiceConfig#doExportUrls</li>
+<li>org.apache.dubbo.config.ServiceConfig#exportRemote</li>
+<li>org.apache.dubbo.rpc.Protocol#export</li>
+<li>org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol#openServer</li>
+<li>org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol#createServer</li>
+<li>org.apache.dubbo.remoting.exchange.Exchangers#bind</li>
+<li>org.apache.dubbo.remoting.transport.netty4.NettyTransporter#bind</li>
+<li>org.apache.dubbo.remoting.transport.AbstractServer#AbstractServer</li>
+<li>org.apache.dubbo.remoting.transport.netty4.NettyServer#doOpen</li>
+</ol>
+</blockquote>
+<p>Triple 协议的启动稍微有些不同，从第四步开始，Triple 协议是使用统一的端口暴露服务（NettyPortUnificationServer），最终同样会调用 doOpen 方法。</p>
+<blockquote>
+<ol start="5">
+<li>org.apache.dubbo.rpc.protocol.tri.TripleProtocol#export</li>
+<li>org.apache.dubbo.remoting.exchange.PortUnificationExchanger#bind</li>
+<li>org.apache.dubbo.remoting.transport.netty4.NettyPortUnificationTransporter#bind</li>
+<li>org.apache.dubbo.remoting.transport.netty4.NettyPortUnificationServer#NettyPortUnificationServer</li>
+<li>org.apache.dubbo.remoting.transport.AbstractServer#AbstractServer</li>
+<li>org.apache.dubbo.remoting.transport.AbstractServer#doOpen</li>
+</ol>
+</blockquote>
+<h3 id="二-发起调用客户端">二、发起调用（客户端）</h3>
+<p>Dubbo 客户端通过动态代理，使用协议（IP/Port），发起网络通信调用</p>
+<blockquote>
+<p>127.0.0.1:50051/com.wei.provider.dubbo.api.DemoService/sayHello</p>
+</blockquote>
+<p>Dubbo 服务端监听这个IP与端口，再经过协议过滤，交由 Netty 线程池处理这个请求，Betty的各种Handler处理这个请求，响应结果返回给客户端</p>
+<h3 id="三-获取请求服务端">三、获取请求（服务端）</h3>
+<p>获取请求</p>
+<blockquote>
+<p>org.apache.dubbo.remoting.http12.netty4.h1.NettyHttp1Codec#channelRead</p>
+</blockquote>
+<p>协议过滤</p>
+<blockquote>
+<p>因为只有 Triple 协议给 HTTP/1 设置了Handler所以使用Triple 协议，协议在处理请求上一层就定死了。</p>
+</blockquote>
+<h3 id="四-处理请求服务端">四、处理请求（服务端）</h3>
+<blockquote>
+<p>org.apache.dubbo.remoting.http12.netty4.h1.NettyHttp1ConnectionHandler#channelRead0</p>
+</blockquote>
+<h3 id="五-返回结果服务端">五、返回结果（服务端）</h3>
+<blockquote>
+<p>org.apache.dubbo.remoting.http12.netty4.h1.NettyHttp1Codec#write</p>
+</blockquote>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w022024-nio-zhong-de-bytebuffer-shu-li/">
+              <h3 class="post-title">
+                下一篇：【W02/2024】NIO 中的 ByteBuffer 梳理
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,823 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W11/2024】学习资料链接 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W11/2024】学习资料链接</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-03-16</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>入行以来收集的学习资料的链接，做了一个简单的汇总。</p>
+<!-- more -->
+<p>Redis容量预估：http://www.redis.cn/redis_memory/<br>
+常见算法可视化：https://algorithm-visualizer.org/<br>
+华为eNSP：https://blog.csdn.net/m0_50984266/article/details/119619563<br>
+反向代理神器—NginxProxyManager：https://blog.csdn.net/zy440458/article/details/122090513<br>
+JMH使用教程：https://blog.csdn.net/ZYC88888/article/details/113741316<br>
+MacMySQL安装：https://blog.csdn.net/zz00008888/article/details/109091478<br>
+浏览器泄露：https://browserleaks.com<br>
+JMH官方案例解释：https://developer.aliyun.com/article/899469<br>
+陈钇蒙/nginxWebUl：https://gitee.com/cym1102/nginxWebUI<br>
+async-profiler：https://github.com/async-profiler/async-profiler<br>
+houseMd（Java命令行监控工具）：https://github.com/CSUG/HouseMD/wiki/UserGuideCN<br>
+IP查询：https://ip125.com/<br>
+DNS泄露查看：https://ipleak.net/<br>
+JSONView：https://jsoncrack.com/editor<br>
+python程序转为exe可执行程序：https://mp.weixin.qq.com/s/-7_MlDF4D03jKTVeREvBBg<br>
+Nginx可视化配置工具：https://mp.weixin.qq.com/s/86D_5Jua8UHxbKcN2n22LQ<br>
+TLS可视化：https://tls12.xargs.org/<br>
+IP路由查询：https://tools.ipip.net/<br>
+Jmeter安装：https://www.cnblogs.com/jwzqyz/p/17477141.html<br>
+华为eNSP：https://zhuanlan.zhihu.com/p/350394895<br>
+Spring 启动耗时分析：https://zhuanlan.zhihu.com/p/638026832<br>
+Jmeter启动：sh/Users/huangxuwei/Downloads/apache-jmeter-5.6.2/bin/jmeter<br>
+多版本并发控制：http://blog.mrcroxx.com/posts/paper-reading/wu-vldb2017/<br>
+关于并发控制的乐观方法：http://feelkill.github.io/2017/05/10/On-Optimistic-Methods-for-Concurrency-Control.html<br>
+MySQLbinlog源码入门：http://mysql.taobao.org/monthly/2023/01/04/<br>
+弱网优化合集：http://www.52im.net/thread-1413-1-1.html<br>
+一文读懂动态数据源：http://www.manongjc.com/detail/60-dkziomutwvulsxq.html<br>
+汇编语言：http://www.phatcode.net/res/223/files/html/toc.html<br>
+数据库课程：https://15799.courses.cs.cmu.edu/spring2022/<br>
+invokedynamic：https://alex-ber.medium.com/explaining-invokedynamic-introduction-part-i-1079de618512<br>
+Redis持久化：https://baijiahao.baidu.com/s?id=1662843885312435398&amp;wfr=spider&amp;for=pc<br>
+计算机启停原理，BIOS，BootLoader，EFI：https://baijiahao.baidu.com/s?id=1663569336964534450&amp;<br>
+闭包：https://baike.baidu.com/item/%E9%97%AD%E5%8C%85<br>
+DMA：https://baike.baidu.com/item/DMA/2385376<br>
+mmap：https://baike.baidu.com/item/mmap/1322217?fr=aladdin<br>
+冰河合集：https://binghe.blog.csdn.net/article/details/106755121<br>
+高可用的MySQL：https://blog.csdn.net/alitech2017/article/details/108343839<br>
+Sharding不支持sql关键字：https://blog.csdn.net/baidu_23263735/article/details/102972019<br>
+Spring中的Advisor：https://blog.csdn.net/bigtree_3721/article/details/71963394<br>
+Java 对象的生命周期：https://blog.csdn.net/c15158032319/article/details/117262629<br>
+Java内存模型（JMM）：https://blog.csdn.net/c15158032319/article/details/117361782<br>
+深拷贝与浅拷贝：https://blog.csdn.net/ChineseSoftware/article/details/122942803<br>
+Javaagant：https://blog.csdn.net/ClarkCC/article/details/124765995<br>
+Maven 教程：https://blog.csdn.net/cristianoxm/article/details/121219695<br>
+Redis分布式锁：https://blog.csdn.net/ctwctw/article/details/120375225<br>
+WatchDog：https://blog.csdn.net/ctwctw/article/details/120375284<br>
+几种垃圾收集器对比：https://blog.csdn.net/dlmuRabbit/article/details/121575489<br>
+结构化并发：https://blog.csdn.net/feng_zi0yhv/article/details/125562365<br>
+线程池-单例：https://blog.csdn.net/fengye454545/article/details/79536986<br>
+搭建Esjob控制台：https://blog.csdn.net/ffzhihua/article/details/101034809<br>
+GraphQL及元数据驱动架构：https://blog.csdn.net/fly910905/article/details/116491958<br>
+读懂消息队列：https://blog.csdn.net/fuzhongmin05/article/details/105205124<br>
+设计模式七大原则：https://blog.csdn.net/fyj13925475957/article/details/103178579<br>
+软中断，硬中断：https://blog.csdn.net/GenuineMonster/article/details/85074827<br>
+MySQL索引详解：https://blog.csdn.net/guorui_java/article/details/118558095<br>
+JVM运行时数据区：https://blog.csdn.net/Handsome_Le_le/article/details/111356376<br>
+Optional：https://blog.csdn.net/jdcdev_/article/details/127103892<br>
+mmap：https://blog.csdn.net/KLYAZWS/article/details/121764164<br>
+冰河合集：https://blog.csdn.net/l1028386804/article/details/124978720<br>
+Java虚拟线程原理：https://blog.csdn.net/lewyu521/article/details/127649776<br>
+LongAdder原理浅析：https://blog.csdn.net/liulianglin/article/details/126361550<br>
+TCP的拥塞控制控制：https://blog.csdn.net/love_668/article/details/116913790<br>
+Redis内存淘汰策略：https://blog.csdn.net/luzhensmart/article/details/112392428<br>
+HttpExchange：https://blog.csdn.net/m0_65014849/article/details/128833434<br>
+@EnableXXXi注解：https://blog.csdn.net/mapleleafforest/article/details/87903718<br>
+MySQL主从复制：https://blog.csdn.net/mengyidan/article/details/130747481<br>
+auto_increment：https://blog.csdn.net/Omega29/article/details/118542850<br>
+SpringBean的加载顺序：https://blog.csdn.net/qianshangding0708/article/details/107373538<br>
+单例线程池Java版：https://blog.csdn.net/qq_24143469/article/details/89235614<br>
+ES倒排索引压缩算法：https://blog.csdn.net/qq_24950043/article/details/121348252<br>
+比读写锁更快的锁：https://blog.csdn.net/qq_33220089/article/details/105173632<br>
+MySQL深度分页：https://blog.csdn.net/qq_33589510/article/details/118198525<br>
+配置中心选型对比：https://blog.csdn.net/qq_34168515/article/details/109253747<br>
+Hash碰撞：https://blog.csdn.net/qq_35583089/article/details/80048285<br>
+SpringBean生命周期：https://blog.csdn.net/qq_35634181/article/details/104473308<br>
+WatchDog：https://blog.csdn.net/qq_35843095/article/details/109815062<br>
+mapper单连接多语句问题：https://blog.csdn.net/qq_37699336/article/details/114811392<br>
+RedissionLock：https://blog.csdn.net/qq_38697437/article/details/121359818<br>
+Get、POST原理：https://blog.csdn.net/qq_39390545/article/details/105616407<br>
+唯一索引与普通索引：https://blog.csdn.net/qq_39390545/article/details/120124518<br>
+计算机组成原理---DMA、中断控制、I/O之间的联系与区别：https://blog.csdn.net/qq_45353823/article/details/117406908<br>
+不要在数据库系统中使用mmap：https://blog.csdn.net/qq12323qweeqwe/article/details/124323566<br>
+一个List相对另一个List进行排序：https://blog.csdn.net/Redolently/article/details/125218280<br>
+try-with-resources：https://blog.csdn.net/tianzhonghaoqing/article/details/118720380<br>
+线程池最优使用策略：https://blog.csdn.net/Tomwildboar/article/details/129000098<br>
+Spring使用策略模式：https://blog.csdn.net/u011659172/article/details/79140561<br>
+RedissionWatchDog：https://blog.csdn.net/Weixiaohuai/article/details/128239152<br>
+Redission分布式锁：https://blog.csdn.net/weixin_37862824/article/details/115987388<br>
+全局线程池：https://blog.csdn.net/weixin_39544175/article/details/126818665<br>
+文件描述符：https://blog.csdn.net/yushuaigee/article/details/107883964<br>
+JavaJVM启动参数：https://blog.csdn.net/zhanglongfei_test/article/details/122926151<br>
+JDK主要特性汇总：https://blog.oxings.com/article/31.html<br>
+手写数据库：https://build-your-own.org/database/<br>
+手写Redis：https://build-your-own.org/redis/<br>
+MySQL江湖路：https://chensj.blog.csdn.net/article/details/107786761<br>
+听我讲完redolog、binlog原理，面试官老脸一红：https://chensj.blog.csdn.net/article/details/115214802<br>
+8种主流NoSQL数据库对比：https://cloud.tencent.com/developer/article/1114538<br>
+BBR拥塞控制算法：https://cloud.tencent.com/developer/article/1369617<br>
+Java的模块化：https://cloud.tencent.com/developer/article/1654182#<br>
+压缩算法选型：https://cloud.tencent.com/developer/article/1903414<br>
+MySQL的三层体系结构：https://cloud.tencent.com/developer/article/1916729<br>
+SSE技术详解：使用HTTP做服务端数据推送应用的技术：https://cloud.tencent.com/developer/article/1999650<br>
+如何解决分布式系统中的“幽灵复现”？：https://cloud.tencent.com/developer/news/594901<br>
+Rust语言圣经：https://course.rs/about-book.html<br>
+自己写一个数据库：https://cstack.github.io/db_tutorial/parts/part1.html<br>
+FastJson中如何传递泛型参数以及关于泛型擦除的一点思考：https://dandelioncloud.cn/article/details/1442871734520360961/<br>
+R2DBC测试：https://gist.github.com/mp911de/c9c739bee64c40f666f44c302d75f7d5<br>
+bilibili动态数据源源码：https://github.com/lhing17/java-demo-bilibili.git<br>
+Spring源码学习：https://github.com/seaswalker/spring-analysis<br>
+Java进阶学习：https://github.com/veezean/JavaBasicSkills<br>
+动态规划详解：https://juejin.cn/post/6951922898638471181<br>
+SpringBean的执行顺序：https://juejin.cn/post/7106548571423391781<br>
+使用eBPF提升HTTP可观测性：https://juejin.cn/post/7204085076505362487<br>
+Spring事物嵌套：https://juejin.cn/post/7224658621794271290<br>
+labuladong：https://labuladong.gitee.io/algo/2/22/51/<br>
+类上注解切面失效：https://ld246.com/article/1632461146826<br>
+服务端编程新手入门：https://liuhaohua.com/server-programming-guide/<br>
+计算机教育中缺失的一课：https://missing-semester-cn.github.io/<br>
+机器学习：https://mlu-explain.github.io/<br>
+Kafka 高可靠高性能原理探究：https://mp.weixin.qq.com/s/_g11mmmQse6KrkUE8x4abQ<br>
+为什么新版内核将进程pid管理从bitmap替换成了radix-tree：https://mp.weixin.qq.com/s/0w7dJh0Gr4PokUBcy8rN7w<br>
+面试官一个线程池问题把我问懵逼了：https://mp.weixin.qq.com/s/1-h5AHhJYin9c9G_ozdJqQ<br>
+搞懂TCP七种定时器：https://mp.weixin.qq.com/s/1Yx1cVOMoMU_d-wX8hRoKQ<br>
+一个逻辑完备的线程池：https://mp.weixin.qq.com/s/29QYeSRKlDgQKR5l6V5tTw<br>
+庖丁解InnoDB之REDOLOG：https://mp.weixin.qq.com/s/2G_2ZYAbQIblVJY7pmrhKg<br>
+总结mysql的所有buffer：https://mp.weixin.qq.com/s/43QsG_05JgaoiV5ZTb20Ag<br>
+聊聊分布式事务：https://mp.weixin.qq.com/s/5PH6DwDlULcNvs2KlPCNBg<br>
+PolarDBMySQL高性能强一致集群核心技术详解：https://mp.weixin.qq.com/s/7YXMC7eeos-S5kG8FNIoBA<br>
+Nginx高性能网络工作原理：https://mp.weixin.qq.com/s/AX6Fval8RwkgzptdjlU5kg<br>
+16个代码优化技巧：https://mp.weixin.qq.com/s/bIEZxpmIdkCAQKwZ6GE_8Q<br>
+时间轮算法经典案例解析：https://mp.weixin.qq.com/s/CcChX0MvxkdlToaVQT1BOA<br>
+Spring事务失效的12种场景：https://mp.weixin.qq.com/s/CGWPoigyg-_uRczhpNvSMA<br>
+步步为营，剖析事务中最难的——隔离性：https://mp.weixin.qq.com/s/CKVJJq5mg3SmidC_qJyTfA<br>
+Spring循环依赖：https://mp.weixin.qq.com/s/cqkZEvmmh7jnNt2K5r_lXg<br>
+LinuxI/O原理和Zero-copy技术全面揭秘：https://mp.weixin.qq.com/s/dZNjq05q9jMFYhJrjae_LA<br>
+大白话谈类加载机制：https://mp.weixin.qq.com/s/e_fj3crV8YwcCGy5Jl8W-A<br>
+MySQL加行级锁的规则：https://mp.weixin.qq.com/s/Ef73pSWb_k6yiTTlNCrEjg<br>
+计算机体系结构：https://mp.weixin.qq.com/s/EGNiAemHgP34WkASVHQkcw<br>
+什么是零拷贝：https://mp.weixin.qq.com/s/ElUIpKz4rpgMvgHOEV2yyQ<br>
+支付名词：https://mp.weixin.qq.com/s/fVktFGL7ahQSYjGvPtvHJg<br>
+两万字详解！InnoDB锁专题：https://mp.weixin.qq.com/s/FwtMWBT_GBH2cSgod2oUzA<br>
+如何让你的bean在其他bean之前完成加载：https://mp.weixin.qq.com/s/gwX9KuVRCvdoKrOIwHRZ-Q<br>
+单例模式：https://mp.weixin.qq.com/s/HAFx5lGImylBSrv_6GaARQ<br>
+无锁队列：https://mp.weixin.qq.com/s/HdP5NcQIdzfznGwcHLTvMw<br>
+45个CPU寄存器：https://mp.weixin.qq.com/s/iJhjkvHaJ-xRHqrbBdSaxQ<br>
+开源框架中的责任链模式实践：https://mp.weixin.qq.com/s/IvPEvf1Jn3Xejh8TbH0Inw<br>
+MySQL之到底该查哪个分区：https://mp.weixin.qq.com/s/jC0rCI2BnyYBORZwRIqbdg<br>
+深入理解Synchronized：https://mp.weixin.qq.com/s/jjdxeuzq43nrRFouFUo0RA<br>
+JAVA中如何高效的实现SQL的like语法：https://mp.weixin.qq.com/s/jOyj71wWfukcObTYw_gdPg<br>
+WebRTC：https://mp.weixin.qq.com/s/Kt4Kj2uIIEMHZCqjhKmhkA<br>
+Arrays.asList和ArrayList.subList竟然暗藏这些坑：https://mp.weixin.qq.com/s/kXjCgT81WzOVGOv7zG1cMQ<br>
+7种分布式事务方案：https://mp.weixin.qq.com/s/lDv5EaOaYS656EH5KWfFfQ<br>
+MySQL的一些高性能探索：https://mp.weixin.qq.com/s/LEH2unfve9YlGuuftQt-Ag<br>
+B+树、B-Link树、LSM树，解读一下常用的存储结构：https://mp.weixin.qq.com/s/NW3lGMejsDHNs0ml3vQRwg<br>
+如何保证RocketMQ消息有序？：https://mp.weixin.qq.com/s/ofaQwaOobZ_5xqcor6ObhA<br>
+MySQL8.0AtomicDDL：https://mp.weixin.qq.com/s/ofp0e4HYjDFyZsBXYR-ueg<br>
+分布式表格存储系统的演进：https://mp.weixin.qq.com/s/oV5F_K2mmE_kK77uEZSjLg<br>
+ReentrantLock-20张图解析原理：https://mp.weixin.qq.com/s/P4Q8QrSxjgZydf-2WsOSwg<br>
+限流器设计：https://mp.weixin.qq.com/s/P6-I_3HoIVGpVnBfnb4G2A<br>
+MatrixOne从NewSQL到HTAP分布式架构演进：https://mp.weixin.qq.com/s/PfwDKWWWZD7wRvS4Ksu28A<br>
+把Redis当作队列来用：https://mp.weixin.qq.com/s/pn_kJM7gfqD4lVPYFkSN1g<br>
+SpringBoot最大连接数：https://mp.weixin.qq.com/s/Q1Ap91PtEEUoUGmnxOijpQ<br>
+扯下@EventListener这个注解的神秘面纱。：https://mp.weixin.qq.com/s/RSgd_bWH_oPQUDU3IsJEOQ<br>
+聊聊selectforupdate到底加了什么锁：https://mp.weixin.qq.com/s/shogIDEgXTtPVPFgsS8crw<br>
+Linux虚拟内存管理：https://mp.weixin.qq.com/s/sn51H-Cb-XPpf6BsO_gJiw<br>
+庖丁解InnoDB之UNDOLOG：https://mp.weixin.qq.com/s/SQe5TTB42thRqAyfcz5mHA<br>
+浅入浅出代理模式与Spring事务管理：https://mp.weixin.qq.com/s/T7mq5MuEwD8E9IPkz8toEQ<br>
+巧用Bitmap实现亿级海量数据统计：https://mp.weixin.qq.com/s/tKWEXb9gzEFNXR5y2l6m5Q<br>
+史诗级计算机字符编码知识分享：https://mp.weixin.qq.com/s/TTPrP3-VO2QFZpof0VXFnQ<br>
+PaperReading:分布式数据流的轻量级异步快照：https://mp.weixin.qq.com/s/UbY7vQ2VsSJrrUeHR_gIDg<br>
+Java编译期注解处理器AbstractProcessor：https://mp.weixin.qq.com/s/VO39ZN_7uO1srMuHFxu9hQ<br>
+Redis锁从面试连环炮聊到神仙打架：https://mp.weixin.qq.com/s/WXnAzYbVZ7GAT6AnOeFSgA<br>
+Java中如何获得A<T>泛型中T的运行时类型：https://mp.weixin.qq.com/s/Yn9CIfgLozZNs_xfSo1ZmA<br>
+MySQL使用RedoLog崩溃恢复过程分析：https://mp.weixin.qq.com/s/yNPwRivmeH4xx6oSxLyHYw<br>
+Bean异步初始化，让你的应用启动飞起来：https://mp.weixin.qq.com/s/ZMIUXDc7yY64GDE70g3-kA<br>
+Bash-Oneliner：https://onceupon.github.io/Bash-Oneliner/<br>
+Redisson批量锁：https://ost.51cto.com/posts/13606<br>
+MySQL存储null值：https://qa.1r1g.com/sf/ask/16042561/<br>
+容器技术介绍：https://qiankunli.github.io/2016/12/02/docker_cgroup_namespace.html<br>
+有限状态机：https://suisuisi.blog.csdn.net/article/details/76132201<br>
+DDIA中文：https://vonng.gitbooks.io/ddia-cn/content/<br>
+Bash：https://wangdoc.com/bash/intro<br>
+ES 基础笔记：https://www.cnblogs.com/clarehjh/p/13689906.html<br>
+全局线程池：https://www.cnblogs.com/deepalley/p/16206745.html<br>
+TCP/IP中链路层的附加数据(Trailer数据)和作用：https://www.cnblogs.com/dodng/p/4466740.html<br>
+重学计算机组成原理：https://www.cnblogs.com/flashsun/p/10628433.html<br>
+I++和++i：https://www.cnblogs.com/fulongyuanjushi/p/17724834.html<br>
+OnlineDDL：https://www.cnblogs.com/igoodful/p/14075649.html<br>
+计算Java线程数：https://www.cnblogs.com/jpfss/p/11016169.html<br>
+RedissionWatchDog：https://www.cnblogs.com/keeya/p/14332131.html<br>
+Redis分布式锁：https://www.cnblogs.com/kisshappyboy/p/16941354.html<br>
+垂直扩缩容VPA：https://www.cnblogs.com/ltzhang/p/14532192.html<br>
+AE事件库：https://www.cnblogs.com/MrLiuZF/p/15001415.html<br>
+虚拟地址与虚拟内存：https://www.cnblogs.com/ralap7/p/9137893.html<br>
+Redission分布式锁：https://www.cnblogs.com/rgcLOVEyaya/p/RGC_LOVE_YAYA_1003days.html<br>
+为什么Redis有16384个槽：https://www.cnblogs.com/rjzheng/p/11430592.html<br>
+Java并发编程之final域的内存语义：https://www.cnblogs.com/senlinyang/p/7875468.html<br>
+存储介质访问性能：https://www.cnblogs.com/sfzlstudy/p/15852383.html<br>
+什么是高可用：https://www.cnblogs.com/shizhiyi/p/7750530.html<br>
+操作数栈：https://www.cnblogs.com/shizhiyi/p/7857764.html<br>
+红包算法：https://www.cnblogs.com/smileZeng/p/13395743.html<br>
+JAVA匿名内部类(AnonymousClasses)：https://www.cnblogs.com/wuhenzhidu/p/anonymous.html<br>
+局部性原理：https://www.cnblogs.com/xindoo/p/11303906.html<br>
+Java反射：https://www.cnblogs.com/zhishan/p/3195771.html<br>
+分布式事物：https://www.cnblogs.com/zhusf/p/15481215.html<br>
+OnlineDDL：https://www.cnblogs.com/zmc60/p/14872073.html<br>
+JVM深入学习：https://www.iteye.com/blog/rednaxelafx-362738<br>
+Java反射：https://www.itzhimei.com/archives/2852.html<br>
+logback介绍和配置详解：https://www.jianshu.com/p/04065d8cb2a9<br>
+聊一聊链路日志-异步线程：https://www.jianshu.com/p/0a613ee9733b<br>
+rocketmq 与 kafka 对比漫谈：https://www.jianshu.com/p/35fcd6e0bc93<br>
+一文解决内存屏障：https://www.jianshu.com/p/64240319ed60<br>
+Stream流根据对象指定字段去重：https://www.jianshu.com/p/b1362370c77d<br>
+ZGC：https://www.jianshu.com/p/f02d9c6adaf0<br>
+InvokeDynamic：https://www.kingkk.com/2020/11/%E4%BB%8EMethodHandle%E5%88%B0InvokeDynamic%E6%8C%87%E4%BB%A4/<br>
+JVM知识导图：https://www.processon.com/view/link/5eea141cf346fb1ae56a44e7<br>
+DDR规范：https://www.sohu.com/a/485600408_120111001<br>
+LinuxIPC：SystemV与POSIX介绍：https://www.testerfans.com/archives/linux-ipc-overview<br>
+Java 深入知识：https://www.zhihu.com/column/c_1419693539530178562<br>
+不为面试的数据库记录：https://www.zhihu.com/column/c_1507624473692372992<br>
+CompletableFuture异步处理：https://www.zhihu.com/question/19612287/answer/2663172806<br>
+有了IP地址,为什么还要用MAC地址：https://www.zhihu.com/question/21546408/answer/2120115071<br>
+Java中的线程池的线程数量如何确定：https://www.zhihu.com/question/336683528/answer/3218878435<br>
+内存频率与CPU频率：https://www.zhihu.com/question/349982942<br>
+CDN是什么？使用CDN有什么优势？：https://www.zhihu.com/question/36514327/answer/1604554133<br>
+auto_increment：https://www.zhihu.com/question/403257630<br>
+既然有HTTP请求，为什么还要用RPC调用：https://www.zhihu.com/question/41609070/answer/1030913797<br>
+为什么Java和JS等语言需要VM，不能直接操作内存堆栈空间？：https://www.zhihu.com/question/449995754/answer/1838749872<br>
+详细说一下CountDownLatch的实现？：https://www.zhihu.com/question/484002877/answer/2939661852<br>
+你对Spring的理解：https://www.zhihu.com/question/48427693/answer/723146648<br>
+如何弄懂Java多线程和Java内存模型？：https://www.zhihu.com/question/485321451/answer/2112169026<br>
+对于JVM,你掌握多少？：https://www.zhihu.com/question/538212312/answer/2642314063<br>
+6个曾经牛逼哄哄的Java技术，你用过吗？：https://www.zhihu.com/question/614190316/answer/3137549930<br>
+最强优化指令大全：https://xie.infoq.cn/article/6fc17f866c1d15883cce793bd<br>
+BPM：https://zhidao.baidu.com/question/1690844474903666308.html<br>
+内存频率与主板频率：https://zhidao.baidu.com/question/1955921704009556508.html<br>
+内存参数详解：https://zhidao.baidu.com/question/400405846387780205.html<br>
+红包算法：https://zhuanlan.zhihu.com/p/108914134<br>
+Parquet 列式存储格式：https://zhuanlan.zhihu.com/p/141908285<br>
+HashMap夺命二十一问：https://zhuanlan.zhihu.com/p/151027796<br>
+G1 MixedGC：https://zhuanlan.zhihu.com/p/157280572<br>
+dubbo 线程模型：https://zhuanlan.zhihu.com/p/157354148<br>
+线程创建的开销与线程池：https://zhuanlan.zhihu.com/p/161628226<br>
+ArrayList和LinkedList哪个更占空间：https://zhuanlan.zhihu.com/p/166686856<br>
+MySQL优化器原来是这样工作的：https://zhuanlan.zhihu.com/p/192707721<br>
+尾递归优化：https://zhuanlan.zhihu.com/p/24305359<br>
+聊聊内存屏障：https://zhuanlan.zhihu.com/p/270269628<br>
+Java内存模型（JMM）：https://zhuanlan.zhihu.com/p/29881777<br>
+深度图解Redis Cluster：https://zhuanlan.zhihu.com/p/337878020<br>
+什么是Safepoint：https://zhuanlan.zhihu.com/p/345034354<br>
+文件描述符：https://zhuanlan.zhihu.com/p/364617329<br>
+ICMP详解：https://zhuanlan.zhihu.com/p/369623317<br>
+PolarDBVS分库分表：https://zhuanlan.zhihu.com/p/372422876<br>
+RedLock:看完这篇文章后请不要有任何疑惑了：https://zhuanlan.zhihu.com/p/374732293<br>
+Dubbo 框架：https://zhuanlan.zhihu.com/p/382200101<br>
+Javaagant：https://zhuanlan.zhihu.com/p/436306606<br>
+B+树与Trie树：https://zhuanlan.zhihu.com/p/440194791<br>
+什么是数据仓库：https://zhuanlan.zhihu.com/p/441279282<br>
+内存带宽：https://zhuanlan.zhihu.com/p/443104177<br>
+Java开发中的加密、解密、签名、验签，密钥，证书：https://zhuanlan.zhihu.com/p/450560517<br>
+DDR5内存：https://zhuanlan.zhihu.com/p/496784640<br>
+彻底搞懂三大MySQL日志：https://zhuanlan.zhihu.com/p/528575954<br>
+细聊MySQLundolog、redolog、binlog有什么用？：https://zhuanlan.zhihu.com/p/531731716<br>
+我说HashMap初始容量是16，面试官让我回去等通知：https://zhuanlan.zhihu.com/p/573635059<br>
+内存延迟：因与果：https://zhuanlan.zhihu.com/p/57780996<br>
+ZGC：https://zhuanlan.zhihu.com/p/585254683<br>
+理解Spring应用上下文生命周期：https://zhuanlan.zhihu.com/p/586240139<br>
+MySQL缓冲池(bufferpool)：https://zhuanlan.zhihu.com/p/594772437<br>
+Bean加载流程：https://zhuanlan.zhihu.com/p/601853294<br>
+MySQL三大日志(binlog、redolog和undolog)的作用：https://zhuanlan.zhihu.com/p/609972086<br>
+比ReadWriteLock还快的锁：https://zhuanlan.zhihu.com/p/620086654<br>
+MySQL主从复制原理剖析与应用实践：https://zhuanlan.zhihu.com/p/620697440<br>
+InnoDB中undo日志的组织及实现：https://zhuanlan.zhihu.com/p/631682367<br>
+Maven 教程：https://zhuanlan.zhihu.com/p/634098705<br>
+腾讯专家沉淀的MQ设计精要：https://zhuanlan.zhihu.com/p/644125515<br>
+ZGC：https://zhuanlan.zhihu.com/p/653047733<br>
+从栈帧看字节码是如何在JVM中进行流转的：https://zhuanlan.zhihu.com/p/654685769<br>
+网络拥塞控制之cubic算法：https://zhuanlan.zhihu.com/p/674591961<br>
+存储技术：https://zhuanlan.zhihu.com/p/73728096<br>
+常见OOM：https://zhuanlan.zhihu.com/p/79355050<br>
+HashMap 的环形链表：https://zhuanlan.zhihu.com/p/80878915<br>
+一文了解 Redis 内存监控和内存消耗：https://zhuanlan.zhihu.com/p/86881556<br>
+Java线线程池的生命周期：https://zhuanlan.zhihu.com/p/88748331<br>
+什么是NFA：http://t.zoukankan.com/HIT-ryp-p-12874153.html<br>
+BPF入门：https://zhuanlan.zhihu.com/p/469860384<br>
+微信后台在海量并发请求下是如何做到不崩溃的：http://www.52im.net/thread-3930-1-1.html<br>
+解密抖音春节红包背后的技术设计与实践：http://www.52im.net/thread-3945-1-1.html<br>
+微服务全链路灰度新能力：https://blog.csdn.net/alisystemsoftware/article/details/126518876<br>
+多数据源分页方案：https://blog.csdn.net/JokerLJG/article/details/116290930<br>
+业务中台：https://blog.csdn.net/significantfrank/article/details/118337701<br>
+一文看懂Cola架构和DDD：https://blog.csdn.net/weixin_43431766/article/details/108797848<br>
+如何熟悉一个系统：https://developer.aliyun.com/article/743058<br>
+延时消息常见实现：https://juejin.cn/post/7052894117105238053<br>
+得物Trace2：https://juejin.cn/post/7140840556162351140<br>
+高TPS系统设计：https://juejin.cn/post/7276678098409898019<br>
+聊一聊分布式系统中的时空观构建：https://mp.weixin.qq.com/s/3dGpV4hSgNOlwkSJ9pjPrw<br>
+促销系统架构：https://mp.weixin.qq.com/s/8ipzmvcsOmBP0ggqQNYLlw<br>
+阿里-时间穿越：https://mp.weixin.qq.com/s/fPvIJNJmM_8SZUbA42vIfQ<br>
+浅析三款大规模分布式文件系统架构设计：https://mp.weixin.qq.com/s/hzM5TPucY44_s2iwkp59gg<br>
+审批异步链路重构：https://mp.weixin.qq.com/s/nIY7Gs2XA8DohTa34aEO8g<br>
+企业微信万亿级日志检索系统：https://mp.weixin.qq.com/s/opxvlddsSQctb3nwcxaW_g<br>
+浅谈灰度方案的设计：https://mp.weixin.qq.com/s/QPYprfHeHBnh38HQBh_K-w<br>
+基于TiDB+Flink实现的滑动窗口实时累计指标算法：https://mp.weixin.qq.com/s/vr_bz6kUuwOyaVlqQa0C8Q<br>
+搞定秒杀：https://mp.weixin.qq.com/s/xblOHnD_iauEQiz5odObJQ<br>
+得物点赞业务：https://mp.weixin.qq.com/s/zKP4Urs0chCXjYCGPZGnpA<br>
+APM：https://support.huaweicloud.com/apm/index.html<br>
+营销逆向：https://tech.youzan.com/ump-refund-overview/<br>
+实时精准营销：https://www.alibabacloud.com/help/zh/apsaradb-for-rds/latest/real-time-precision-marketing<br>
+关注点分离(Separationofconcerns,SoC)：https://www.cnblogs.com/asis/p/architecture-Soc.html<br>
+聊聊我与流式计算的故事：https://www.cnblogs.com/makemylife/p/17063284.html<br>
+软件架构：https://www.jdon.com/design.htm<br>
+字节优惠券系统：https://www.toutiao.com/article/7087825428798652962?wid=1669897969138<br>
+DDD：https://www.zhihu.com/question/25089273/answer/233316164<br>
+基于SpringCache实现Caffeine、jimDB多级缓存：https://xie.infoq.cn/article/b0b41f4fe90911739ddb7cfb4<br>
+软件架构的“4+1”视图模型：https://xie.infoq.cn/article/f371c72ecc192407e5620f6e4<br>
+热点账户问题：https://cloud.tencent.com/developer/article/1452310<br>
+热点账户问题：https://www.cnblogs.com/zyl2016/articles/9928567.html<br>
+SuperCSV：http://super-csv.github.io/super-csv/index.html<br>
+Dubboexchange层：https://blog.51cto.com/u_14014612/5769080<br>
+Aviator：https://blog.csdn.net/huanghuang9426/article/details/125314084<br>
+Dubbo3：https://blog.csdn.net/l569590478/category_12078617.html<br>
+Mybatis批量更新：https://blog.csdn.net/liujianjian2722/article/details/122923024<br>
+Maven私服搭建：https://blog.csdn.net/liutianxiazhendehao/article/details/121795394<br>
+Dubbo路由规则之标签路由：https://blog.csdn.net/liyong1028826685/article/details/117266242<br>
+Dubbo长链接：https://blog.csdn.net/m0_54866636/article/details/123734151<br>
+Dubbo线程模型：https://blog.csdn.net/nuowei_senlin/article/details/109119602<br>
+Vert.x快速入门参考：https://blog.csdn.net/qq_18870127/article/details/110943712<br>
+Dubbo负载均衡：https://blog.csdn.net/qq_31960623/article/details/124218374<br>
+MybatisGenerator：https://blog.csdn.net/qq_33326449/article/details/105930655<br>
+Guava：https://blog.csdn.net/RuiKe1400360107/article/details/107879867<br>
+分布式消息队列：https://blog.csdn.net/Tencent_TEG/article/details/120499836<br>
+RocketMQ高可用方案：https://blog.csdn.net/weixin_32572129/article/details/112166134<br>
+ShardingSphere不支持的SQL：https://blog.csdn.net/weixin_39970883/article/details/125896678<br>
+注解实现切面加分布式锁：https://blog.csdn.net/weixin_41036287/article/details/121244926<br>
+Dubbomonitor：https://blog.csdn.net/weixin_41947378/article/details/108430878<br>
+Zookeeper：https://blog.csdn.net/weixin_42837961/article/details/106233902<br>
+Dubbo：https://blog.csdn.net/weixin_43922655/article/details/117257644<br>
+ShardingSphere踩坑合集：https://blog.csdn.net/weixin_44654147/article/details/118311097<br>
+JWT详解：https://blog.csdn.net/weixin_45070175/article/details/118559272<br>
+ShardingJDBC：https://blog.csdn.net/worn_xiao/article/details/125837201<br>
+三种分布式锁的实现思路：https://blog.csdn.net/wuzhiwei549/article/details/80692278<br>
+动态数据源切换：https://blog.csdn.net/yaomingyang/article/details/117161318<br>
+Spock：https://blog.csdn.net/yu514950381/article/details/103073089<br>
+深度解析Dubbo集群路由之标签路由：https://blog.csdn.net/yuanshangshenghuo/article/details/108133661<br>
+Dubbo3.0课程：https://coding.imooc.com/class/529.html#Prchor<br>
+NebulaGraph3.3.0文档：https://docs.nebula-graph.com.cn/3.3.0/<br>
+存储系统kudu：https://fuzhe1989.github.io/2020/12/24/kudu-storage-for-fast-analytics-on-fast-data/<br>
+Sentinal核心类解析：https://gitbook.cn/gitchat/column/5f34b38305cd3d35a3b01d4a/topic/5f3a4a3a05cd3d35a3b0a6f9<br>
+hotkey：https://gitee.com/jd-platform-opensource/<br>
+AsyncTool：https://gitee.com/jd-platform-opensource/asyncTool<br>
+限流项目：https://gitee.com/XhyQAQ/limiter<br>
+RocketMQ运维管理：https://github.com/apache/RocketMQ/blob/master/docs/cn/operation.md<br>
+LRU实现：https://github.com/djangogao/mqexercise.git<br>
+Vert.x：https://github.com/vert-x3/vertx-guide-for-java-devs<br>
+分布式文件系统Tectonic：https://hardcore.feishu.cn/docx/doxcnpULgnDx6ZPL1xW7kanT7Zf<br>
+RocketMQ定时消息：https://help.aliyun.com/document_detail/440242.html<br>
+PolarDB实时物化视图：https://help.aliyun.com/document_detail/457267.html<br>
+JMH&amp;Spring：https://juejin.cn/post/6844903970880618503<br>
+FluentMybatis：https://juejin.cn/post/6886019929519177735<br>
+批量更新的最佳实践：https://juejin.cn/post/6974035016632238093<br>
+DAOMock：https://juejin.cn/post/7097106606835367966<br>
+ShardingJdbc不支持复杂SQL：https://juejin.cn/post/7141242019120152612<br>
+本地缓存Caffeine青出于蓝的要诀：https://juejin.cn/post/7166020051059867661<br>
+SPI：https://juejin.cn/post/7212804044024397880<br>
+DubboSPI：https://juejin.cn/post/7214396380353675320<br>
+Dubbo通信模式：https://mp.weixin.qq.com/s/4fRoQBYBUp7cF69OqQFb0Q<br>
+RocketMQ的7种重复消息：https://mp.weixin.qq.com/s/5AIhzM7dGfXgBZC1TyecZw<br>
+Dubbo自适应负载均衡：https://mp.weixin.qq.com/s/6czX2QSod2dK9b14tP5RGQ<br>
+RocketMQ的消费逻辑：https://mp.weixin.qq.com/s/94_remd5k5bHkrcErDzRDQ<br>
+定时调度系统：https://mp.weixin.qq.com/s/AjI_20qsvnMOzmBN3PtyqA<br>
+解读RocketMQ5.0全新的高可用设计：https://mp.weixin.qq.com/s/AOJQQh6iWyU_haUFWMylyQ<br>
+SPI：https://mp.weixin.qq.com/s/DQv0Gda6E3HABkkccwzDZg<br>
+Sentinel为什么这么强：https://mp.weixin.qq.com/s/ETghXbTV5GAs78GsqB86XQ<br>
+shmipc：https://mp.weixin.qq.com/s/f8SoJELaBoieePwMtRlj-Q<br>
+分布式链路追踪演进：https://mp.weixin.qq.com/s/fmBrSJMQ9vLCQPysbMcV8g<br>
+OHC案例：https://mp.weixin.qq.com/s/-fx5WipclJT9DdtTp_vpVw<br>
+Sentinel夺命连环17问：https://mp.weixin.qq.com/s/gTLDPxlEdDkD-Bdua5qyNQ<br>
+脑洞打开！第一次看到这样使用Mybatis的，看得我一愣一愣的：https://mp.weixin.qq.com/s/H1JRB2Z61qkzQiVmtltClg<br>
+PowerJob：https://mp.weixin.qq.com/s/mA3SgTMVhI-aO1LDPA60sQ<br>
+DDMQ延时消息：https://mp.weixin.qq.com/s/NGp5kQXlRNdzM5MfdUT2mA<br>
+Kafka核心全面总结：https://mp.weixin.qq.com/s/o-PVvWPey1zTBOMY7JN4VA<br>
+RocketMQ消息轨迹使用和原理：https://mp.weixin.qq.com/s/saYD3mG9F1z-oAU6STxewQ<br>
+Dubbo2.7新特性之异步化改造：https://mp.weixin.qq.com/s/tTk7LrpJNoYrXZwBx2_jlw<br>
+实现延时消息的方案：https://mp.weixin.qq.com/s/UebGw_7f8wgXw_W1qFTcTw<br>
+DanceNN：字节自研千亿级规模文件元数据存储系统概述：https://mp.weixin.qq.com/s/uJb6iplETFEaO2drL3YF_g<br>
+Mybatis批量插入：https://mp.weixin.qq.com/s/vfG7fLqSjICzjtwDa2zxXg<br>
+Dubbo异步化实践：https://mp.weixin.qq.com/s/WmJs3wAldUW7eN4U2bo6Ew<br>
+Amazon 针对小对象的分布式键值存储 ——Dynamo：https://mp.weixin.qq.com/s/y6cMHMXUFkgvNv7VYyLsRA<br>
+RocketMQ并发消费和顺序消费机制：https://mp.weixin.qq.com/s/YCIycHhqNyzMwoRmvCUyxw<br>
+两个例子带你入门Disruptor：https://mp.weixin.qq.com/s/YMmnFVc_95Xjjf8LufpCiQ<br>
+Mapper批量插入问题：https://Mybatis.org/Mybatis-dynamic-sql/docs/insert.html<br>
+RocketMQ事务消息：https://RocketMQ.apache.org/docs/transaction-example/<br>
+Spock：https://segmentfault.com/a/1190000020599509<br>
+Sentinal毫秒级统计数据结构揭秘：https://sentinelguard.io/zh-cn/blog/sentinel-go-internal-data-structure.html<br>
+毫秒级热key探测框架设计与实践：https://tianyalei.blog.csdn.net/article/details/106896210<br>
+Dubbomonitor：https://www.cnblogs.com/aspirant/p/9002663.html<br>
+Dubbo线程池：https://www.cnblogs.com/dreamroute/p/15926820.html<br>
+OHC：https://www.cnblogs.com/liang1101/p/13499781.html<br>
+Mybatis数字0自动转为空串：https://www.cnblogs.com/lnlvinso/p/14802402.html<br>
+OGNL表达式：https://www.cnblogs.com/renchunxiao/p/3423299.html<br>
+ApacheBenchmark：https://www.cnblogs.com/wgw8299/archive/2012/06/13/2547197.html<br>
+Mybatis批量更新：https://www.cnblogs.com/woyujiezhen/p/11656980.html<br>
+Zookeeper：https://www.imooc.com/wiki/Zookeeper/zookeeperinitial.html<br>
+Apacheapisix：https://www.jianshu.com/p/16f0b621815c<br>
+Dubbo集群容错：https://www.jianshu.com/p/2126c1c74304<br>
+微服务之-ServiceMesh：https://www.jianshu.com/p/27a742e349f7<br>
+Disruptor详解：https://www.jianshu.com/p/bad7b4b44e48<br>
+RXJava：https://www.jianshu.com/p/bb0499e8394e<br>
+嵌入式数据库H2的简单介绍：https://www.jianshu.com/p/c185188fa7c8<br>
+InfluxDB：https://www.jianshu.com/p/f0905f36e9c3<br>
+OHC：https://www.mryunwei.com/274975.html<br>
+JMH使用教程：https://www.zhihu.com/question/276455629/answer/1259967560<br>
+为什么Mybatis在数据量大的时候${}赋值，要比#{}赋值快？：https://www.zhihu.com/question/611699603/answer/3121583941<br>
+深度剖析 Apache EventMesh 云原生分布式事件驱动架构：https://xie.infoq.cn/article/166f934380b81621d6949f6c8<br>
+Mybatiscase：https://zhuanlan.zhihu.com/p/240717732<br>
+JMH官方案例解释：https://zhuanlan.zhihu.com/p/381283590<br>
+Dubbo注册中心扩展：https://zhuanlan.zhihu.com/p/466147620<br>
+OpenIM：https://zhuanlan.zhihu.com/p/487656641<br>
+规则引擎框架LiteFlow：https://zhuanlan.zhihu.com/p/514881728<br>
+Resilience4j限流框架：https://zhuanlan.zhihu.com/p/583585713<br>
+Spring-Retry和Guava-Retry：https://zhuanlan.zhihu.com/p/647210905<br>
+面试经验：https://www.cnblogs.com/Tiancheng-Duan/p/15868364.html<br>
+为什么 Redis 集群有 16384 个槽？：https://www.zhihu.com/question/555344285/answer/2691181655<br>
+文档写作规范：http://www.ruanyifeng.com/blog/2016/10/document_style_guide.html<br>
+雅虎yslow-23：https://blog.csdn.net/osmeteor/article/details/40041451<br>
+Matplotlib中文乱码：https://blog.csdn.net/qq_29861217/article/details/106837014#<br>
+算法项目：https://github.com/krahets/hello-algo<br>
+B端产品100问：https://mp.weixin.qq.com/s/G0Ka2DNJfyeQsYZzrq-3iA<br>
+写好技术原创文章的一点建议：https://mp.weixin.qq.com/s/NLGX-5TjBA28YYiybSwEpg<br>
+如何搭建用户增长体系：https://mp.weixin.qq.com/s/Tw8pyd8gVivaQrAUN9S0Vw<br>
+编码编成翔的十八般兵器：https://mp.weixin.qq.com/s/Wvmy9vEDN1-mPdmBSp0Kzg<br>
+线代课程：https://textbooks.math.gatech.edu/ila/index2.html<br>
+IDEA插件：https://www.cnblogs.com/lnlvinso/p/14599229.html<br>
+如何模拟弱网环境：https://www.cnblogs.com/my-testing-life/p/17178784.html<br>
+VuePress搭建教程：https://www.cnblogs.com/softidea/p/10084946.html<br>
+如何模拟弱网测试：https://www.cnblogs.com/xiao-qing/p/9431600.html<br>
+写好技术文章：https://www.cnblogs.com/zzyang/p/17714480.html<br>
+博客自发布系统：https://www.pseudoyu.com/zh/2022/05/29/deploy_your_blog_using_hugo_and_github_action/<br>
+节点搭建系列教程：https://www.youtube.com/playlist?list=PL5TbbtexT8T3d_7UX2aSFhoMYk-cl4kf4<br>
+数据分析4大模型：https://zhuanlan.zhihu.com/p/360399145<br>
+《概率论》学习笔记：https://zhuanlan.zhihu.com/p/418319247<br>
+A/B测试：https://zhuanlan.zhihu.com/p/439698312<br>
+应届生如何半年找到一份数据库内核开发的工作：https://zhuanlan.zhihu.com/p/490171772<br>
+风险指针：http://t.zoukankan.com/coryxie-p-2951249.html<br>
+TCP40ms延迟：https://blog.csdn.net/anliayx/article/details/78564288<br>
+Nagle算法：https://blog.csdn.net/baobigan8565/article/details/102319305<br>
+Java调用C++：https://blog.csdn.net/giveaname/article/details/106615257<br>
+将Object转换成List：https://blog.csdn.net/ptsx0607/article/details/100107492<br>
+根据字段去重：https://blog.csdn.net/weixin_47007127/article/details/111615233<br>
+VAVR：https://blog.csdn.net/y4x5M0nivSrJaY3X92c/article/details/108373128<br>
+JIT优化：https://juejin.cn/post/7282245793687797820<br>
+这个队列的思路真的好，现在它是我简历上的亮点了：https://mp.weixin.qq.com/s/BTVDPHVWjBiq9mj3mvT_Vw<br>
+我试图通过这篇文章告诉你，这行源码有多牛逼：https://mp.weixin.qq.com/s/uOichau3rndSG1Sc4VzGYg<br>
+为Java加入生成器(Generator)特性：https://mp.weixin.qq.com/s/v-HMKBWxtz1iakxFL09PDw<br>
+Java缺失的特性：扩展方法：https://mp.weixin.qq.com/s/VTIrBVbJJ7vOotIMB5pRSg<br>
+从源码里的一个注释，我追溯到了12年前，有点意思：https://mp.weixin.qq.com/s/y7JS_Fs1y5m3roFQzzyFeQ<br>
+Mybatis这些精妙写法，同事直呼哇塞：https://mp.weixin.qq.com/s/yvTsfa1EY3Gu8KKbf9TgEA<br>
+VAVR：https://www.cnblogs.com/lyn8100/p/16564491.html<br>
+指数退避算法：https://www.cnblogs.com/wangzhongqiu/p/7810616.html<br>
+LRU-K和2Q缓存算法介绍：https://www.jianshu.com/p/c4e4d55706ff<br>
+PBFT共识算法：https://www.jianshu.com/p/cf1010f39b84<br>
+JMM64位半读半写：https://www.zhihu.com/question/38816432<br>
+关于频率（波长）与穿透、绕射能力的关系：https://zhuanlan.zhihu.com/p/122238123<br>
+lamport：https://zhuanlan.zhihu.com/p/187591961<br>
+premain | JVM级别的AOP：https://zhuanlan.zhihu.com/p/343282525<br>
+函数柯里化：https://zhuanlan.zhihu.com/p/35841424<br>
+带你认识JDK8中超nice的NativeMemoryTracking：https://zhuanlan.zhihu.com/p/573479279<br>
+非统一内存访问：https://baike.baidu.com/item/NUMA/6906025<br>
+CUDA 统一内存架构：https://blog.51cto.com/u_15015138/2554590<br>
+OceanBase简介及其与MySQL的比较：https://blog.csdn.net/fuzhongmin05/article/details/118196626<br>
+BPF 使用：https://davidlovezoe.club/wordpress/archives/1122<br>
+弹性分布式数据集：基于内存的集群计算的容错性抽象：https://fangmiao97.github.io/2019/04/13/tanslate-Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction%E2%80%93for-In-Memory-Cluster-Computing/<br>
+hotring：https://jiekun.dev/posts/hotring/<br>
+JDK新特性：https://mp.weixin.qq.com/s/IaUQrkxvaeEjujDe5-DVfA<br>
+AF_XDP在B站CDN节点QUIC网关的应用和落地：https://mp.weixin.qq.com/s/uPHVo-4rGZNvPXLKHPq9QQ<br>
+eBPF的简单使用：https://mp.weixin.qq.com/s/V-5k1mX5JRA0lWLXJ2AxpA<br>
+虚拟线程如何大幅提高系统吞吐量：https://mp.weixin.qq.com/s/yyApBXxpXxVwttr01Hld6Q<br>
+结构化并发：https://www.cnblogs.com/BlogNetSpace/p/17143748.html<br>
+虚拟线程：https://www.cnblogs.com/throwable/p/16758997.html<br>
+阿里的GCIH技术：https://www.cnblogs.com/zyf-yxm/p/13559528.html<br>
+M1 统一内存架构：https://www.eet-china.com/news/202108190817.html<br>
+M1 统一内存架构：https://www.eet-china.com/news/202109080900.html<br>
+阿里wisp：https://www.freesion.com/article/16861142213/<br>
+eBPF何以改变Linux：https://www.infoq.cn/article/5xvC1Ic6BdLQYju6YWV0<br>
+Java探针的实现和二次开发：https://www.infoq.cn/article/sLiRwa72fHzWvzC2HmKf<br>
+虚拟线程：大规模Java应用的新基石：https://www.infoq.cn/article/YaBqqD7fd6kX97GbhkGm<br>
+hotring：https://www.usenix.org/conference/fast20/presentation/chen-jiqiang<br>
+为什么GPU比CPU更适合人工智能计算？：https://www.zhihu.com/question/368546764/answer/2994320662<br>
+percolator：https://zhuanlan.zhihu.com/p/149377959<br>
+MassTree调研：https://zhuanlan.zhihu.com/p/271740123<br>
+持久内存：https://zhuanlan.zhihu.com/p/391089447<br>
+MassTree：https://zhuanlan.zhihu.com/p/410624085<br>
+Java8到Java17都更新了哪些内容：https://zhuanlan.zhihu.com/p/480293185<br>
+CUDA编程入门之统一内存：https://zhuanlan.zhihu.com/p/567915643<br>
+聊聊Apple处理器的统一内存寻址：https://zhuanlan.zhihu.com/p/574822683<br>
+精读论文Virtual-MemoryAssistedBufferManagement：https://zhuanlan.zhihu.com/p/611616867<br>
+ServiceMesh是什么：https://zhuanlan.zhihu.com/p/61901608<br>
+Java22HeapDump双阶段转储：https://zhuanlan.zhihu.com/p/652669897<br>
+roaring bitmap：https://blog.csdn.net/GGBOOMi/article/details/127576805<br>
+BlockingQueue（阻塞队列）详解：https://blog.csdn.net/qq_37774171/article/details/122742494<br>
+尺取法：https://zhuanlan.zhihu.com/p/31425915<br>
+MavenHelper教程&amp;包冲突解决：https://blog.csdn.net/cucgyfjklx/article/details/122681339<br>
+如何解决消息的乱序：https://blog.csdn.net/weixin_45583158/article/details/102694114<br>
+线程池打满问题：https://blog.csdn.net/wsmalltiger/article/details/124236055<br>
+NoSuchMethodError常见原因及解决方法：https://blog.csdn.net/xxscj/article/details/102695474/<br>
+唯一性索引与逻辑删除冲突问题解决思路：https://blog.csdn.net/YXXXYX/article/details/125546093<br>
+Linux下TCP延迟确认(DelayedAck)机制导致的时延问题分析：https://cloud.tencent.com/developer/article/1004356<br>
+堆外内存泄漏分析：https://juejin.cn/post/7267919941524389945<br>
+MySQL事务锁问题排查：https://juejin.cn/post/7282692942719615034<br>
+记录一次非常麻烦又磨人的调试...：https://mp.weixin.qq.com/s/0Mdzli8-tSXEVKNZblz8KA<br>
+MybatisPlus解决大数据量查询慢问题：https://mp.weixin.qq.com/s/49geeZHxoFzdkPm8ApALEA<br>
+踩到一个关于分布式锁的非比寻常的BUG：https://mp.weixin.qq.com/s/4xivwoVbgNOwdYhGaZgH-w<br>
+Redis中BigKey、HotKey的发现与处理：https://mp.weixin.qq.com/s/FPYE1B839_8Yk1-YSiW-1Q<br>
+太极限了，JDK的这个BUG都能被我踩到：https://mp.weixin.qq.com/s/gtPVs_FSgZGCb-mV3O2PBQ<br>
+一次倒在LRU上的经历：https://mp.weixin.qq.com/s/O2XkX5UNozHPVyehOCLvbw<br>
+一文讲透Redis分布式锁安全问题：https://mp.weixin.qq.com/s/O8o31rRBVL1DwK-JfmurRw<br>
+JDK有Bug：https://mp.weixin.qq.com/s/qzmlmiaPCkhGvCwyIULaVQ<br>
+隐藏了2年的Bug，终于连根拔起：https://mp.weixin.qq.com/s/T-ofFqYnRqAa4N48xnfqBQ<br>
+慢SQL是如何拖垮数据库的：https://mp.weixin.qq.com/s/XmPdG7E8xGXdZVBg7M81_w<br>
+@Async注解的坑：https://mp.weixin.qq.com/s/YV3Ih8IfJIRnA6Vxj62rig<br>
+记一次最近生产环境项目中发生的两个事故及处理方法：https://www.cnblogs.com/fulongyuanjushi/p/15866055.html<br>
+auto_increment的坑：https://www.cnblogs.com/moss_tan_jun/p/6909565.html<br>
+生产事故-记一次特殊的OOM排查：https://www.cnblogs.com/mylibs/p/production-accident-0002.html<br>
+为什么一段看似正确的代码会导致Dubbo线程池被打满：https://www.codetd.com/article/14366507<br>
+互联网公司MySQL数据库采用读已提交的隔离级别原因：https://www.ngui.cc/el/530591.html<br>
+线上问题定位：https://www.zhihu.com/column/c_1395671956256108544<br>
+舒服了，踩到一个关于分布式锁的非比寻常的BUG：https://zhuanlan.zhihu.com/p/509537142<br>
+一个关于异步编程中错误使用Future导致的生产问题复盘：https://zhuanlan.zhihu.com/p/597679268<br>
+这篇文章汇聚33个BUG！来挑战一下，看看你能找出来几个？：https://zhuanlan.zhihu.com/p/613554136<br>
+perf 性能分析实例：https://blog.csdn.net/sunshineywz/article/details/109044155<br>
+如何用火焰图进行Java性能分析：http://www.ibloger.net/article/3397.html<br>
+JMC：http://www.taodudu.cc/news/show-6331046.html?action=onClick<br>
+频繁分配释放内存导致的性能问题的分析：https://bbs.csdn.net/topics/330179712<br>
+设置JVM堆比例：https://blog.csdn.net/c_daofeng/article/details/122110372<br>
+C10K：https://blog.csdn.net/chinawangfei/article/details/102780959<br>
+FullGC触发条件：https://blog.csdn.net/Hollake/article/details/90484027<br>
+泛化调用：https://blog.csdn.net/hxy_lbj/article/details/115141677<br>
+CMSFullGC阈值：https://blog.csdn.net/insomsia/article/details/91802923<br>
+log_info：https://blog.csdn.net/jiang18238032891/article/details/115832280<br>
+Java定位CPU负载高的代码：https://blog.csdn.net/m0_37787662/article/details/128972019<br>
+log_info：https://blog.csdn.net/maoyeqiu/article/details/119456270<br>
+Mybatis批量插入优化：https://blog.csdn.net/moshowgame/article/details/122226553<br>
+Arthas保姆级教程：https://blog.csdn.net/qq_45443475/article/details/127305299<br>
+Mac查看系统负载：https://blog.csdn.net/sinat_33718563/article/details/122072591<br>
+一次简单的JVM调优，性能提升了15%：https://cloud.tencent.com/developer/article/1829759<br>
+ApacheBenchmark压测实例：https://cloud.tencent.com/developer/article/1929748<br>
+实践了5千万的数据表和重建索引：https://developer.aliyun.com/article/848375<br>
+log_info：https://didispace-wx.blog.csdn.net/article/details/119336759<br>
+JFR：https://juejin.cn/post/6959405798556434440<br>
+CMS + ParNew 总结：https://juejin.cn/post/6959961290001350693<br>
+设置JVM堆比例：https://juejin.cn/post/7084224032824328223<br>
+JVMGC：https://mp.weixin.qq.com/s/_AKQs-xXDHlk84HbwKUzOw<br>
+深入浅出解析JVM中的Safepoint：https://mp.weixin.qq.com/s/<em>Khj3Qa2MZBN9718KhVp0w<br>
+把FullGC40次/天优化为10天1次：https://mp.weixin.qq.com/s/Aivcu3qXC-gMfxJeUktsQA<br>
+ZGC的系统实践：https://mp.weixin.qq.com/s/dbnNS2KONdPKRp1A_1FU0A<br>
+JVM面试：https://mp.weixin.qq.com/s/FEPtidbx7WKz6LbhoerRcA<br>
+如果你也会这样调试：https://mp.weixin.qq.com/s/fjMCG17u6EC97A7oSqMSjQ<br>
+CPU调频、线程绑核、优先级控制实践：https://mp.weixin.qq.com/s/H6IghIVzPCMYhzQcdzwxLQ<br>
+这玩意儿都能优化？果然是细节都在魔鬼里：https://mp.weixin.qq.com/s/hvR39KcRk5BVPJSXT2pJMQ<br>
+数据库性能优化八大方案：https://mp.weixin.qq.com/s/jS0VnaKGrJhXVPlq9lx--A<br>
+线上GC突然飙升，BAT大佬五分钟定位到问题：https://mp.weixin.qq.com/s/NC1zY60t4SfWG2oXn9JLdA<br>
+StopTheWorld是何时发生的？：https://mp.weixin.qq.com/s/nJuV7ViuntcxxL-vZi24xg<br>
+如何正确获取容器的CPU利用率：https://mp.weixin.qq.com/s/nKedQRFxmIgPBxtlIJasZw<br>
+JVM内存大对象监控和优化实践：https://mp.weixin.qq.com/s/qfsY7fk</em>-rMdXPGYb766PA<br>
+CMS问题解决思路：https://mp.weixin.qq.com/s/RFwXYdzeRkTG5uaebVoLQw<br>
+JVM调优思路：https://mp.weixin.qq.com/s/RWVV80vLYmQKRmObIcHPTg<br>
+聊聊高并发：https://mp.weixin.qq.com/s/wQxVeP64Qf46Plyw3vQQWw<br>
+一次JVMGC长暂停的排查过程：https://mp.weixin.qq.com/s/XgoDkkcpZyP6XzKE-cQboQ<br>
+火焰图：https://segmentfault.com/a/1190000042419139<br>
+JVM调优：https://www.51cto.com/article/695889.html<br>
+MySQL如何进行索引重建操作？：https://www.cnblogs.com/kerrycode/p/11706730.html<br>
+如何查看GC日志：https://www.cnblogs.com/klvchen/articles/11841337.html<br>
+MySQL 索引重建：https://www.cnblogs.com/liuchd/p/13278022.html<br>
+呕血回顾一次提高接口并发的经历：https://www.cnblogs.com/ljy-1471914707/p/17725280.html<br>
+JVM深入学习：https://www.cnblogs.com/mazhimazhi/p/15131492.html<br>
+arthas教程：https://www.cnblogs.com/michael-xiang/p/10777756.html<br>
+Linux查看CPU和内存使用情况：https://www.cnblogs.com/xd502djj/archive/2011/03/01/1968041.html<br>
+JVM性能分析工具Jprofiler：https://www.cnblogs.com/xfeiyun/p/15597650.html<br>
+火焰图：https://www.cnblogs.com/xuxh120/p/15990446.html<br>
+Linux查看系统负载：https://www.cnblogs.com/ysgs1995/p/13872936.html<br>
+火焰图：https://www.infoq.cn/article/a8kmnxdhbwmzxzsytlga<br>
+C4垃圾回收算法：https://www.jianshu.com/p/8b384a841626<br>
+火焰图：https://www.ruanyifeng.com/blog/2017/09/flame-graph.html<br>
+JFR：https://www.zhihu.com/column/c_1264859821121355776<br>
+ZGC原理是什么，它为什么能做到低延时：https://www.zhihu.com/question/287945354/answer/2892974083<br>
+为什么JVM开启指针压缩后支持的最大堆内存是32G?：https://www.zhihu.com/question/365436606/answer/2317862899<br>
+Javaheapsize为什么不建议设置大于32G：https://www.zhihu.com/question/435678596/answer/3211499170<br>
+怎么看澳国立和谷歌联名发表的新的低延时、高吞吐的javaGC策略？：https://www.zhihu.com/question/529975824/answer/2461127150<br>
+从微秒到纳秒：https://zhuanlan.zhihu.com/p/365905187<br>
+JVM的指针压缩：https://zhuanlan.zhihu.com/p/491684586<br>
+Redis内存优化在vivo的探索与实践：https://zhuanlan.zhihu.com/p/506470564<br>
+Java的反射调用性能很低吗?：https://zhuanlan.zhihu.com/p/55075493<br>
+介绍几个JVM性能调优工具：https://zhuanlan.zhihu.com/p/551301967<br>
+JDK序列化原理及Fury高度兼容的极致性能实现：https://zhuanlan.zhihu.com/p/589714699<br>
+Linux性能分析工具perf和火焰图使用方法：https://zhuanlan.zhihu.com/p/623190735<br>
+全网最硬核JVM内存解析（上）：https://zhuanlan.zhihu.com/p/624821042<br>
+程序员性能之道，从使用perf开始！：https://zhuanlan.zhihu.com/p/638791429<br>
+当小白遇到FullGC：https://zhuanlan.zhihu.com/p/651780779<br>
+使用mtrace追踪JVM堆外内存泄露：https://zhuanlan.zhihu.com/p/658031926<br>
+什么是深堆和浅堆：https://zhuanlan.zhihu.com/p/658077995<br>
+JavaGC日志可导致整个JVM服务卡顿：https://zhuanlan.zhihu.com/p/658474470</p>
+<p>浏览器渲染原理与弹幕：https://mp.weixin.qq.com/s/QLeqqSmLgZxy82m9fC7Cig<br>
+爬虫与反爬-接口安全的风控介绍：https://mp.weixin.qq.com/s/Qu4yIEiLK2HVrIiQZVTP0w<br>
+热点检测治理：https://mp.weixin.qq.com/s/C8CI-1DDiQ4BC_LaMaeDBg<br>
+B站千亿级点赞系统服务架构设计：https://mp.weixin.qq.com/s/4T_S7nR8-HXJ59IbK4FBWQ<br>
+账号多租户架构升级与落地实践：https://mp.weixin.qq.com/s/7I6q07wVNMJ6UhFWzmKN_g<br>
+RoaringBitMap在B站大数据中的应用：https://mp.weixin.qq.com/s/hZsZoaMfEo3G51OLv2keyQ<br>
+B站标签系统建设实践：https://mp.weixin.qq.com/s/fw7mfhsLo-l3VOXYZL_CCQ<br>
+你是怎么从数据包看出MTU异常的：https://mp.weixin.qq.com/s/11BkPO2FN6EJoQMtiOprtQ<br>
+网络性能调试工具：https://mp.weixin.qq.com/s/IuVgNVRpyMEAB1lM7wTmFw<br>
+我们是这样崩的：https://mp.weixin.qq.com/s/nGtC5lBX_Iaj57HIdXq3Qg<br>
+资源隔离技术之CPU隔离：https://mp.weixin.qq.com/s/q-O2L-6_DMwhjCjGVAvmrg<br>
+哔哩哔哩内网 DNS 实践：https://mp.weixin.qq.com/s/iAPjhBlbusFLlFVUN4OLaA<br>
+B站流程引擎设计与实践：https://mp.weixin.qq.com/s/kDWpJ-Zu96cWW0yGCSbXUQ<br>
+竟然是&quot;你&quot;偷走了那0.001的服务可用性：https://mp.weixin.qq.com/s/-C-wIjkKM7N1M7fcCd7HSQ<br>
+B站动态outbox本地缓存优化：https://mp.weixin.qq.com/s/ov1UPkhjIti0QuHdxm2t9Q<br>
+千万长连消息系统：https://www.bilibili.com/opus/919363528131870775<br>
+广告增量实时索引构建实践：https://mp.weixin.qq.com/s/B9BFOLam5OXCYnimqInqpQ<br>
+重构国内游戏账号登录系统的思考和实践：https://mp.weixin.qq.com/s/ZL1fsBQUlCRKE0nEQm8Msg</p>
+<p>你知道Java类是如何被加载的吗？：https://mp.weixin.qq.com/s/q1ecT-4lprVzwQRrSqlU7g<br>
+浅析JVM方法解析、创建和链接：https://mp.weixin.qq.com/s/Hx8zi6mY7ELFOskjBiBKwA<br>
+记一次神奇的崩溃：https://mp.weixin.qq.com/s/vMlK7oIQH62VV6qHSPHnQQ<br>
+业务系统架构实践总结：https://mp.weixin.qq.com/s/pNfC7klCZTKhXwC4t5V7BA<br>
+一次访问Redis延时高问题排查与总结：https://mp.weixin.qq.com/s/trbGNYZPEfzaAMz6kZ_YKg<br>
+读写扩散的概念与实践：https://mp.weixin.qq.com/s/abnS5dqgZVv1oRwsy_sjEQ<br>
+如何做好高效高质量的价值交付：https://mp.weixin.qq.com/s/fAb37qTbBZWmMEJ3b1ANgg<br>
+Java中保持扩展性的几种套路和实现：https://mp.weixin.qq.com/s/F42LqQncMDLQH-WWmZ28fA<br>
+线程操纵术之更优雅的并行策略：https://mp.weixin.qq.com/s/wPoMlevdB5lEHVQKERPNDw<br>
+业务单据进行领域驱动设计的最佳实践：https://mp.weixin.qq.com/s/gEiiGL-qN87nr_a9X9vkkA<br>
+兼顾性能的数据倾斜处理新姿势：https://mp.weixin.qq.com/s/VGgT1faRKGnUuQ-HHQ3Q5g<br>
+一文详解长连接黑洞重现和分析：https://mp.weixin.qq.com/s/VSRU_VtR7NDiSnNod-7u1g<br>
+什么？for循环也会出问题？：https://mp.weixin.qq.com/s/F996MB4LUkPulQa4FZx07Q<br>
+深入探讨Java的分层编译：https://mp.weixin.qq.com/s/ZNNyRrjjLlaeepuUByqaGQ<br>
+一不小心掉入了 Java Interface 的陷阱：https://mp.weixin.qq.com/s/KB5bo10LPkJJqnOJUc2fpw<br>
+Java Agent 实战：https://mp.weixin.qq.com/s/mX7v5lgfC7JXj-X6xUE3hw<br>
+Stream原理与执行流程探析：https://mp.weixin.qq.com/s/UGWoRO5-pFB0p01mc73wLA<br>
+深入探索MySQL索引策略：https://mp.weixin.qq.com/s/XpukKx9Ovl4bqil8cNDP0g<br>
+MySQL 8.0：filesort 性能退化的问题分析：https://mp.weixin.qq.com/s/qYkyzD79nQuNGe59M2wWgg<br>
+内核网络小白之故障寻踪记：https://mp.weixin.qq.com/s/Gk6jAEApXH1BKfMkCIXd5A<br>
+我是如何通过火焰图分析让应用CPU占用下降近20%的：https://mp.weixin.qq.com/s/Xx7mfv2rluaYf-Eu91YPyQ<br>
+MySQL 是怎么做并发控制的？：https://mp.weixin.qq.com/s/EjKtAj9H6KpuRlWAfoLYSA<br>
+通过实验深入了解 TCP 数据的发送和接收：https://mp.weixin.qq.com/s/6MlebbExo3GVhj554J7Vnw<br>
+二级缓存架构极致提升系统性能：https://mp.weixin.qq.com/s/R_Qg0N46OkFm_eLAq_UZLw<br>
+一文详解Java泛型设计：https://mp.weixin.qq.com/s/VbkzJb45EPFY3Yu_iSQ25A<br>
+如何让SQL跑快一点？：https://mp.weixin.qq.com/s/Gr3yk7J1XSe6QCmPmvIjWg<br>
+分库分表扩容如何实现平滑数据迁移？：https://mp.weixin.qq.com/s/Lg1HF1FmD44roo8_H5aaDQ</p>
+<p>你管这破玩意叫网络：https://mp.weixin.qq.com/s/dCQqDyFMaXgQycidNB4G5g<br>
+你管这破玩意儿叫TCP：https://mp.weixin.qq.com/s/RsuuaC61b97-IM78kYRlIw<br>
+你管这破玩意叫计算机：https://mp.weixin.qq.com/s/RdYUAaixGs-76SKths8Y5A<br>
+高性能调度系统设计总结：https://mp.weixin.qq.com/s/fAzH8SOWnocshMX3CB6OMw<br>
+Linux内存变低会发生什么问题：https://mp.weixin.qq.com/s/c2y36IH-4mRwhR-xvvdqGw<br>
+深入理解Linux的TCP三次握手：https://mp.weixin.qq.com/s/LIeb5DwMS6RS2YhEw47GDA<br>
+没有二十年功力，写不出这一行“看似无用”的代码！：https://mp.weixin.qq.com/s/AhoTKmXfRW0RDC3rS5SZcw<br>
+得物App弱网诊断探索之路：https://mp.weixin.qq.com/s/Q0gy_Tf2ZMVlvMd8A8v4ag<br>
+new ArrayList 不当导致 CPU 飙升：https://mp.weixin.qq.com/s/DUqgK2O_qewGiVQ0EPB-Mg<br>
+关于 Redis 内存泄漏：https://mp.weixin.qq.com/s/mlLr5RxDMH9d8HwwHQlGww<br>
+MySQL慢 SQL：https://mp.weixin.qq.com/s/oxhcJx-H8niP2IsXAxFyOw<br>
+Redis最佳实践：https://mp.weixin.qq.com/s/1TyZsAMPR83UvcqJ4tTPxg<br>
+内存页面迁移技术：https://mp.weixin.qq.com/s/bX38J4dZyNNAmfiRkfdJWQ<br>
+zRAM 内存压缩机制：https://mp.weixin.qq.com/s/pXKk2VzrZogVbqdv4b4eNw<br>
+记一次 MySQL 主从同步异常的排查记录：https://mp.weixin.qq.com/s/18eVJ9U1MlP-Ir5NpTGzaA<br>
+硬核 JVM 压缩指针详解：https://mp.weixin.qq.com/s/4jDAjUZzPkCUQe6uagiLQw<br>
+深入解析 Redis 执行命令流程：https://mp.weixin.qq.com/s/yQ3x2oCN7k98BtLq7mg5AQ<br>
+衡量CPU利用率的更好方法：https://mp.weixin.qq.com/s/n1VoY7SlvaBttoeRXRnzPA<br>
+一次性讲清楚「连接池获取连接慢」的所有原因：https://mp.weixin.qq.com/s/JDPZcFEQWaA--SVCVh2caQ<br>
+一口气看完43个关于 ElasticSearch 的使用建议：https://mp.weixin.qq.com/s/Gsa1rPVISjOdVteol78EoA<br>
+一次订单系统重构实践：https://mp.weixin.qq.com/s/7GOn0d7IzLuzziyToPSVFQ<br>
+记一次 CountDownLatch 使用和线上踩坑：https://mp.weixin.qq.com/s/gMP0HwNORZU3wVXsL72GxA<br>
+Redis为什么使用哈希槽而不用一致性哈希：https://mp.weixin.qq.com/s/eAKEsH5FJu31IJ9JYb4S4w<br>
+TCP经典异常问题探讨与解决：https://mp.weixin.qq.com/s/KelITBqxYplQrTJLAmt6XA<br>
+一条Redis命令是如何执行的？：https://mp.weixin.qq.com/s/DZGAeA_LPS5RzxvmtqXawQ<br>
+MySQL日志15连问，你能抗住嘛？：https://mp.weixin.qq.com/s/YBLcpIEmi-yyiTWtBqBSJA<br>
+说下10个高级的 SQL 查询技巧：https://mp.weixin.qq.com/s/CInDcoelrxX1D4qozljWKQ<br>
+MySQL 给数据表增加一列，一定会锁表吗？：https://mp.weixin.qq.com/s/r7XLZ0GONMrUwl8P61LbjQ<br>
+Async-fork解读与Redis实战：https://mp.weixin.qq.com/s/uEdP6wQmENztkO1uX0NtqQ<br>
+Mysql很慢，除了索引，还能因为什么？：https://mp.weixin.qq.com/s/lVWE41BXtKEY4dOi99IuEw</p>
+<p>Redis Cluster Pipeline导致的死锁问题：https://mp.weixin.qq.com/s/Jpo2qqe36QdjY5_jOG8bww<br>
+RocksDB 在 vivo 消息推送系统中的实践：https://mp.weixin.qq.com/s/Ejc1Iqc9zgzaZVsxDn-ZYA<br>
+vivo全球商城：电商交易平台设计：https://mp.weixin.qq.com/s/YDPZi1D8EDtv-C72_LRsog<br>
+vivo全球商城：库存系统架构设计与实践：https://mp.weixin.qq.com/s/tABKHwoN6PCaB5UT7OaoDQ<br>
+MySQL 5.7 DDL 与 GH-OST 对比分析：https://mp.weixin.qq.com/s/YFpKp4Y1s6ITdaMLSE66Ow<br>
+数据特征采样在 MySQL 同步一致性校验中的实践：https://mp.weixin.qq.com/s/0HnZczdCynmppHCHebgQJQ<br>
+海量数据处理利器 Roaring BitMap 原理介绍：https://mp.weixin.qq.com/s/aNHXKHNViWchWKcyRxjOIg<br>
+TimeWheel 算法介绍及在应用上的探索：https://mp.weixin.qq.com/s/dopgOC5zdvyoy5phjAlH3A</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/java-wang-luo-bian-cheng-zhong-de-yi-xie-gai-nian/">
+              <h3 class="post-title">
+                下一篇：【W08/2024】Java 网络编程中的一些概念
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

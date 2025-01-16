@@ -1,0 +1,491 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W08/2024】Java 网络编程中的一些概念 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W08/2024】Java 网络编程中的一些概念</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-02-22</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>这篇文章简单介绍一些在 Java 网络编程中，经常遇到的一些概念，比如 Socket、Select、Selector 等，避免在具体使用它们的时候，混淆它们的作用。</p>
+<!-- more -->
+<h3 id="socket">Socket</h3>
+<h4 id="介绍">介绍</h4>
+<p>Socket 就是 TCP/IP 协议的编程模型，通过一系列 API 来访问操作系统的网络协议栈，从而建立 TCP 连接，发送或接收数据。</p>
+<p>传统意义上是类似于文件描述符的存在形式，是一种抽象的资源定位，即进程端口资源。</p>
+<p>一个程序启动后，有 pid 文件标识锁定该运行的程序。<br>
+一个文件打开后，在进程中有一个 fd 标识着它。<br>
+一个进程占用了一个端口，并建立相关协议的通信，由 socket 标识着它。</p>
+<h4 id="例子">例子</h4>
+<p>服务端</p>
+<pre><code class="language-java">public class Server {
+  public static void main(String[] args) {
+    try {
+      // 创建ServerSocket并绑定端口
+      ServerSocket serverSocket = new ServerSocket(8888);
+      System.out.println(&quot;Server started, waiting for client...&quot;);
+
+      // 监听客户端连接
+      Socket clientSocket = serverSocket.accept();
+      System.out.println(&quot;Client connected: &quot; + clientSocket.getInetAddress());
+
+      // 获取输入流和输出流
+      InputStream inputStream = clientSocket.getInputStream();
+      OutputStream outputStream = clientSocket.getOutputStream();
+
+      // 读取客户端发送的数据
+      byte[] buffer = new byte[1024];
+      int length = inputStream.read(buffer);
+      String message = new String(buffer, 0, length);
+      System.out.println(&quot;Received message from client: &quot; + message);
+
+      // 向客户端发送数据
+      String response = &quot;Hello, client! TCP！&quot;;
+      outputStream.write(response.getBytes());
+
+      // 关闭连接
+      clientSocket.close();
+      serverSocket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre>
+<p>客户端</p>
+<pre><code class="language-java">public class Client {
+  public static void main(String[] args) {
+    try {
+      // 创建Socket并连接服务器
+      Socket socket = new Socket(&quot;localhost&quot;, 8888);
+      System.out.println(&quot;Connected to server: &quot; + socket.getInetAddress());
+
+      // 获取输入流和输出流
+      InputStream inputStream = socket.getInputStream();
+      OutputStream outputStream = socket.getOutputStream();
+
+      // 向服务器发送数据
+      String message = &quot;Hello, server! TCP!&quot;;
+      outputStream.write(message.getBytes());
+
+      // 读取服务器返回的数据
+      byte[] buffer = new byte[1024];
+      int length = inputStream.read(buffer);
+      String response = new String(buffer, 0, length);
+      System.out.println(&quot;Received message from server: &quot; + response);
+
+      // 关闭连接
+      socket.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre>
+<h4 id="tcpdump">tcpdump</h4>
+<pre><code class="language-shell">// 三次握手
+22:07:38.042234 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [S], seq 3851306320, win 65535, options [mss 16344,nop,wscale 6,nop,nop,TS val 496650245 ecr 0,sackOK,eol], length 0
+22:07:38.042243 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [S], seq 3851306320, win 65535, options [mss 16344,nop,wscale 6,nop,nop,TS val 496650245 ecr 0,sackOK,eol], length 0
+22:07:38.042353 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [S.], seq 3003959104, ack 3851306321, win 65535, options [mss 16344,nop,wscale 6,nop,nop,TS val 1229281786 ecr 496650245,sackOK,eol], length 0
+22:07:38.042357 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [S.], seq 3003959104, ack 3851306321, win 65535, options [mss 16344,nop,wscale 6,nop,nop,TS val 1229281786 ecr 496650245,sackOK,eol], length 0
+22:07:38.042374 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 1, win 6379, options [nop,nop,TS val 496650245 ecr 1229281786], length 0
+22:07:38.042376 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 1, win 6379, options [nop,nop,TS val 496650245 ecr 1229281786], length 0
+22:07:38.042389 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 1, win 6379, options [nop,nop,TS val 1229281786 ecr 496650245], length 0
+22:07:38.042391 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 1, win 6379, options [nop,nop,TS val 1229281786 ecr 496650245], length 0
+// 通信
+22:07:38.043893 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [P.], seq 1:20, ack 1, win 6379, options [nop,nop,TS val 496650247 ecr 1229281786], length 19
+22:07:38.043907 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [P.], seq 1:20, ack 1, win 6379, options [nop,nop,TS val 496650247 ecr 1229281786], length 19
+22:07:38.043920 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 20, win 6379, options [nop,nop,TS val 1229281788 ecr 496650247], length 0
+22:07:38.043926 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 20, win 6379, options [nop,nop,TS val 1229281788 ecr 496650247], length 0
+22:07:38.044294 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [P.], seq 1:22, ack 20, win 6379, options [nop,nop,TS val 1229281789 ecr 496650247], length 21
+22:07:38.044304 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [P.], seq 1:22, ack 20, win 6379, options [nop,nop,TS val 1229281789 ecr 496650247], length 21
+22:07:38.044318 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 22, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+22:07:38.044325 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 22, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+// 四次挥手
+22:07:38.044630 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [F.], seq 22, ack 20, win 6379, options [nop,nop,TS val 1229281789 ecr 496650248], length 0
+22:07:38.044636 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [F.], seq 22, ack 20, win 6379, options [nop,nop,TS val 1229281789 ecr 496650248], length 0
+22:07:38.044644 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 23, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+22:07:38.044647 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [.], ack 23, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+22:07:38.044650 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [F.], seq 20, ack 23, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+22:07:38.044652 IP localhost.63836 &gt; localhost.ddi-tcp-1: Flags [F.], seq 20, ack 23, win 6379, options [nop,nop,TS val 496650248 ecr 1229281789], length 0
+22:07:38.044664 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 21, win 6379, options [nop,nop,TS val 1229281789 ecr 496650248], length 0
+22:07:38.044666 IP localhost.ddi-tcp-1 &gt; localhost.63836: Flags [.], ack 21, win 6379, options [nop,nop,TS val 1229281789 ecr 496650248], length 0
+</code></pre>
+<p>解释</p>
+<blockquote>
+<ul>
+<li>22:07:38.044666 时间带有精确到微妙</li>
+<li>localhost.39870 &gt; localhost.9502 表示通信的流向，39870是客户端，9502是服务器端</li>
+<li>[S] 表示这是一个SYN请求</li>
+<li>[S.] 表示这是一个SYN+ACK确认包:</li>
+<li>[.] 表示这是一个ACT确认包， (client)SYN-&gt;(server)SYN-&gt;(client)ACT 就是3次握手过程</li>
+<li>[P] 表示这个是一个数据推送，可以是从服务器端向客户端推送，也可以从客户端向服务器端推</li>
+<li>[F] 表示这是一个FIN包，是关闭连接操作，client/server都有可能发起</li>
+<li>[R] 表示这是一个RST包，与F包作用相同，但RST表示连接关闭时，仍然有数据未被处理。可以理解为是强制切断连接</li>
+<li>win 4099 是指滑动窗口大小</li>
+<li>length 18指数据包的大小</li>
+</ul>
+</blockquote>
+<h3 id="nio">NIO</h3>
+<p>例子</p>
+<pre><code class="language-java">public class HttpServer {
+    public static void main(String[] args) throws IOException {
+        // 创建一个Selector
+        Selector selector = Selector.open();
+
+        // 创建一个ServerSocketChannel
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.socket().bind(new InetSocketAddress(8888));
+        serverSocketChannel.configureBlocking(false);
+
+        // 注册ServerSocketChannel到Selector，并监听连接事件
+        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+        while (true) {
+            // 阻塞等待就绪的事件
+            selector.select();
+
+            // 获取所有已就绪的事件
+            Set&lt;SelectionKey&gt; selectedKeys = selector.selectedKeys();
+            Iterator&lt;SelectionKey&gt; iterator = selectedKeys.iterator();
+
+            // 处理已就绪的事件
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+
+                if (key.isAcceptable()) {
+                    // 处理连接事件
+                    handleAccept(key);
+                } else if (key.isReadable()) {
+                    // 处理读取事件
+                    handleRead(key);
+                }
+            }
+        }
+    }
+
+    private static void handleAccept(SelectionKey key) throws IOException {
+        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+        SocketChannel clientChannel = serverChannel.accept();
+        clientChannel.configureBlocking(false);
+        clientChannel.register(key.selector(), SelectionKey.OP_READ);
+    }
+
+    private static void handleRead(SelectionKey key) throws IOException {
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        int bytesRead = clientChannel.read(buffer);
+        if (bytesRead == -1) {
+            clientChannel.close();
+            return;
+        }
+        buffer.flip();
+        String request = StandardCharsets.UTF_8.decode(buffer).toString();
+        System.out.println(&quot;request = &quot; + request);
+        // 处理HTTP请求
+        String response = &quot;HTTP/1.1 200 OK\r\n&quot;
+                + &quot;Content-Type: text/plain\r\n&quot;
+                + &quot;\r\n&quot;
+                + &quot;Hello, World!&quot;
+                + &quot;\r\n&quot;
+                + request;
+        ByteBuffer responseBuffer = StandardCharsets.UTF_8.encode(response);
+        clientChannel.write(responseBuffer);
+
+        clientChannel.close();
+    }
+}
+</code></pre>
+<p>从前面两个例子可以看出，对网络的读写其实是对文件（磁盘）的读写，或者优惠资盘的读写性能，使用内存缓冲区。</p>
+<ol>
+<li>
+<p>首先创建了一个Selector，并打开一个ServerSocketChannel，绑定到8888端口，并配置为非阻塞模式。然后我们将ServerSocketChannel注册到Selector上，监听连接事件（OP_ACCEPT）。</p>
+</li>
+<li>
+<p>在主循环中，我们使用<code>selector.select()</code>阻塞等待就绪的事件。一旦有事件就绪，我们获取已就绪的事件集合，并遍历处理每个事件。</p>
+</li>
+<li>
+<p>当有连接事件就绪时，我们调用<code>handleAccept()</code>方法处理连接事件，即接受客户端连接，并将客户端SocketChannel注册到Selector上，监听读取事件（OP_READ）。</p>
+</li>
+<li>
+<p>当有读取事件就绪时，我们调用<code>handleRead()</code>方法处理读取事件。在该方法中，我们使用ByteBuffer读取客户端发送的HTTP请求，并根据请求生成HTTP响应。最后，将响应写入客户端，并关闭连接。</p>
+</li>
+</ol>
+<h3 id="netty">Netty</h3>
+<p>Netty 是一个基于 Java NIO 用于开发高性能的异步事件驱动网络应用程序框架。</p>
+<pre><code class="language-java">public class ChatServer {
+    public static void main(String[] args) throws Exception {
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            serverBootstrap.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ChatServerHandler());
+                        }
+                    });
+
+            ChannelFuture channelFuture = serverBootstrap.bind(8888).sync();
+            channelFuture.channel().closeFuture().sync();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+    }
+
+    private static class ChatServerHandler extends SimpleChannelInboundHandler&lt;String&gt; {
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+            Channel incoming = ctx.channel();
+            System.out.println(&quot;Received message from &quot; + incoming.remoteAddress() + &quot;: &quot; + msg);
+            incoming.writeAndFlush(&quot;Server received: &quot; + msg + &quot;\n&quot;);
+        }
+
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            Channel incoming = ctx.channel();
+            System.out.println(&quot;Client &quot; + incoming.remoteAddress() + &quot; connected&quot;);
+        }
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+            Channel incoming = ctx.channel();
+            System.out.println(&quot;Client &quot; + incoming.remoteAddress() + &quot; disconnected&quot;);
+        }
+    }
+}
+</code></pre>
+<p>客户端</p>
+<pre><code class="language-java">package com.wei.netty.gpt.chat;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class ChatClient {
+    public static void main(String[] args) throws Exception {
+        NioEventLoopGroup group = new NioEventLoopGroup();
+
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer&lt;SocketChannel&gt;() {
+                        @Override
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new StringDecoder(), new StringEncoder(), new ChatClientHandler());
+                        }
+                    });
+
+            Channel channel = bootstrap.connect(&quot;localhost&quot;, 8888).sync().channel();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            while (true) {
+                String message = reader.readLine();
+                if (message == null || &quot;exit&quot;.equalsIgnoreCase(message)) {
+                    break;
+                }
+                channel.writeAndFlush(message + &quot;\n&quot;);
+            }
+
+            channel.closeFuture().sync();
+        } finally {
+            group.shutdownGracefully();
+        }
+    }
+
+    private static class ChatClientHandler extends SimpleChannelInboundHandler&lt;String&gt; {
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+            System.err.println(msg);
+        }
+    }
+}
+</code></pre>
+<h3 id="epoll">Epoll</h3>
+<p>epoll是Linux内核提供的一种高性能的事件通知机制，用于实现I/O多路复用。它是Linux内核2.6版本引入的一种新的I/O事件通知接口，相比于旧的select和poll机制，具有更好的性能和扩展性。</p>
+<p>epoll使用一个文件描述符来管理需要监视的I/O事件，通过epoll_ctl函数向内核注册需要监视的文件描述符和事件类型。当有文件描述符上的事件发生时，内核会将事件通知给应用程序。应用程序可以通过epoll_wait函数来等待事件的发生，一旦有事件发生，就可以进行相应的处理。</p>
+<p>epoll的主要特点包括：</p>
+<ol>
+<li>支持大量的并发连接：epoll使用红黑树和哈希表来管理文件描述符，可以高效地处理大量的并发连接。</li>
+<li>高效的事件通知：epoll采用事件驱动的方式，只有当事件发生时才会通知应用程序，避免了轮询的开销。</li>
+<li>边缘触发和水平触发：epoll提供了边缘触发（EPOLLET）和水平触发（EPOLLIN和EPOLLOUT）两种模式。边缘触发模式只通知应用程序一次，直到下次有新的事件发生。水平触发模式则会持续通知应用程序，直到事件被处理。</li>
+<li>零拷贝：epoll可以使用零拷贝技术，避免了数据在内核空间和用户空间之间的复制，提高了数据传输的效率。</li>
+</ol>
+<h4 id="tcp-epoll">TCP epoll</h4>
+<ol>
+<li>127.0.0.1:1234 -&gt; 127.0.0.1:8080，在监听端口号为 8080 的进程新建一个 Socket 套接字。</li>
+<li>新建后返回一个文件描述符。</li>
+<li>后续所有请求都是基于这个文件描述符所指向文件的IO读写。</li>
+<li>epoll_ctl函数监听这个文件描述符的IO读写。</li>
+<li>当有文件描述符上的事件发生时。</li>
+<li>内核通知应用程序。</li>
+<li>应用程序通过 epoll_wait 读取事件，进行相应的处理。</li>
+</ol>
+<h4 id="udp-epoll">UDP epoll</h4>
+<p>TCP 面向连接，有 epoll异步进行IO读写，那么UDP 有这种功能吗？也是有的，UDP 连接时也会创建一个 Socket，也会返回一个文件描述符，epoll 是根据这个文件描述符上的事件来响应，所以 UDP 也可以使用epoll的功能。</p>
+<p>UDP 会复用前面创建的 Socket 文件描述符吗？会的，文件描述符由IP，端口，事件类型指定，当是复用连接请求时，并不会新建一个Socket套接字。</p>
+<h3 id="selector">Selector</h3>
+<p>在Java NIO（New I/O）中，Selector是一个可用于多路复用的高效机制，用于管理多个通道（Channel）的I/O事件。它允许单个线程同时监视多个通道上的事件，当一个或多个通道上的事件发生时，该线程可以选择处理这些事件。</p>
+<p>Selector通过使用底层操作系统提供的机制（如epoll、kqueue等）来实现高效的事件通知。它基于事件驱动的模型，当一个或多个通道上的事件发生时，Selector将通知应用程序，应用程序可以根据事件的类型进行相应的处理。</p>
+<h4 id="io-多路复用">IO 多路复用</h4>
+<p>IO：IO 系统</p>
+<p>多路：多个网络连接</p>
+<p>复用：一个或有限个线程</p>
+<h4 id="selector-java-应用的多路复用">Selector Java 应用的多路复用？</h4>
+<p>是的</p>
+<p>通过Selector，Java应用程序可以将多个通道（Channel）注册到Selector上，在一个线程中同时监视多个通道的I/O事件，避免了为每个通道创建一个线程的开销。并指定所关注的事件类型，如读取、写入等。然后，应用程序可以通过调用Selector的select()方法来阻塞等待事件的发生。当有事件发生时，select()方法将返回，并返回就绪的通道集合。</p>
+<h4 id="select-内核的多路复用">select 内核的多路复用？</h4>
+<p>是</p>
+<p>在内核中，select函数会遍历所有被监视的文件描述符，检查每个文件描述符的状态。如果某个文件描述符上有事件发生，即满足了所关注的事件类型，select函数会将该文件描述符标记为就绪状态，并将其添加到返回的结果集中。应用程序可以通过遍历结果集获取到就绪的文件描述符和具体的事件信息。</p>
+<h4 id="结论">结论</h4>
+<p>很明显，select、poll、epoll 都是 IO 多路复用，也是是一种 IO 事件的通知方式（中断？），多路复用 IO多路复用常常与 Reactor、Proctor）一起介绍，这几个概念常常会混淆，epoll 与 应用层的 Selector 组合，通过各种线程模型处理，一起实现高效的网络模型。</p>
+<blockquote>
+<p>ChatGPT：</p>
+<p>Java的Selector也是通过底层的机制实现多路复用。具体来说，Java的Selector会利用底层操作系统提供的机制（如epoll、kqueue等）来实现高效的事件监视和通知。它会将需要监视的通道注册到内核的文件描述符集合中，并通过底层机制等待事件的发生。一旦有事件发生，内核会将事件通知给Java的Selector，然后 Java 的 Selector 再通过相应的方法将事件通知给应用程序。</p>
+</blockquote>
+<p>Netty 中怎么体现内核对网络的读写？</p>
+<p>Dubbo 从内核到应用的数据是怎么读写的？</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w72024-dubbo-diao-yong-liu-cheng-shu-li-cao-gao/">
+              <h3 class="post-title">
+                下一篇：【W07/2024】Dubbo 调用流程源码简要梳理
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W41/2024】Golang 学习笔记 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W41/2024】Golang 学习笔记</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-10-12</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>前段时间准备了一次 Golang 的面试，整理了一些 Golang 的学习笔记。</p>
+<!-- more -->
+<h4 id="map-的查找过程是什么样的">map 的查找过程是什么样的？</h4>
+<p>在 Go 中，map 是一种哈希表（hash table）的实现，能够高效地实现键值对的存储和查找。Go map 的查找过程涉及哈希计算、桶（bucket）的查找以及具体的键值匹配。具体流程如下：</p>
+<p><strong>Go map 的查找过程</strong></p>
+<p>​	1.	<strong>计算哈希值</strong>：当使用某个键（key）查找 map 中的值时，首先对这个键进行哈希运算。Go 会根据键的类型调用相应的哈希函数，生成该键的哈希值。这个哈希值决定了键值对在哈希表中的位置。</p>
+<p>​	2.	<strong>定位桶（bucket）</strong>：Go map 的内部存储结构是一个哈希桶数组，每个桶可以存放多个键值对。使用哈希值来计算目标桶的位置。具体来说，Go 根据哈希值的低位决定数据应该放在哪个桶中。例如，假设有 N 个桶，Go 会取哈希值的后几位（hash % N）来定位桶的位置。</p>
+<p>​	3.	<strong>在桶内查找</strong>：每个桶内可以存放多个键值对。Go 会在桶内部逐一比较键的哈希值和实际值，来查找目标键。如果桶内有多个键值对，Go 会遍历桶内的所有键，依次比较它们的哈希值是否相同。<strong>如果哈希值相同</strong>：再进行键的逐字节比较，确认是不是相同的键。	<strong>如果哈希值不同</strong>：直接跳过。<strong>找到值或报告不存在</strong>：</p>
+<p>​	•	如果找到了匹配的键，就返回该键对应的值。</p>
+<p>​	•	如果遍历完桶后，没有找到匹配的键，说明 map 中没有这个键，返回零值或 ok 为 false。</p>
+<p><strong>桶的设计</strong></p>
+<p>​	•	每个桶中不仅存放键和值，还存放每个键的哈希值的高 8 位（top hash）。这样做是为了加速桶内部的查找，减少与键的逐字节比较。</p>
+<p>​	•	如果某个桶过于满或频繁冲突，Go map 会触发扩容（rehashing），这时会重新分配更多的桶，并将键值对重新分布到新的桶中。</p>
+<p><strong>示例：map 的查找过程简图</strong></p>
+<p>假设有一个简单的 map：</p>
+<pre><code class="language-go">m := make(map[string]int)
+m[&quot;apple&quot;] = 10
+m[&quot;banana&quot;] = 20
+</code></pre>
+<p>当你执行 m[&quot;apple&quot;]：</p>
+<p>​	1.	<strong>哈希计算</strong>：对 &quot;apple&quot; 进行哈希运算，得到哈希值（假设为 12345678）。</p>
+<p>​	2.	<strong>定位桶</strong>：假设有 16 个桶，使用哈希值的低 4 位（12345678 % 16 = 14）来定位桶 14。</p>
+<p>​	3.	<strong>桶内查找</strong>：在桶 14 内查找，找到键 &quot;apple&quot;，并进行逐字节比较确认。</p>
+<pre><code>4.	**返回值**：查找到 &quot;apple&quot; 对应的值 10，返回结果。
+</code></pre>
+<h4 id="map-是怎么扩容的">map 是怎么扩容的？</h4>
+<h5 id="扩容的触发条件"><strong>扩容的触发条件</strong></h5>
+<p>​	1.	<strong>哈希表的装载因子（load factor）过高</strong>：装载因子表示哈希表中元素的平均密度。Go 的 map 默认会在装载因子接近 6.5 时进行扩容，降低桶内的存储密度，减少冲突。</p>
+<p>​	2.	<strong>哈希冲突过多</strong>：当一个桶及其溢出桶链上的元素数目变得过多时，会触发扩容操作。</p>
+<h5 id="扩容机制"><strong>扩容机制</strong></h5>
+<p><strong>1. 桶数量翻倍</strong>：每次 map 扩容时，哈希表的桶数量会翻倍。最初的桶数量是 2 的幂（例如 8、16、32…），扩容会让桶数量变为之前的 2 倍。</p>
+<p><strong>2. 重新分配哈希桶</strong>：扩容时，会为新的哈希表分配更多的桶，并将旧表中的所有键值对重新哈希并分配到新的桶中。扩容后，键值对可能会被重新分布到不同的桶中，这减少了每个桶内的冲突，减少了溢出桶的使用。</p>
+<p><strong>3. 渐进式扩容</strong>：为了避免一次性将所有键值对重新分配给新的桶，Go 的 map 采取了一种<strong>渐进式扩容</strong>（incremental rehashing）的策略。即在后续的读写操作中逐步迁移键值对，避免扩容时阻塞整个程序。<strong>渐进式扩容</strong>的过程如下：</p>
+<p>​	•	当扩容开始时，会在 map 中保留对旧桶数组和新桶数组的引用。</p>
+<p>​	•	每次写入新数据或读取某个键时，系统会将部分旧桶的数据重新哈希到新桶中，逐步完成扩容。</p>
+<p>​	•	当所有旧桶数据都被迁移完成后，旧桶数组会被释放。</p>
+<p><strong>4. 重新哈希</strong></p>
+<p>扩容后，系统会使用不同的哈希算法或通过增加更多的哈希位（由桶数量翻倍带来的高位变化）来重新计算每个键的哈希值，从而将键值对分散到新的桶中。</p>
+<p><strong>扩容过程的简单示例</strong></p>
+<p>假设我们有一个 map 存储了 10 个键值对，并且桶数量为 8。随着数据增长，系统决定扩容，增加桶的数量。</p>
+<pre><code class="language-go">m := make(map[string]int)
+m[&quot;apple&quot;] = 1
+m[&quot;banana&quot;] = 2
+m[&quot;cherry&quot;] = 3
+// ... 添加更多元素
+</code></pre>
+<p>​	1.	<strong>初始状态</strong>：哈希表有 8 个桶，每个桶存放部分键值对，当某些桶存储的数据过多或总量接近负载因子限制时，扩容触发。</p>
+<p>​	2.	<strong>扩容开始</strong>：系统分配 16 个新的桶，但并不会一次性将所有数据从旧桶迁移到新桶，而是逐步迁移。</p>
+<p>​	3.	<strong>渐进式迁移</strong>：在后续的每次读写操作中，部分旧桶的数据会被重新哈希到新的桶中。</p>
+<p>​	4.	<strong>扩容完成</strong>：所有旧桶的数据迁移完成后，系统释放旧桶，所有键值对重新分布到 16 个新的桶中。</p>
+<p><strong>示例：map 扩容代码演示</strong></p>
+<pre><code class="language-go">func main() {
+  m := make(map[int]int)
+  // 插入大量数据
+  for i := 0; i &lt; 20; i++ {
+    m[i] = i * 10
+    fmt.Printf(&quot;After inserting key %d, map size: %d\n&quot;, i, len(m))
+  }
+}
+</code></pre>
+<p>在这个例子中，当插入的数据量逐渐增加时，map 会触发扩容。Go 的 map 实现会自动管理桶的数量和扩容的过程，开发者不需要手动干预。</p>
+<h5 id="扩容的效果"><strong>扩容的效果</strong></h5>
+<p>​	•	扩容可以减少哈希冲突，提高查找性能。</p>
+<p>​	•	使用渐进式扩容避免了扩容时的卡顿，保证程序运行的平稳性。</p>
+<h4 id="map-的结构与读写原理">map 的结构与读写原理。</h4>
+<p>Go 中的 map 是一个哈希表结构，它允许通过键（key）来快速查找、插入和删除值（value）。map 的内部结构和读写原理紧密相关，主要围绕桶（bucket）和哈希函数展开。下面我将详细介绍 map 的内部结构及其读写的原理。</p>
+<p><strong>1. map 的结构</strong></p>
+<p>Go 的 map 由以下几个核心部分组成：</p>
+<p>​	•	<strong>哈希桶（bucket）</strong>：map 将所有键值对存储在桶中，每个桶存储多个键值对。桶的数量通常是 2 的幂次方，随着键值对数量的增加，哈希表会自动扩容，增加桶的数量。</p>
+<p>​	•	<strong>哈希函数</strong>：每个键在插入到 map 时都会经过哈希函数计算，生成一个哈希值。根据这个哈希值，系统会决定将这个键值对放入哪个桶。</p>
+<p>​	•	<strong>溢出桶（overflow bucket）</strong>：当一个桶中的元素过多时（通常是 8 个键值对），会使用溢出桶来存储额外的数据。</p>
+<p>​	•	<strong>键值对存储</strong>：每个桶存储多个键值对（最多 8 个），每个键值对由键、值和哈希值的高位构成。</p>
+<p><strong>2. map 的内部结构示意</strong></p>
+<pre><code class="language-go">type hmap struct {
+  count   int      // map中元素的个数
+  B     uint8     // 当前哈希桶数量的幂次
+  buckets  unsafe.Pointer // 指向哈希桶数组的指针
+  oldbuckets unsafe.Pointer// 指向旧哈希桶数组（扩容时使用）
+  ...
+}
+</code></pre>
+<p><strong>3. map 的读写原理</strong></p>
+<p><strong>（1）map 的写入原理</strong></p>
+<p>写入时的过程主要是通过哈希函数定位桶，并在桶中找到合适的位置存储键值对。</p>
+<p>​	1.	<strong>哈希值计算</strong>：通过对键进行哈希运算得到哈希值。</p>
+<p>hash := hashFunction(key)</p>
+<p>Go 的哈希函数将键转化为一个 32 位或 64 位的哈希值。</p>
+<p>​	2.	<strong>定位桶</strong>：根据哈希值的低位来确定键值对应该存储在哪个桶中。</p>
+<p>bucketIndex := hash &amp; (numBuckets - 1) // 使用低位决定桶的位置</p>
+<p>numBuckets 是当前桶的数量，它等于 2^B。</p>
+<p>​	3.	<strong>寻找空闲位置</strong>：在桶中寻找合适的空位存储键值对。如果桶已经满了，则会创建溢出桶来存储多余的键值对。</p>
+<p>​	4.	<strong>存储键值对</strong>：键值对连同哈希值的一部分被存储在桶中。</p>
+<p><strong>（2）map 的读取原理</strong></p>
+<p>读取 map 中的值时，系统也会通过哈希函数定位到键所在的桶，并在桶中查找键。</p>
+<p>​	1.	<strong>哈希值计算</strong>：和写入过程一样，首先通过哈希函数计算键的哈希值。</p>
+<p>​	2.	<strong>定位桶</strong>：使用哈希值的低位定位到键所在的桶。</p>
+<p>​	3.	<strong>遍历桶</strong>：在桶中找到对应的键，并返回它的值。如果在主桶中没有找到，可能需要遍历溢出桶。</p>
+<p>​	4.	<strong>哈希值对比</strong>：当找到对应的键时，系统会进行哈希值的高位对比，确保哈希冲突时能找到正确的键。</p>
+<p><strong>（3）map 的删除原理</strong></p>
+<p>删除时，系统会通过哈希值定位到键所在的桶，并将该键值对从桶中移除。</p>
+<p>​	1.	<strong>定位键</strong>：通过哈希值找到对应的桶，并在桶中遍历找到对应的键。</p>
+<p>​	2.	<strong>删除键值对</strong>：将该键值对从桶中移除，并调整桶中的其他键值对。</p>
+<p><strong>4. 溢出桶与扩容</strong></p>
+<p><strong>（1）溢出桶</strong></p>
+<p>当一个桶中的键值对过多（最多 8 个）时，系统会创建一个溢出桶。溢出桶的作用是将该桶无法容纳的键值对存储进去，保证哈希冲突时不会丢失数据。每个桶可以链式地连接多个溢出桶。</p>
+<p><strong>（2）扩容</strong></p>
+<p>当 map 中的键值对数量达到一定程度时（根据装载因子），系统会触发扩容操作，扩展桶的数量以减少冲突和溢出桶的使用。</p>
+<p>扩容时，map 会创建一个新的桶数组，大小是原来的两倍。接下来的操作会采用渐进式扩容的方式，每次读写时会逐步将旧桶中的键值对重新哈希并搬迁到新的桶中。</p>
+<p><strong>5. 并发安全性</strong></p>
+<p>Go 的 map 默认是<strong>非线程安全的</strong>，多个协程同时对同一个 map 进行读写操作会导致竞态条件，造成未定义行为。在多线程环境中使用 map 时，需要使用 sync.Map 或者手动加锁来保护并发读写操作。</p>
+<h4 id="闭包的作用">闭包的作用</h4>
+<p>闭包（Closure）是指一个函数和它的引用环境组合在一起的实体。在 Go 中，闭包是通过将函数和它所依赖的外部变量打包在一起，使得这些外部变量在函数调用时仍然可以被访问和修改。闭包的核心特点是<strong>函数可以捕获并“记住”它在定义时作用域中的变量</strong>，即使在函数外部或更晚的时候调用，这些变量仍然保持其最新的状态。</p>
+<p><strong>1. 闭包的定义与基本作用</strong></p>
+<p>在 Go 中，闭包通常是匿名函数，但匿名函数并不是必需的条件。闭包能够访问它被定义时作用域中的变量，即使该作用域已经退出。</p>
+<p><strong>闭包的例子：</strong></p>
+<pre><code class="language-go">func closureExample() func() int {
+  x := 10
+  return func() int {
+    x++    // 闭包可以访问并修改外部变量
+    return x  // 返回更新后的值
+  }
+}
+
+func main() {
+  closureFunc := closureExample()  // 创建闭包
+  fmt.Println(closureFunc())    // 输出：11
+  fmt.Println(closureFunc())    // 输出：12
+}
+</code></pre>
+<p>在这个例子中，closureExample 返回一个闭包。这个闭包可以访问并修改变量 x，即使函数 closureExample 已经返回并退出了。</p>
+<p><strong>2. 闭包的作用</strong></p>
+<p>闭包在编程中有很多作用：</p>
+<p>​	•	<strong>延迟计算</strong>：闭包可以将某些计算延迟到以后执行，比如回调函数等场景。</p>
+<p>​	•	<strong>数据封装</strong>：闭包可以用来封装状态或数据，外部无法直接访问这些数据，只有通过闭包提供的接口来操作。</p>
+<p>​	•	<strong>保持状态</strong>：闭包可以让一个函数“记住”某些信息，比如上面例子中的变量 x。</p>
+<p>​	•	<strong>高阶函数</strong>：闭包可以作为参数传递给其他函数，也可以作为返回值返回，实现更加灵活的函数组合。</p>
+<p><strong>3. 闭包的常见问题</strong></p>
+<p>虽然闭包很强大，但在使用闭包时也会面临一些常见问题：</p>
+<p><strong>（1）外部变量的共享</strong></p>
+<p>由于闭包会捕获外部变量的引用（而非拷贝），这意味着如果有多个闭包依赖于同一个外部变量，变量的状态会在不同闭包中共享，可能导致一些不可预测的结果。</p>
+<p>例子：</p>
+<pre><code class="language-go">func closureExample() []func() int {
+  funcs := []func() int{}
+  for i := 0; i &lt; 3; i++ {
+    funcs = append(funcs, func() int {
+      return i
+    })
+  }
+  return funcs
+}
+
+
+func main() {
+  closureFuncs := closureExample()
+  for _, f := range closureFuncs {
+    fmt.Println(f()) // 输出：3 3 3
+  }
+}
+</code></pre>
+<p>在这个例子中，我们可能期望输出是 0 1 2，但实际结果是 3 3 3。这是因为闭包捕获的是变量 i 的引用，而不是每次循环的值。当循环结束时，i 的值为 3，所有闭包访问的都是这个共享的 i。</p>
+<p>解决方案可以通过将变量的当前值传递给闭包：</p>
+<pre><code class="language-go">func closureExample() []func() int {
+  funcs := []func() int{}
+  for i := 0; i &lt; 3; i++ {
+    v := i // 将 i 的当前值赋给 v
+    funcs = append(funcs, func() int {
+      return v
+    })
+  }
+  return funcs
+}
+</code></pre>
+<p>现在输出结果将是 0 1 2。</p>
+<p><strong>（2）内存泄漏问题</strong></p>
+<p>闭包可能会延长某些变量的生命周期，导致这些变量在内存中驻留更长的时间，进而导致内存泄漏。如果闭包捕获了大量数据并且没有及时释放，这可能会导致内存问题。</p>
+<p><strong>4. 总结</strong></p>
+<p>​	•	<strong>闭包</strong> 是函数和其引用环境的结合，允许函数捕获外部变量并在以后使用。</p>
+<p>​	•	<strong>作用</strong>：闭包可以延迟计算、封装状态和数据、保持状态、支持高阶函数等。</p>
+<p>​	•	<strong>常见问题</strong>：</p>
+<p>​	•	捕获的是外部变量的引用，可能导致多个闭包共享同一个变量的状态，造成意外行为。</p>
+<p>​	•	使用不当可能会导致内存泄漏。</p>
+<h4 id="channel-的阻塞时机">channel 的阻塞时机。</h4>
+<p>​	•	发送到<strong>未缓冲的 channel</strong> 或 <strong>满缓冲的 channel</strong> 会导致阻塞，直到有接收者。</p>
+<p>​	•	从<strong>空的 channel</strong> 读取会导致阻塞，直到有数据可接收。</p>
+<p>​	•	通过 select 语句可以实现非阻塞的发送和接收操作。</p>
+<p>​	•	关闭 channel 后，接收操作不会阻塞，会返回零值和 false。</p>
+<h4 id="goroutine-会被阻塞吗">goroutine 会被阻塞吗？</h4>
+<p>goroutine 在某些情况下会被阻塞。虽然 Go 语言的 goroutine 是一种轻量级的并发机制，但它依然可能在等待某些操作时发生阻塞。以下几种常见场景下 goroutine 可能被阻塞：</p>
+<p><strong>1. 等待 channel 操作</strong></p>
+<p>当 goroutine 试图通过 channel 发送或接收数据时，如果没有匹配的接收者或发送者，它将被阻塞。</p>
+<p>​	•	<strong>发送操作阻塞</strong>：当向一个未缓冲的 channel 发送数据时，如果没有任何接收者准备好接收，发送操作将阻塞，直到有接收者接收数据。</p>
+<pre><code class="language-go">ch := make(chan int)
+
+go func() {
+  ch &lt;- 1 // 阻塞，直到有接收者
+}()
+&lt;-ch // 接收数据，解除阻塞
+</code></pre>
+<p>​	•	<strong>接收操作阻塞</strong>：同样地，如果接收方在尝试从 channel 中获取数据，而没有任何发送方在发送数据，接收操作将被阻塞，直到有数据到达。</p>
+<pre><code class="language-go">ch := make(chan int)
+
+go func() {
+  &lt;-ch // 阻塞，直到有发送者
+}()
+ch &lt;- 1 // 发送数据，解除阻塞
+</code></pre>
+<p><strong>2. 等待锁（Mutex、RWMutex 等）</strong></p>
+<p>在使用同步原语（例如 sync.Mutex 或 sync.RWMutex）时，goroutine 可能会被阻塞，等待其他 goroutine 释放锁。</p>
+<p>​	•	<strong>互斥锁阻塞</strong>：如果一个 goroutine 已经获取了锁，其他尝试获取同一把锁的 goroutine 将被阻塞，直到锁被释放。</p>
+<pre><code class="language-go">var mu sync.Mutex
+
+go func() {
+  mu.Lock()
+  time.Sleep(time.Second * 2)
+  mu.Unlock()
+}()
+
+go func() {
+  mu.Lock() // 被阻塞，直到上一个 goroutine 释放锁
+  mu.Unlock()
+}()
+</code></pre>
+<p><strong>3. 等待 sync.WaitGroup</strong></p>
+<p>goroutine 可能会被 sync.WaitGroup 阻塞，等待多个其他 goroutine 完成。</p>
+<pre><code class="language-go">var wg sync.WaitGroup
+wg.Add(1)
+go func() {
+  time.Sleep(time.Second)
+  wg.Done() // 完成一个任务
+}()
+</code></pre>
+<p>wg.Wait() // 阻塞，直到所有 goroutine 完成</p>
+<p><strong>4. 系统调用或 I/O 操作</strong></p>
+<p>当 goroutine 执行某些系统调用（例如文件 I/O、网络 I/O 等）时，它可能会被阻塞，直到操作完成。</p>
+<pre><code class="language-go">go func() {
+  file, _ := os.Open(&quot;example.txt&quot;)
+  defer file.Close()
+  buf := make([]byte, 100)
+  file.Read(buf) // 可能阻塞，等待文件读取完成
+}()
+</code></pre>
+<p><strong>5. 定时操作（time.Sleep 等）</strong></p>
+<p>使用 time.Sleep 等操作会让 goroutine 进入休眠状态，从而被阻塞一段时间。</p>
+<pre><code class="language-go">go func() {
+  time.Sleep(time.Second * 2) // 阻塞 2 秒
+}()
+</code></pre>
+<p>goroutine 虽然是并发执行的，但在某些情况下仍然可能被阻塞。常见的阻塞场景包括 channel 通信、锁操作、sync.WaitGroup、I/O 操作以及定时器操作等。避免阻塞或处理阻塞的关键在于合理使用 channel、同步原语，以及通过 select 等非阻塞方式来协调 goroutine 之间的通信。</p>
+<h4 id="goroutine-的溢出">goroutine 的溢出</h4>
+<p><strong>1. goroutine 泄漏</strong></p>
+<p>goroutine 泄漏是指程序中启动的 goroutine 未能正确终止，从而持续占用资源。goroutine 不会自动回收内存或释放资源，除非它的任务完成。如果大量的 goroutine 无法退出，它们会占用系统资源，最终可能导致内存耗尽。</p>
+<p><strong>常见的 goroutine 泄漏场景：</strong></p>
+<p>​	•	<strong>未关闭的</strong> channel：如果一个 goroutine 在等待一个永远不会关闭的 channel，它将永远阻塞，导致泄漏。</p>
+<pre><code class="language-go">func worker(ch &lt;-chan int) {
+  for val := range ch {
+    fmt.Println(val)
+  }
+  // 如果 ch 永远不关闭，这个 worker goroutine 会一直阻塞在这里
+}
+
+func main() {
+  ch := make(chan int)
+  go worker(ch)
+  // 未关闭 ch 导致 goroutine 永远阻塞，造成泄漏
+}
+</code></pre>
+<p>​	•	<strong>死锁</strong>：多个 goroutine 之间的通信或同步操作相互等待，形成死锁。死锁会导致所有涉及的 goroutine 永远无法完成。</p>
+<pre><code class="language-go">func worker(ch &lt;-chan int) {
+  for val := range ch {
+​    fmt.Println(val)
+  }
+  // 如果 ch 永远不关闭，这个 worker goroutine 会一直阻塞在这里
+}
+
+func main() {
+  ch := make(chan int)
+  go worker(ch)
+  // 未关闭 ch 导致 goroutine 永远阻塞，造成泄漏
+}
+</code></pre>
+<p>​	•	<strong>误用</strong> select：当使用 select 监听 channel 时，如果所有的分支都无法执行，goroutine 也会阻塞。</p>
+<pre><code class="language-go">func worker() {
+  ch := make(chan int)
+  select {
+  case &lt;-ch:
+    fmt.Println(&quot;received&quot;)
+  // 由于没有其他 case，goroutine 会一直阻塞在 select 上
+  }
+}
+</code></pre>
+<p><strong>2. 大量 goroutine 导致的内存问题</strong></p>
+<p>尽管 goroutine 非常轻量级，但每个 goroutine 启动时会分配大约 2 KB 的栈空间，如果程序创建了大量的 goroutine（例如上百万个），仍然会导致内存消耗过高。</p>
+<p>​	•	<strong>无限制地创建</strong> goroutine：在某些循环或递归场景中，如果不加限制地启动 goroutine，会迅速耗尽内存，导致 goroutine 数量“溢出”。</p>
+<pre><code class="language-go">func main() {
+  for {
+    go func() {
+      time.Sleep(time.Second)
+    }()
+  }
+    // 无限创建 goroutine，最终导致资源耗尽
+}
+</code></pre>
+<p>​	•	<strong>高并发但不加限制的</strong> goroutine：当有大量并发任务时，如果不控制并发的数量，会导致系统资源耗尽。为了避免这种情况，可以使用 sync.WaitGroup 或者有缓冲的 channel 来限制 goroutine 的数量。</p>
+<pre><code class="language-go">func main() {
+  var wg sync.WaitGroup
+  ch := make(chan struct{}, 10) // 限制并发数为 10
+  for i := 0; i &lt; 100; i++ {
+    wg.Add(1)
+    go func(i int) {
+      defer wg.Done()
+      ch &lt;- struct{}{} // 占用一个位置
+      fmt.Println(i)
+      time.Sleep(time.Second)
+      &lt;-ch // 释放一个位置
+    }(i)
+  }
+  wg.Wait()
+}
+</code></pre>
+<p><strong>3. 解决 goroutine 泄漏和溢出问题的策略</strong></p>
+<p>​	•	<strong>关闭</strong> channel：确保 channel 被正确关闭，防止消费者 goroutine 永远阻塞。</p>
+<pre><code class="language-go">func worker(ch &lt;-chan int) {
+  for val := range ch {
+    fmt.Println(val)
+  }
+}
+
+func main() {
+  ch := make(chan int)
+  go worker(ch)
+  ch &lt;- 1
+  close(ch) // 确保关闭 channel
+}
+</code></pre>
+<p>​	•	<strong>使用带缓冲的</strong> channel <strong>控制并发</strong>：在高并发情况下，使用带缓冲的 channel 来限制并发 goroutine 的数量，避免创建过多的 goroutine。</p>
+<p>​	•	<strong>使用</strong> sync.WaitGroup：当需要等待多个 goroutine 完成时，使用 sync.WaitGroup 来保证所有 goroutine 都能正确退出。</p>
+<p>​	•	<strong>监控和调试</strong> goroutine <strong>泄漏</strong>：使用 runtime.NumGoroutine() 来监控程序中 goroutine 的数量，或者通过 pprof 等工具进行调试和性能分析。</p>
+<h4 id="goroutine-阻塞抢占休眠的机制">goroutine 阻塞，抢占，休眠的机制。</h4>
+<p>M调度和执行G，M调用 G.func(）函数执行G</p>
+<ul>
+<li>如果M在执行G的过程发生系统调用阻塞（同步），会阻塞G和M（操作系统限制），此时P会和当前M解绑，并寻找新的M，如果没有空闲的M就会新建一个M，接管正在阻塞G所属的P，接着继续执行P中其余的G，这种阻塞后释放P的方式称之为hand off。当系统调用结束后，这个G会尝试获取一个空闲的P执行，优先获取之前绑定的P，并放入到这个P的本地队列，如果获取不到P，那么这个线程M变成休眠状态，加入到空闲线程中，然后这个G会被放入到全局队列中。</li>
+<li>如果M在执行G的过程发生网络10等操作阻塞时（异步），阻塞G，不会阻塞M。M会寻找P中其它可执行的G继续执行，G会被网络轮询器network poller 接手，当阻塞的G恢复后，G1从network poller 被移回到P的LRQ中，重新进入可执行状态。异步情况下，通过调度，Go scheduler成功地将1/0的任务转变成了CPU任务，或者说将内核级别的线程切换转变成了用户级别的goroutine切换，大大提高了效率。</li>
+</ul>
+<h4 id="gorouting-自旋占用cpu怎么解决">gorouting 自旋占用CPU怎么解决？</h4>
+<p>​	1.	<strong>使用</strong> channel：</p>
+<p>使用 channel 进行 goroutine 之间的通信和同步，可以避免频繁检查条件导致的自旋。channel 提供了阻塞式的通信机制，只有在有消息到达时才会唤醒 goroutine，从而避免了自旋。</p>
+<p>​	2.	<strong>使用</strong> sync.Cond：</p>
+<p>sync.Cond 是 Go 提供的条件变量，可以用来阻塞和唤醒 goroutine。当某个条件不满足时，goroutine 可以调用 Wait() 进入阻塞状态，等条件满足后再通过 Signal() 或 Broadcast() 唤醒等待中的 goroutine，避免了忙等待。</p>
+<p>​	3.	<strong>使用</strong> sync.WaitGroup：</p>
+<p>sync.WaitGroup 可以用来等待一组 goroutine 完成任务，避免 goroutine 自旋等待。通过 Add() 方法增加等待的 goroutine 数量，然后 goroutine 在完成任务后调用 Done()。主 goroutine 可以通过 Wait() 阻塞等待所有子 goroutine 完成。</p>
+<p>​	4.	<strong>使用</strong> time.Sleep() <strong>限制频繁检查</strong>：</p>
+<p>如果必须频繁检查某个条件，可以在检查时加入适当的休眠时间，减少 CPU 的占用。这种方法适合非关键路径的场景，在等待期间让出 CPU 时间片。</p>
+<h4 id="gorouting-的抢占时机是什么">gorouting 的抢占时机是什么？</h4>
+<p><strong>1. 时间片轮转（Time-Slice）</strong></p>
+<p>Go 的调度器通常会为每个 goroutine 分配一个时间片（默认是 10ms）。当时间片用完时，调度器会挂起当前正在运行的 goroutine，并切换到下一个等待的 goroutine。这被称为时间片轮转。此时，如果有其他 goroutine 已准备好执行，当前 goroutine 可能会被抢占。</p>
+<p>​	•	<strong>时间片轮转的条件</strong>：</p>
+<p>​	•	goroutine 的时间片用完。</p>
+<p>​	•	当前 goroutine 被挂起（例如：由于 I/O、同步等待、网络阻塞等），调度器将选择下一个可以运行的 goroutine。</p>
+<p><strong>2. I/O 操作阻塞</strong></p>
+<p>当一个 goroutine 执行 I/O 操作（如网络读取、文件读取等）时，它会被阻塞，直到 I/O 操作完成。此时，调度器会抢占当前被阻塞的 goroutine，并选择其他可运行的 goroutine 执行。I/O 阻塞会触发调度器的抢占行为，确保系统能有效利用空闲的 CPU 资源。</p>
+<p><strong>3. 同步操作（如 channel、mutex）</strong></p>
+<p>当一个 goroutine 在等待锁（如 sync.Mutex 或 sync.RWMutex）或等待从 channel 读取数据时，它会被阻塞。这时，调度器会抢占当前 goroutine，并调度其他可执行的 goroutine。</p>
+<p>​	•	例如，当 goroutine 在 channel 上读取或发送数据时，如果没有数据可读（或者发送缓冲区已满），goroutine 会被挂起，调度器会选择其他等待的 goroutine 执行。</p>
+<p><strong>4. 系统调用</strong></p>
+<p>goroutine 执行系统调用时（如 os 包中的系统调用），它可能会被调度挂起，调度器会把 CPU 分配给其他 goroutine 直到系统调用完成。这是一种“抢占”，让其他 goroutine 有机会运行。</p>
+<p><strong>5. Goroutine 的协作调度</strong></p>
+<p>如果一个 goroutine 是计算密集型的，且不会主动进行阻塞操作（如 I/O、等待锁、等待 channel），它可能会“占用” CPU 进行长时间的计算，导致其他 goroutine 无法获得执行时间。在 Go 中，调度器会通过协作的方式确保每个 goroutine 轮流执行。</p>
+<p>​	•	为了防止长时间占用 CPU，Go 的调度器会定期进行抢占，确保 goroutine 的调度是公平的。如果没有明显的阻塞，调度器会周期性地检查是否有其他 goroutine 应该被调度执行。</p>
+<p><strong>6. 显式调度（runtime.Gosched()）</strong></p>
+<p>在一些特殊情况下，可以显式地让当前 goroutine 让出 CPU，来允许其他 goroutine 运行。通过 runtime.Gosched()，可以触发显式的调度。</p>
+<p>​	•	示例：</p>
+<pre><code class="language-go">go func() {
+  // 做一些计算
+  runtime.Gosched() // 让出 CPU 给其他 goroutine
+  // 继续做其他事情
+}()
+</code></pre>
+<p>runtime.Gosched() 让当前 goroutine 协作式地将 CPU 的控制权交给其他 goroutine，即便当前 goroutine 还未耗尽其时间片。</p>
+<p><strong>7. 垃圾回收（GC）</strong></p>
+<p>Go 的垃圾回收机制也会影响 goroutine 的抢占。垃圾回收线程会周期性地运行，如果某个 goroutine 在垃圾回收期间占用 CPU，调度器可能会抢占当前 goroutine，以便完成垃圾回收。GC 可能会导致 goroutine 的短暂暂停，但它不太会长时间阻塞其他 goroutine。</p>
+<p><strong>8. 系统的负载和调度策略</strong></p>
+<p>Go 的调度器会根据系统负载、可用 CPU 核数等信息调整调度策略。例如，在多核机器上，Go 会使用多个线程同时运行多个 goroutine，并在不同的核心上进行调度。调度器会保证 CPU 的利用率，但也会避免某些 goroutine 长时间占用 CPU，导致其他 goroutine 无法运行。</p>
+<h4 id=""></h4>
+<h4 id="pool-的使用">pool 的使用</h4>
+<p>在 Go 语言中，sync.Pool 是一个高效的对象复用机制，常用于减少高频率创建和销毁对象的开销。sync.Pool 提供了临时对象的存储，通过池化复用对象，减少内存分配压力。</p>
+<h5 id="syncpool-的使用场景"><strong>sync.Pool 的使用场景</strong></h5>
+<p>​	1.	<strong>减少内存分配</strong>：对于频繁创建和销毁的对象，使用 sync.Pool 可以复用已经分配的对象，避免频繁的垃圾回收。</p>
+<p>​	2.	<strong>高并发下的对象池化</strong>：适合在高并发环境中使用，用来缓存和复用对象，避免每次请求都重新分配内存。</p>
+<h5 id="syncpool-的基本用法"><strong>sync.Pool 的基本用法</strong></h5>
+<p>sync.Pool 使用很简单，主要有两个方法：</p>
+<p>​	•	<strong>Put(x interface{})</strong>：将对象放入池中。</p>
+<p>​	•	<strong>Get() interface{}</strong>：从池中获取对象。如果池中没有对象，会调用 New 字段创建一个新对象（如果定义了 New 方法）。</p>
+<pre><code class="language-go">func main() {
+  var pool sync.Pool
+  // 定义当池中没有对象时，如何创建新对象
+  pool.New = func() interface{} {
+    return &quot;new&quot;
+  }
+  // 从池中获取对象
+  v1 := pool.Get()
+  fmt.Println(&quot;第一次获取：&quot;, v1)
+  // 放入对象到池中
+  pool.Put(&quot;old&quot;)
+  // 再次从池中获取
+  v2 := pool.Get()
+  fmt.Println(&quot;第二次获取：&quot;, v2)
+  // 第三次获取，池中已经没有对象了，会触发 `New`
+  v3 := pool.Get()
+  fmt.Println(&quot;第三次获取：&quot;, v3)
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<p>第一次获取： new</p>
+<p>第二次获取： old</p>
+<p>第三次获取： new</p>
+<p><strong>sync.Pool 的特点</strong></p>
+<p>​	1.	<strong>线程安全</strong>：sync.Pool 是并发安全的，多个 goroutine 可以同时调用 Put 和 Get。</p>
+<p>​	2.	<strong>生命周期</strong>：sync.Pool 中的对象不会永久保留，Go 运行时的垃圾回收器（GC）会在合适的时机清空池中的对象。因此，sync.Pool 适合存储临时对象，而非长期使用的对象。</p>
+<p><strong>使用示例：对象池化减少内存分配</strong></p>
+<p>例如，在处理大量请求时，需要频繁创建和销毁结构体对象。我们可以使用 sync.Pool 来复用这些对象，避免频繁的内存分配。</p>
+<pre><code class="language-go">type Request struct {
+  Data string
+}
+
+func main() {
+  var pool = sync.Pool{
+    New: func() interface{} {
+      return &amp;Request{}
+    },
+  }
+  // 模拟处理请求
+  for i := 0; i &lt; 10; i++ {
+    req := pool.Get().(*Request)
+    req.Data = fmt.Sprintf(&quot;Request %d&quot;, i)
+    fmt.Println(&quot;处理:&quot;, req.Data)
+    // 处理完后将对象放回池中
+    pool.Put(req)
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<p>处理: Request 0</p>
+<p>处理: Request 1</p>
+<p>...</p>
+<p>处理: Request 9</p>
+<p>在这个例子中，sync.Pool 复用了 Request 对象，避免了每次处理请求时都重新分配内存。</p>
+<p><strong>sync.Pool 的注意事项</strong></p>
+<p>​	1.	<strong>不适合长期缓存对象</strong>：由于 sync.Pool 中的对象可能会被 GC 回收，因此它并不适合作为缓存长期存储的对象，而是用于短期复用。</p>
+<p>​	2.	<strong>New 字段的定义</strong>：如果池为空，调用 Get 时会返回 nil，除非你定义了 New 方法来创建新对象。</p>
+<p>​	3.	<strong>与垃圾回收的关系</strong>：池中的对象可能随时被 GC 回收，因此不能依赖它来保证对象一直存在。</p>
+<h4 id="gc-算法演进">gc 算法演进</h4>
+<ul>
+<li>Go 1: mark and sweep操作都需要STW</li>
+<li>Go1.3：分离了mark和sweep操催，mark过程需要 STW，mark完成后让sweep任务和普通协程任务一样并行，停顿时间在约几百ms</li>
+<li>Go1.5：引入三色并发标记法、插入写屏障，不需要每次都扫描整个内存空间，可以减少stop the world的时间，停顿时间在100ms以内</li>
+<li>Go1.6：使用bitmap来记录回收内存的位置，大幅优化垃圾回收器自身消耗的内存，停顿时间在10ms以内</li>
+<li>Go 1.7：停顿时间控制在2ms以内</li>
+<li>Go 1.8：混合写屏障（插入写屏障和删除写屏障），停顿时间在0.5ms左右</li>
+<li>Go 1.9：彻底移除了栈的重扫描过程</li>
+<li>Go 1.12：整合了两个阶段的 Mark Termination</li>
+<li>Go 1.13：着手解决向操作系统归还内存的，提出了新的Scavenger</li>
+<li>Go1.14：替代了仅存活了一个版本的 scavenger，全新的页分配器，优化分配内存过程的速率与现有的扩展性问题，并引入了异步抢 占，解决了由于密集循环导致的STW时间过长的问题</li>
+</ul>
+<h4 id="gc-触发时机">gc 触发时机</h4>
+<p>​	1.	堆内存的使用量达到 GOGC 设定的百分比。</p>
+<p>​	2.	内存分配失败，系统无法为新对象分配内存时。</p>
+<p>​	3.	大对象分配触发了内存的增大。</p>
+<p>​	4.	系统内存的压力过大，GC 为了释放内存而被触发。</p>
+<pre><code>5.	程序中有明显的内存泄漏或长时间未触发 GC 时，GC 会尝试回收不再使用的内存。
+6.	定时触发（2min）
+7.	显式出发（runtime.GC()）
+</code></pre>
+<h4 id="channel-分配在栈还是分配在堆">channel 分配在栈还是分配在堆</h4>
+<p><strong>1. 栈分配与堆分配</strong></p>
+<p>​	•	<strong>栈分配</strong>：栈是为每个 goroutine 分配的一块内存区域。栈内存的分配和释放速度非常快。栈分配的内存会随着函数调用和返回自动管理。函数的局部变量通常会分配在栈上，除非它们需要在堆上分配（如被闭包引用）。</p>
+<p>​	•	<strong>堆分配</strong>：堆内存是程序的共享内存区域，由 Go 运行时（GC）负责回收。堆分配的内存管理较为复杂，通常通过垃圾回收来释放。堆内存适用于需要在多个函数或 goroutine 之间共享的数据，或者生命周期比函数调用更长的数据。</p>
+<p><strong>2. Go 的内存分配决策</strong></p>
+<p>​	•	<strong>栈分配</strong>：适用于函数内部的局部变量和短生命周期的对象。栈上的内存是自动管理的，速度快。</p>
+<p>​	•	<strong>堆分配</strong>：适用于跨多个函数调用、跨 goroutine 共享的数据。堆分配的内存由垃圾回收（GC）管理。</p>
+<p><strong>3. Channel 的内存分配</strong>：大多数情况下，channel 会分配在堆上，因为它是多个 goroutine 之间共享的同步机制，而栈内存不能跨 goroutine 使用。</p>
+<h4 id="什么小对象为什么小对象多了会造成gc压力">什么小对象，为什么小对象多了会造成GC压力？</h4>
+<p><strong>1. 什么是小对象？</strong></p>
+<p>在 Go 语言中，“小对象”通常指的是那些占用内存较小的对象。具体来说：</p>
+<p>​	•	<strong>小对象</strong>一般是指那些占用的内存小于<strong>大约 256 字节</strong>的对象（具体大小会因 Go 版本和实现细节有所不同）。例如，结构体、数组、切片、字符串等对象如果大小较小，就可以被认为是小对象。</p>
+<p><strong>2. 小对象与内存分配</strong></p>
+<p>小对象的内存分配主要依赖于 Go 的堆分配机制。当程序在运行过程中创建了大量小对象时，内存管理就会变得复杂。特别是在 Go 的垃圾回收机制中，频繁的堆分配和释放会增加 GC 的负担，导致更多的 GC 压力。</p>
+<p><strong>3. 为什么小对象多了会造成 GC 压力？</strong></p>
+<p>当程序创建大量小对象时，GC 会面临以下几种压力：</p>
+<p>​	•	<strong>频繁的内存分配和回收</strong>：每当创建一个小对象时，Go 会在堆上分配内存。随着对象数量的增加，GC 需要更频繁地扫描和回收不再使用的内存。尤其是小对象的分配和释放速度较快，导致 GC 需要不断地清理堆上的空间。</p>
+<p>​	•	<strong>堆碎片化</strong>：如果频繁地分配和释放小对象，可能会导致堆内存碎片化。碎片化会导致一些内存块无法被有效利用，增加了 GC 的难度。为了避免碎片化，GC 可能需要做更复杂的内存整理，这会消耗更多时间和资源。</p>
+<p>​	•	<strong>GC 的标记-清除过程</strong>：Go 的垃圾回收算法采用标记-清除（Mark-and-Sweep）机制。GC 会标记所有仍然在使用的对象，然后清除未标记的对象。小对象的创建和销毁会增加这个过程的复杂性，特别是在堆上分配大量小对象时，GC 需要检查的对象数量会显著增加。</p>
+<p>​	•	<strong>GC 暂停时间</strong>：GC 的运行会导致程序的暂停。虽然 Go 的垃圾回收器在最近的版本中进行了优化（例如使用了分代收集、增量收集等技术），但小对象的频繁分配和回收依然会增加 GC 的暂停时间，导致程序的响应时间变慢。</p>
+<p><strong>4. 小对象对 GC 的影响</strong></p>
+<p>​	•	<strong>高频 GC</strong>：如果程序中创建了大量的小对象，垃圾回收器会频繁触发，导致高频率的 GC。这不仅消耗 CPU 资源，还会导致程序暂停，影响性能。</p>
+<p>​	•	<strong>堆内存占用增加</strong>：随着小对象的增多，堆内存的占用也会增加。堆的空间有限，堆的不断扩展会影响系统的稳定性和性能。</p>
+<p>​	•	<strong>增量 GC 的效果下降</strong>：Go 运行时使用增量垃圾回收策略来减少 GC 停顿时间。但是，当小对象的分配和销毁变得非常频繁时，增量 GC 的效果会减弱，因为 GC 需要更频繁地处理这些小对象。</p>
+<p><strong>5. 如何减少小对象对 GC 的影响？</strong></p>
+<p>为了减轻小对象对 GC 的压力，Go 提供了一些优化策略：</p>
+<p>​	•	<strong>对象池</strong>（sync.Pool）：如果应用中需要频繁创建和销毁小对象，可以使用 sync.Pool 来复用对象，减少频繁的内存分配和回收。sync.Pool 提供了一种对象缓存机制，允许从池中获取已经分配好的对象，避免了重复的堆分配。</p>
+<p>例如，创建一个对象池：</p>
+<pre><code class="language-go">var pool = sync.Pool{
+  New: func() interface{} {
+    return &amp;MyStruct{}
+  },
+}
+
+obj := pool.Get().(*MyStruct) // 获取对象
+// 使用 obj...
+pool.Put(obj) // 放回池中以供复用
+</code></pre>
+<p>​	•	<strong>减少小对象的频繁创建</strong>：合理设计程序的对象创建逻辑，尽量减少不必要的小对象创建和销毁。特别是在循环中创建大量临时对象时，要注意优化代码结构。</p>
+<p>​	•	<strong>提高对象生命周期</strong>：尽量延长对象的生命周期，减少对象的频繁销毁和重建。例如，可以将对象池用于缓存对象，避免频繁创建和销毁。</p>
+<p>​	•	<strong>避免内存泄漏</strong>：确保不会在不再使用的地方引用对象，以避免堆上的对象不能被垃圾回收器回收。</p>
+<p>​	•	<strong>合理配置 GC 参数</strong>：通过调整 Go 运行时的 GC 参数（如 GOGC），可以控制垃圾回收的触发频率。适当提高 GOGC 的值可以减少 GC 的频繁触发，但要小心，因为这可能会增加内存占用。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w412024-tu-chuan-da-jian-jiao-cheng/">
+              <h3 class="post-title">
+                下一篇：【W41/2024】图传搭建教程
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

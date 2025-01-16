@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W51/2024】Docker 入门 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W51/2024】Docker 入门</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-12-16</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://cosmoswei.github.io/CDR8dVgiUV/">
+                    入门教程
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>Docker 是个划时代的开源项目，它彻底释放了计算虚拟化的威力，极大提高了应用的维护效率，降低了云计算应用开发的成本！使用 Docker，可以让应用的部署、测试和分发都变得前所未有的高效和轻松！</p>
+<!-- more -->
+<h2 id="安装">安装</h2>
+<h3 id="官网安装"><a href="https://docs.docker.com/engine/install/ubuntu/">官网安装</a></h3>
+<p>step1：运行以下命令卸载所有冲突的包：</p>
+<pre><code class="language-shell">for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+</code></pre>
+<p>step2：设置Docker的“apt”存储库</p>
+<pre><code class="language-shell"># Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo &quot;$VERSION_CODENAME&quot;) stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+sudo apt-get update
+</code></pre>
+<p>step3：要安装最新版本，请运行：</p>
+<pre><code class="language-shell">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+<p>step3：通过运行“hello-world” 镜像验证安装是否成功：</p>
+<pre><code class="language-shell">sudo docker run hello-world
+</code></pre>
+<h3 id="注意事项">注意事项</h3>
+<p>在国内使用docker无法使用官方镜像仓库，需要使用镜像加速，如果在阿里云的服务器上使用 Docker，您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器</p>
+<pre><code class="language-shell">sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json &lt;&lt;-'EOF'
+{
+  &quot;registry-mirrors&quot;: [&quot;https://1y6by8x7.mirror.aliyuncs.com&quot;]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre>
+<p>或者直接使用</p>
+<pre><code class="language-shell">sudo docker pull 1y6by8x7.mirror.aliyuncs.com/library/nginx:latest
+</code></pre>
+<p>命令拉取镜像，在其他环境则需要使用公共镜像仓库。</p>
+<h3 id="卸载">卸载</h3>
+<p>删除安装包：</p>
+<pre><code class="language-shell">sudo apt-get purge docker-ce
+</code></pre>
+<p>删除镜像、容器、配置文件等内容：</p>
+<pre><code class="language-shell">sudo rm -rf /var/lib/docker
+</code></pre>
+<h2 id="流转图">流转图</h2>
+<figure data-type="image" tabindex="1"><img src="https://raw.githubusercontent.com/cosmoswei/images/main/202412160011604.png" alt="" loading="lazy"></figure>
+<h2 id="仓库">仓库</h2>
+<h2 id="镜像">镜像</h2>
+<h2 id="容器">容器</h2>
+<h2 id="数据卷">数据卷</h2>
+<h2 id="网络">网络</h2>
+<h2 id="dockerfile">Dockerfile</h2>
+<h3 id="案例">案例</h3>
+<pre><code class="language-dockerfile">#
+# 抖音关注：程序员三丙
+# 知识星球：https://t.zsxq.com/j9b21
+#
+
+FROM registry.cn-hangzhou.aliyuncs.com/sanbing/jcpp-base:latest AS base
+WORKDIR /app
+COPY . .
+RUN mvn -U -B -T 0.8C clean install -DskipTests
+
+#分层
+FROM registry.cn-hangzhou.aliyuncs.com/sanbing/openjdk:21-jdk-slim-bullseye AS builder
+WORKDIR /app
+COPY --from=base /app/jcpp-app-bootstrap/target/application.jar application.jar
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+
+# 执行
+FROM registry.cn-hangzhou.aliyuncs.com/sanbing/openjdk:21-jdk-slim-bullseye
+RUN useradd -m sanbing
+WORKDIR /home/sanbing
+
+COPY --from=builder /app/extracted/dependencies/ ./
+COPY --from=builder /app/extracted/spring-boot-loader/ ./
+COPY --from=builder /app/extracted/snapshot-dependencies/ ./
+COPY --from=builder /app/extracted/application/ ./
+COPY --from=base /app/jcpp-app-bootstrap/target/conf ./config
+COPY --from=base /app/docker/start.sh .
+
+RUN chmod a+x start.sh &amp;&amp; \
+    mkdir -p /home/sanbing/logs/jcpp &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/accesslog &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/gc &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/heapdump &amp;&amp;  \
+    chmod 700 -R /home/sanbing/logs/* &amp;&amp;  \
+    chown -R sanbing:sanbing /home/sanbing
+
+EXPOSE 8080 8080
+
+ENV APP_LOG_LEVEL=INFO
+ENV PROTOCOLS_LOG_LEVEL=INFO
+
+USER sanbing
+CMD [&quot;/bin/bash&quot;, &quot;start.sh&quot;]
+
+</code></pre>
+<h3 id="解释">解释</h3>
+<p>这段 Dockerfile 是一个多阶段构建的配置，主要用于构建和运行一个基于 Spring Boot 的 Java 应用。以下是逐段解释：</p>
+<p><strong>1. 第一阶段：基础镜像（base）</strong></p>
+<pre><code class="language-dockerfile">FROM registry.cn-hangzhou.aliyuncs.com/sanbing/jcpp-base:latest AS base
+WORKDIR /app
+COPY . .
+RUN mvn -U -B -T 0.8C clean install -DskipTests
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>
+<p>使用 jcpp-base 作为基础镜像，这里可能包含构建 Java 项目所需的环境（如 Maven）。</p>
+</li>
+<li>
+<p>设置工作目录为 /app。</p>
+</li>
+<li>
+<p>将当前项目代码复制到镜像的 /app 目录。</p>
+</li>
+<li>
+<p>使用 Maven 构建项目，跳过测试（-DskipTests）。</p>
+</li>
+<li>
+<p>-U：强制更新依赖。</p>
+</li>
+<li>
+<p>-B：以非交互模式运行。</p>
+</li>
+<li>
+<p>-T 0.8C：并行构建，使用 CPU 的 80%。</p>
+</li>
+</ul>
+<p><strong>结果：</strong></p>
+<ul>
+<li>构建完成后，生成的 JAR 文件位于 jcpp-app-bootstrap/target/application.jar。</li>
+</ul>
+<p><strong>2. 第二阶段：分层优化（builder）</strong></p>
+<pre><code class="language-shell">FROM registry.cn-hangzhou.aliyuncs.com/sanbing/openjdk:21-jdk-slim-bullseye AS builder
+WORKDIR /app
+COPY --from=base /app/jcpp-app-bootstrap/target/application.jar application.jar
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>
+<p>使用 openjdk 的轻量级镜像作为基础镜像。</p>
+</li>
+<li>
+<p>将第一阶段生成的 JAR 文件复制到当前阶段。</p>
+</li>
+<li>
+<p>使用 Spring Boot 的分层工具将 JAR 文件解压为多个逻辑层（dependencies、spring-boot-loader、snapshot-dependencies、application）。</p>
+</li>
+<li>
+<p>--layers：启用分层。</p>
+</li>
+<li>
+<p>--destination extracted：指定解压目录。</p>
+</li>
+</ul>
+<p><strong>结果：</strong></p>
+<ul>
+<li>JAR 文件被分解为多个层，便于缓存和重用，减少后续镜像构建时间。</li>
+</ul>
+<p><strong>3. 第三阶段：运行环境</strong></p>
+<pre><code class="language-dockerfile">FROM registry.cn-hangzhou.aliyuncs.com/sanbing/openjdk:21-jdk-slim-bullseye
+RUN useradd -m sanbing
+WORKDIR /home/sanbing
+
+COPY --from=builder /app/extracted/dependencies/ ./
+COPY --from=builder /app/extracted/spring-boot-loader/ ./
+COPY --from=builder /app/extracted/snapshot-dependencies/ ./
+COPY --from=builder /app/extracted/application/ ./
+COPY --from=base /app/jcpp-app-bootstrap/target/conf ./config
+COPY --from=base /app/docker/start.sh .
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>
+<p>使用轻量级的 openjdk 镜像作为运行环境。</p>
+</li>
+<li>
+<p>创建一个名为 sanbing 的用户，用于运行容器，增强安全性。</p>
+</li>
+<li>
+<p>设置工作目录为 /home/sanbing。</p>
+</li>
+<li>
+<p>从第二阶段复制分层解压的内容到当前镜像。</p>
+</li>
+<li>
+<p>从第一阶段复制配置文件和启动脚本。</p>
+</li>
+</ul>
+<p><strong>4. 配置与权限</strong></p>
+<pre><code class="language-docker">RUN chmod a+x start.sh &amp;&amp; \
+    mkdir -p /home/sanbing/logs/jcpp &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/accesslog &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/gc &amp;&amp;  \
+    mkdir -p /home/sanbing/logs/heapdump &amp;&amp;  \
+    chmod 700 -R /home/sanbing/logs/* &amp;&amp;  \
+    chown -R sanbing:sanbing /home/sanbing
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>
+<p>为启动脚本 start.sh 添加执行权限。</p>
+</li>
+<li>
+<p>创建日志目录：</p>
+</li>
+<li>
+<p>jcpp：可能是主应用日志。</p>
+</li>
+<li>
+<p>accesslog：访问日志。</p>
+</li>
+<li>
+<p>gc：垃圾回收日志。</p>
+</li>
+<li>
+<p>heapdump：堆转储文件。</p>
+</li>
+<li>
+<p>设置日志目录权限为 700（仅拥有者可访问）。</p>
+</li>
+<li>
+<p>更改所有权为用户 sanbing。</p>
+</li>
+</ul>
+<p><strong>5. 暴露端口</strong></p>
+<pre><code class="language-docker">EXPOSE 8080 8080
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>暴露容器的 8080 端口，用于接收外部请求。</li>
+</ul>
+<p><strong>6. 环境变量</strong></p>
+<pre><code class="language-dockerfile">ENV APP_LOG_LEVEL=INFO
+ENV PROTOCOLS_LOG_LEVEL=INFO
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>设置默认的日志级别为 INFO。</li>
+</ul>
+<p><strong>7. 用户与启动命令</strong></p>
+<pre><code class="language-dockerfile">USER sanbing
+CMD [&quot;/bin/bash&quot;, &quot;start.sh&quot;]
+</code></pre>
+<p><strong>功能：</strong></p>
+<ul>
+<li>
+<p>切换到非 root 用户 sanbing。</p>
+</li>
+<li>
+<p>指定容器启动时运行的命令为 start.sh。</p>
+</li>
+</ul>
+<h2 id="java-实战">Java 实战</h2>
+<h3 id="使用-jar-包">使用 jar 包</h3>
+<p>使用 Docker 运行自己编写的 Java 程序，可以通过以下步骤完成：</p>
+<p><strong>step 1. 准备 Java 程序</strong></p>
+<p>确保你已经编写并打包了一个 Java 程序（例如，HelloWorld.java）。如果没有打包，可以先创建一个简单的 Java 程序：<strong>HelloWorld.java</strong></p>
+<pre><code class="language-java">public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println(&quot;Hello, Docker!&quot;);
+    }
+}
+</code></pre>
+<p>编译程序，生成 .class 文件：</p>
+<pre><code class="language-shell">javac HelloWorld.java
+</code></pre>
+<p>如果需要生成可执行 JAR 文件，可以使用以下命令：</p>
+<pre><code class="language-shell">jar cvfe HelloWorld.jar HelloWorld HelloWorld.class
+</code></pre>
+<p><strong>step 2. 创建 Dockerfile</strong></p>
+<p>创建一个名为 Dockerfile 的文件，用于定义构建镜像的步骤。</p>
+<p><strong>示例 Dockerfile</strong></p>
+<pre><code class="language-dockerfile"># 使用官方的 OpenJDK 镜像作为基础镜像
+FROM openjdk:17-jdk-slim
+
+# 将 JAR 文件复制到容器中
+COPY HelloWorld.jar /app/HelloWorld.jar
+
+# 设置工作目录
+WORKDIR /app
+
+# 定义运行容器时的默认命令
+CMD [&quot;java&quot;, &quot;-jar&quot;, &quot;HelloWorld.jar&quot;]
+</code></pre>
+<p><strong>step 3. 构建 Docker 镜像</strong></p>
+<p>在包含 Dockerfile 和 HelloWorld.jar 的目录中运行以下命令：</p>
+<pre><code class="language-shell">docker build -t my-java-app .
+</code></pre>
+<p>构建成功后，可以通过以下命令查看镜像：</p>
+<pre><code class="language-shell">docker images
+</code></pre>
+<p><strong>step 4. 运行 Docker 容器</strong></p>
+<p>运行容器：</p>
+<pre><code class="language-shell">docker run --rm my-java-app
+</code></pre>
+<p>输出应为：</p>
+<pre><code class="language-shell">Hello, Docker!
+</code></pre>
+<p><strong>step 5. 验证和调试</strong></p>
+<p>如果程序需要接受输入或参数，可以通过以下方式运行：</p>
+<pre><code class="language-shell">docker run --rm my-java-app arg1 arg2
+</code></pre>
+<p>需要修改 Dockerfile 的 CMD 为：</p>
+<pre><code class="language-dockerfile">CMD [&quot;java&quot;, &quot;-jar&quot;, &quot;HelloWorld.jar&quot;]
+</code></pre>
+<p>如果需要调试，可以进入容器内部：</p>
+<pre><code class="language-shell">docker run -it --rm my-java-app /bin/bash
+</code></pre>
+<p><strong>step 6. 发布到 Docker Hub（可选）</strong></p>
+<p>如果需要分享你的镜像，可以将其推送到 Docker Hub：</p>
+<pre><code class="language-shell">docker tag my-java-app your-dockerhub-username/my-java-app
+docker push your-dockerhub-username/my-java-app
+</code></pre>
+<p>之后，其他人可以通过以下命令拉取并运行：</p>
+<pre><code class="language-shell">docker run --rm your-dockerhub-username/my-java-app
+</code></pre>
+<p><strong>完整项目结构</strong></p>
+<pre><code>project/
+├── Dockerfile
+├── HelloWorld.java
+└── HelloWorld.jar
+</code></pre>
+<h3 id="使用-git">使用 git</h3>
+<p>Docker 可以直接从 Git 仓库构建镜像，而无需先将代码克隆到本地。以下是具体操作步骤：</p>
+<p><strong>step 1. 准备 Git 仓库</strong></p>
+<p>确保 Git 仓库中包含一个有效的 Dockerfile，用于定义如何构建镜像。</p>
+<p><strong>示例 Git 仓库结构</strong></p>
+<pre><code>repository/
+├── Dockerfile
+├── src/
+│  └── Main.java
+├── pom.xml
+└── README.md
+</code></pre>
+<p><strong>step 2. 使用 Docker 从 Git 仓库构建镜像</strong></p>
+<p>直接运行以下命令，从远程 Git 仓库构建镜像：</p>
+<pre><code class="language-shell">docker build -t my-java-app https://github.com/username/repository.git
+</code></pre>
+<ul>
+<li>-t my-java-app：指定镜像的名称。</li>
+<li>https://github.com/username/repository.git：Git 仓库地址。</li>
+</ul>
+<p>Docker 会自动从指定的 Git 仓库拉取代码并根据 Dockerfile 构建镜像。</p>
+<p><strong>step 3. 运行构建的镜像</strong></p>
+<p>构建完成后，可以运行容器：</p>
+<pre><code class="language-shell">docker run --rm my-java-app
+</code></pre>
+<p><strong>step 4. 如果需要指定分支或路径</strong></p>
+<p>可以通过 # 指定分支或特定路径：</p>
+<pre><code class="language-shell">docker build -t my-java-app https://github.com/username/repository.git#branch-name
+</code></pre>
+<p>或者指定子目录（如果 Dockerfile 不在仓库根目录）：</p>
+<pre><code class="language-shell">docker build -t my-java-app https://github.com/username/repository.git#:subdir
+</code></pre>
+<p><strong>step 5. 示例 Dockerfile</strong></p>
+<p>以下是一个用于构建 Java 应用的 Dockerfile 示例：</p>
+<pre><code class="language-dockerfile"># 使用官方 OpenJDK 镜像作为基础镜像
+FROM openjdk:17-jdk-slim
+
+# 复制项目文件到容器中
+COPY . /app
+
+# 设置工作目录
+WORKDIR /app
+
+# 构建项目（适用于 Maven 项目）
+RUN ./mvnw clean package
+
+# 运行生成的 JAR 文件
+CMD [&quot;java&quot;, &quot;-jar&quot;, &quot;target/app.jar&quot;]
+</code></pre>
+<p><strong>step 6. 注意事项</strong></p>
+<ol>
+<li>网络访问：确保 Docker 容器可以访问 Git 仓库（例如私有仓库需要配置 SSH 密钥或访问令牌）。</li>
+<li>依赖环境：确保 Dockerfile 定义了项目的构建和运行环境（如 JDK、Maven 等）。</li>
+<li>缓存：Docker 会缓存构建步骤，后续构建速度会更快。</li>
+</ol>
+
+          </div>
+        </div>
+
+        
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

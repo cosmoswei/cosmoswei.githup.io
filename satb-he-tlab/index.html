@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W18/2024】SATB 和 TLAB | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W18/2024】SATB 和 TLAB</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-05-01</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在学习JVM 的过程中，会出现两个长的很像的概念 SATB（Snapshot At The Beginning）和 TLAB（Thread Local Allocation Buffer），但是它们却有不同的功能，为了更好地理解它们，让我们对这两个概念进行详细的梳理和记录。</p>
+<!-- more -->
+<h3 id="satbsnapshot-at-the-beginning">SATB（Snapshot At The Beginning）</h3>
+<h4 id="介绍">介绍</h4>
+<p>SATB 是垃圾回收算法中的一种快照机制，尤其在增量或并发收集器中发挥着重要作用。在并发垃圾回收过程中，程序可能会在垃圾回收器执行的同时修改对象的引用。这会导致垃圾回收器无法准确地追踪对象的引用关系，从而可能误判对象是否为垃圾。SATB的核心思想是在垃圾回收周期的起始时刻对当前存活的对象状态进行快照。在随后的回收过程中，收集器只关注快照时刻之前标记为存活的对象，而忽略快照之后的变化，这样可以避免并发修改对象引用带来的问题，提高垃圾回收的准确性和效率。这种方法可以减少垃圾回收过程中的开销，因为它不需要不断地更新对象状态。</p>
+<h4 id="作用">作用</h4>
+<p>SATB算法的作用包括：</p>
+<ol>
+<li>提高并发垃圾回收的准确性：通过记录对象的引用状态，SATB算法可以准确地判断对象是否为垃圾，避免误判和漏判的情况。</li>
+<li>改善并发垃圾回收的效率：SATB算法可以在并发垃圾回收过程中快速判断对象是否为垃圾，避免不必要的扫描和标记操作，提高垃圾回收的效率。</li>
+<li>支持大规模应用程序的垃圾回收：SATB算法可以处理大规模应用程序中的垃圾回收，通过快照记录对象的引用状态，避免大量的扫描和标记操作，提高垃圾回收的性能和吞吐量。</li>
+</ol>
+<h4 id="那个垃圾回收器用到了satb">那个垃圾回收器用到了SATB？</h4>
+<p>在HotSpot JVM中，G1（Garbage-First）垃圾回收器使用了SATB（Snapshot-at-the-Beginning）算法。G1垃圾回收器是一种面向服务器端应用的垃圾回收器，其目标是在有限的停顿时间内高效地回收内存。</p>
+<p>G1垃圾回收器使用了一种叫做Remembered Set的数据结构来跟踪对象之间的引用关系。Remembered Set记录了在上一次垃圾回收之后，堆中对象的引用关系发生了变化的地方。而SATB算法就是用来维护和更新Remembered Set的。</p>
+<p>当G1垃圾回收器进行垃圾回收时，它会先标记所有的存活对象，然后会在标记过程中记录下对象之间的引用关系变化。这个过程中使用了SATB算法，即在垃圾回收开始时拍摄对象的快照，记录下所有对象的引用状态。通过这个快照，G1垃圾回收器可以准确地判断对象是否为垃圾，避免了并发修改对象引用带来的问题。</p>
+<p>SATB算法在G1垃圾回收器中的应用，提高了并发垃圾回收的准确性和效率，同时也减少了垃圾回收的停顿时间。</p>
+<p>因为SATB相对增量更新效率会高(当然SATB可能造成更多的浮动垃圾)，因为不需要在重新标记阶段再次深度扫描被删除引用对象，而CMS对增量更新的根对象会做深度扫描，G1因为很多对象都位于不同的region，CMS就一块老年代区域，重新深度扫描对象的话G1的代价会比CMS高，所以G1选择SATB不深度扫描对象，只是简单标记，等到下一轮GC再深度扫描。</p>
+<h4 id="cms">CMS</h4>
+<p>CMS 使用的是增量更新（Incremental Update）的方式来准确地追踪对象的引用关系。在CMS的标记阶段，垃圾回收器会遍历对象图，并标记所有的存活对象。这个过程是并发执行的，不会暂停应用程序的执行。然而，在标记阶段完成后，应用程序可能会继续运行，而同时对象之间的引用关系可能会发生变化。</p>
+<p>为了解决这个问题，CMS使用了增量更新的技术。增量更新将标记阶段的结果与引用变化进行增量合并，以保持引用关系的准确性。在应用程序执行期间，CMS会使用写屏障来拦截对对象引用的写操作，并记录下引用的变化信息。</p>
+<p>在CMS的重新标记阶段，只对发生引用变化的对象进行增量标记。这样，垃圾回收器可以在不暂停应用程序的情况下，准确地追踪对象的引用关系。</p>
+<p>通过增量更新，CMS能够在并发的垃圾回收过程中，快速而准确地找到所有被引用的存活对象，从而进行垃圾回收。增量更新可以减少垃圾回收的停顿时间，提供较短的暂停时间。</p>
+<p>CMS使用增量更新的方式来准确地追踪对象的引用关系，以支持并发的垃圾回收。对于引用的变化，CMS使用写屏障来记录增量更新信息，并在重新标记阶段进行增量标记。</p>
+<h4 id="zgc">ZGC</h4>
+<p>ZGC 一种叫做Remembered Set的数据结构来准确地追踪对象的引用关系。在ZGC中，Remembered Set是一种特殊的数据结构，用于记录在垃圾回收过程中对象之间的引用关系变化。Remembered Set是一种以卡表（Card Table）为基础的数据结构，将堆内存划分为一系列固定大小的卡片（Card），每个卡片对应一块连续的内存区域。当对象之间的引用关系发生变化时，ZGC会通过写屏障（Write Barrier）来更新Remembered Set。写屏障是一种特殊的代码插入技术，用于拦截对对象引用的写操作。当写屏障触发时，ZGC会将变化的引用信息记录到对应的卡片中。这样，垃圾回收器就可以根据Remembered Set中的信息，准确地追踪对象之间的引用关系。通过Remembered Set，ZGC能够在并发的垃圾回收过程中，快速而准确地找到所有被引用的存活对象，从而进行垃圾回收。这种方式可以减少垃圾回收的停顿时间，并提供低延迟的垃圾回收能力。ZGC使用Remembered Set这种基于卡表的数据结构，并通过写屏障来准确地追踪对象的引用关系，以支持低延迟的垃圾回收。</p>
+<h3 id="tlabthread-local-allocation-buffer">TLAB（Thread Local Allocation Buffer）</h3>
+<p>JVM TLAB（Thread-Local Allocation Buffer）是Java虚拟机（JVM）中的一种内存分配优化技术。TLAB用于在多线程环境下提高对象分配的效率。</p>
+<p>TLAB的存在是为了解决在多线程环境下的对象分配竞争问题。在多线程环境中，多个线程同时请求内存分配可能导致竞争和锁冲突，从而降低对象分配的效率。</p>
+<p>TLAB通过为每个线程分配一块私有的内存空间，用于线程的对象分配，避免了多线程之间的竞争和锁冲突。每个线程都可以独立地分配内存，提高对象分配的效率。</p>
+<h4 id="作用-2">作用</h4>
+<ol>
+<li>提高对象分配的效率：通过为每个线程分配私有的内存空间，避免了多线程之间的竞争和锁冲突，从而提高对象分配的效率。</li>
+<li>减少锁竞争：在多线程环境中，对象分配可能成为瓶颈，导致锁竞争和性能下降。使用TLAB可以减少对象分配的竞争，从而减少锁竞争，提高系统的并发性能。</li>
+<li>优化垃圾回收：TLAB可以与垃圾回收算法相结合，提高垃圾回收的效率。TLAB可以减少垃圾回收时对全局内存分配器的竞争，减少垃圾回收的停顿时间。</li>
+<li>支持大规模应用程序的内存分配：TLAB可以为每个线程分配私有的内存空间，支持大规模应用程序的内存分配需求，提高应用程序的性能和吞吐量。</li>
+</ol>
+<h3 id="总结">总结</h3>
+<p>SATB（Snapshot-at-the-Beginning）和TLAB（Thread-Local Allocation Buffer）是JVM中不同的技术，用于解决不同的问题。SATB用于改善并发垃圾回收的准确性和效率，而TLAB用于提高多线程环境下的对象分配效率。它们在JVM中的作用和目的是不同的。</p>
+<h3 id="参考">参考</h3>
+<p>参考资料：https://www.51cto.com/article/744294.html</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w112024-xue-xi-zi-liao-lian-jie/">
+              <h3 class="post-title">
+                下一篇：【W11/2024】学习资料链接
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

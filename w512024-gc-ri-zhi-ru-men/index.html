@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W51/2024】GC 日志入门 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W51/2024】GC 日志入门</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-12-18</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://cosmoswei.github.io/CDR8dVgiUV/">
+                    入门教程
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>GC 日志是 JVM 在执行垃圾回收时生成的日志，它记录了垃圾回收的详细信息，包括回收的类型、时间、回收的区域、GC 期间暂停的时间（即 STW 时间）、各个代的内存使用情况等。通过分析 GC 日志，开发人员可以诊断和优化应用程序的内存管理，了解 GC 对系统性能的影响，找出可能的性能瓶颈。</p>
+<!-- more -->
+<h2 id="gc-日志的作用">GC 日志的作用</h2>
+<p>GC 日志的主要作用是帮助开发者理解 JVM 的垃圾回收过程。它提供了关于垃圾回收的详细信息，包括每次 GC 的类型、耗时、发生的内存区域、堆内存的使用情况等。通过这些信息，开发人员可以：</p>
+<ul>
+<li>监控和评估 JVM 垃圾回收的性能。</li>
+<li>诊断是否存在不必要的 Full GC、频繁的 GC 等问题。</li>
+<li>评估垃圾回收对应用程序的影响（特别是 STW 时间，可能导致应用卡顿）。</li>
+<li>调整 JVM 参数，以优化垃圾回收的行为。</li>
+</ul>
+<h2 id="如何启用-gc-日志">如何启用 GC 日志</h2>
+<p>从 <strong>JDK 8u40</strong> 版本开始，JVM 提供了新的日志记录系统 -Xlog，可以记录更多详细的垃圾回收信息。对于旧版本的 JDK，可以使用 -XX:+PrintGCDetails 和 -XX:+PrintGCDateStamps 等参数来开启日志。</p>
+<p>启用 GC 日志的参数：</p>
+<pre><code class="language-shell"> -XX:+PrintGC -XX:+PrintGCDetails  -Xloggc:LogReader-gc.log 
+</code></pre>
+<h2 id="gc-日志的内容">GC 日志的内容</h2>
+<p>GC 日志包含了很多有用的信息，以下是一些常见的日志条目和解释：</p>
+<h4 id="1-gc-类型">1. <strong>GC 类型</strong></h4>
+<ul>
+<li>Young GC：年轻代的垃圾回收，主要是清理 Eden 区和 Survivor 区的对象。</li>
+<li>Full GC：整个堆（年轻代 + 老年代）的垃圾回收。</li>
+<li>Minor GC：年轻代的垃圾回收（通常指代 Young GC）。</li>
+<li>Major GC：老年代的垃圾回收（通常指代 Full GC）。</li>
+</ul>
+<h4 id="2-日志条目的格式">2. <strong>日志条目的格式</strong></h4>
+<pre><code>[GC (Allocation Failure) [PSYoungGen: 131072K-&gt;128K(196608K)] 131072K-&gt;8192K(524288K), 0.0075050 secs]
+</code></pre>
+<ul>
+<li>GC 类型：GC，Full GC，Minor GC，Major GC 等。</li>
+<li>原因：(Allocation Failure) 表示由于内存不足，JVM 执行了 GC。</li>
+<li>PSYoungGen：表示垃圾回收发生在年轻代。这里显示了回收前后年轻代的内存变化。</li>
+<li>131072K-&gt;128K(196608K)：表示回收前年轻代使用的内存为 131072KB，回收后使用了 128KB，整个年轻代的内存容量是 196608KB。</li>
+<li>回收时间：0.0075050 secs，表示本次垃圾回收花费了 0.0075050 秒。</li>
+</ul>
+<h4 id="3-stwstop-the-world时间">3. <strong>STW（Stop-the-World）时间</strong></h4>
+<p>对于每次 GC，日志会记录 STW 时间，表示应用线程暂停的时间。这对于分析 GC 对应用性能的影响非常重要。</p>
+<pre><code>[GC (Allocation Failure) [PSYoungGen: 131072K-&gt;128K(196608K)] 131072K-&gt;8192K(524288K), 0.0075050 secs]
+  [Times: user=0.00 sys=0.00, real=0.01 secs]
+</code></pre>
+<ul>
+<li>user：表示 CPU 用户时间，表示垃圾回收时 CPU 执行的时间。</li>
+<li>sys：表示系统时间，表示内核执行的时间。</li>
+<li>real：表示经过的实际时间，也就是 STW 时间。</li>
+</ul>
+<h4 id="4-堆内存的使用情况">4. <strong>堆内存的使用情况</strong></h4>
+<p>GC 日志中通常还会记录堆内存的使用情况，包括各个区域的内存情况。例如，以下是一次 Full GC 的日志：</p>
+<pre><code>[Full GC (System.gc()) [PSYoungGen: 335872K-&gt;0K(524288K)] [ParOldGen: 188743680K-&gt;187907840K(187907840K)] 189079552K-&gt;187907840K(190432128K), [Metaspace: 35663K-&gt;35663K(1056768K)], 0.3205650 secs]
+</code></pre>
+<ul>
+<li>PSYoungGen：年轻代的回收，前后内存的使用情况。</li>
+<li>ParOldGen：老年代的回收，前后内存的使用情况。</li>
+<li>Metaspace：类元数据空间的内存使用情况。</li>
+<li>0.3205650 secs：整个 Full GC 的时间。</li>
+</ul>
+<h4 id="5-gc-频率和吞吐量">5. <strong>GC 频率和吞吐量</strong></h4>
+<p>GC 日志可以帮助评估垃圾回收的频率和吞吐量。如果 Full GC 频繁发生或者 STW 时间过长，可能会影响应用的性能。</p>
+<pre><code class="language-log">Heap
+ PSYoungGen      total 64512K, used 2990K [0x000000076ab00000, 0x0000000770480000, 0x00000007c0000000)
+  eden space 61952K, 4% used [0x000000076ab00000,0x000000076adeb920,0x000000076e780000)
+  from space 2560K, 0% used [0x000000076ea80000,0x000000076ea80000,0x000000076ed00000)
+  to   space 3072K, 0% used [0x000000076e780000,0x000000076e780000,0x000000076ea80000)
+ ParOldGen       total 1526272K, used 1437428K [0x00000006c0000000, 0x000000071d280000, 0x000000076ab00000)
+  object space 1526272K, 94% used [0x00000006c0000000,0x0000000717bbd280,0x000000071d280000)
+ Metaspace       used 10186K, capacity 10562K, committed 10624K, reserved 1058816K
+  class space    used 1266K, capacity 1383K, committed 1408K, reserved 1048576K
+</code></pre>
+<ol>
+<li>Young Generation (PSYoungGen)：</li>
+</ol>
+<ul>
+<li>total 64512K：总大小 64MB。</li>
+<li>used 2990K：已使用 2.99MB，意味着大约 4% 的年轻代内存已被使用。</li>
+<li>eden space 61952K, 4% used：Eden 区是年轻代的主要部分，64MB 中有大约 4% 被使用。</li>
+</ul>
+<ol start="2">
+<li>Old Generation (ParOldGen)：</li>
+</ol>
+<ul>
+<li>total 1526272K：总大小约 1.5GB。</li>
+<li>used 1437428K：已使用 1.4GB，使用率为 94%。这表明老年代内存使用很高，接近满载。</li>
+</ul>
+<ol start="3">
+<li>Metaspace：</li>
+</ol>
+<ul>
+<li>used 10186K：元空间已使用约 10MB。</li>
+<li>committed 10624K：承诺的大小为 10.6MB。</li>
+<li>reserved 1058816K：JVM 为元空间预留了大量空间（约 1GB），但实际使用并未达到。</li>
+</ul>
+<h2 id="g1-垃圾回收实战">G1 垃圾回收实战</h2>
+<pre><code>0.210: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0007130 secs]
+   [Parallel Time: 0.3 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 210.1, Avg: 210.2, Max: 210.3, Diff: 0.2]
+      [Ext Root Scanning (ms): Min: 0.0, Avg: 0.2, Max: 0.2, Diff: 0.2, Sum: 1.3]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [Object Copy (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.4]
+         [Termination Attempts: Min: 1, Avg: 1.0, Max: 1, Diff: 0, Sum: 8]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+      [GC Worker Total (ms): Min: 0.1, Avg: 0.2, Max: 0.3, Diff: 0.2, Sum: 1.7]
+      [GC Worker End (ms): Min: 210.4, Avg: 210.4, Max: 210.4, Diff: 0.0]
+   [Code Root Fixup: 0.0 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.1 ms]
+   [Other: 0.3 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 0.2 ms]
+      [Ref Enq: 0.0 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.0 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.0 ms]
+   [Eden: 0.0B(2048.0K)-&gt;0.0B(2048.0K) Survivors: 0.0B-&gt;0.0B Heap: 1064.4K(8192.0K)-&gt;1064.4K(8192.0K)]
+ [Times: user=0.00 sys=0.00, real=0.01 secs]
+</code></pre>
+<p>这个日志是 G1 垃圾收集器的 GC 详情，具体来说是 G1 Humongous Allocation 触发的垃圾收集。接下来我将逐步解析这个日志，帮助你理解每个部分的含义。</p>
+<h3 id="日志分析">日志分析</h3>
+<pre><code>0.210: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0007130 secs]
+</code></pre>
+<ul>
+<li>0.210: GC触发的时间戳（以秒为单位）。表示这是在进程启动后 0.210 秒触发的垃圾收集。</li>
+<li>GC pause: 表示发生了 GC 暂停（暂停应用线程来执行垃圾收集）。</li>
+<li>(G1 Humongous Allocation): 表明触发此次垃圾回收的原因是 G1 垃圾收集器发现了一个“庞大的”对象分配（humongous allocation）。
+<ul>
+<li>Humongous Allocation：当 G1 收集器尝试分配很大的对象（通常是大于 2MB）的空间时，它会使用不同的处理方式。垃圾回收器将通过 young GC 来处理这些对象。</li>
+<li>(young): 表示这次垃圾回收发生在年轻代（Young Generation）。</li>
+<li>(initial-mark): 表示这是 G1 垃圾收集器的 Initial Mark 阶段。G1 垃圾回收器有多个阶段，<code>initial-mark</code> 是其中一个，通常它在第一次垃圾回收时触发。</li>
+</ul>
+</li>
+<li>0.0007130 secs: GC 执行的时间（约 0.0007 秒）。</li>
+</ul>
+<h3 id="具体的各个子部分">具体的各个子部分</h3>
+<pre><code>[Parallel Time: 0.3 ms, GC Workers: 8]
+</code></pre>
+<ul>
+<li>Parallel Time: 并行垃圾收集的总时间。这里是 0.3 毫秒，表示垃圾收集器并行工作的总时间。</li>
+<li>GC Workers: 8: 表示这次垃圾回收是通过 8 个垃圾回收线程进行并行执行的。</li>
+</ul>
+<pre><code>[GC Worker Start (ms): Min: 210.1, Avg: 210.2, Max: 210.3, Diff: 0.2]
+</code></pre>
+<ul>
+<li>GC Worker Start：表示 GC 工作线程开始执行的时间（以毫秒为单位）。这里显示了最小、平均、最大启动时间差异。
+<ul>
+<li>Min: 最小值（210.1 毫秒）。</li>
+<li>Avg: 平均值（210.2 毫秒）。</li>
+<li>Max: 最大值（210.3 毫秒）。</li>
+<li>Diff: 各工作线程启动的时间差异（0.2 毫秒）。</li>
+</ul>
+</li>
+</ul>
+<pre><code>[Ext Root Scanning (ms): Min: 0.0, Avg: 0.2, Max: 0.2, Diff: 0.2, Sum: 1.3]
+</code></pre>
+<ul>
+<li>Ext Root Scanning：扫描外部根（如类加载器、线程栈等）所需的时间。这个过程是垃圾收集器从根对象开始扫描整个堆，标记活动对象的过程。
+<ul>
+<li>Min: 最小扫描时间（0.0 毫秒）。</li>
+<li>Avg: 平均扫描时间（0.2 毫秒）。</li>
+<li>Max: 最大扫描时间（0.2 毫秒）。</li>
+<li>Diff: 时间差异（0.2 毫秒）。</li>
+<li>Sum: 扫描的总时间（1.3 毫秒）。</li>
+</ul>
+</li>
+</ul>
+<pre><code>[Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+</code></pre>
+<ul>
+<li>Update RS: 更新记录集（Remembered Set）所需的时间。记录集用于保存对象引用，以便在垃圾收集时检查对象的引用关系。这里显示的是更新记录集的时间。</li>
+</ul>
+<pre><code>[Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+</code></pre>
+<ul>
+<li>Scan RS: 扫描记录集的时间。</li>
+</ul>
+<pre><code>[Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+</code></pre>
+<ul>
+<li>Code Root Scanning: 扫描代码根（例如方法区中的类）的时间。</li>
+</ul>
+<pre><code>[Object Copy (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+</code></pre>
+<ul>
+<li>Object Copy: 对象复制的时间。G1垃圾收集器在垃圾收集过程中会将对象从一个区域（如Young Generation）复制到另一个区域。</li>
+</ul>
+<pre><code>[Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.4]
+</code></pre>
+<ul>
+<li>Termination: 终止阶段的时间，表示垃圾收集过程中的最终阶段时间。</li>
+</ul>
+<pre><code>[GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+</code></pre>
+<ul>
+<li>GC Worker Other: 表示垃圾收集过程中其他额外的工作（如清理工作等）所需的时间。</li>
+</ul>
+<pre><code>[GC Worker Total (ms): Min: 0.1, Avg: 0.2, Max: 0.3, Diff: 0.2, Sum: 1.7]
+</code></pre>
+<ul>
+<li>GC Worker Total: 表示 GC 工作线程的总执行时间。</li>
+</ul>
+<pre><code>[GC Worker End (ms): Min: 210.4, Avg: 210.4, Max: 210.4, Diff: 0.0]
+</code></pre>
+<ul>
+<li>GC Worker End: GC 工作线程结束的时间。</li>
+</ul>
+<h3 id="gc-相关信息">GC 相关信息</h3>
+<pre><code>[Code Root Fixup: 0.0 ms]
+[Code Root Purge: 0.0 ms]
+[Clear CT: 0.1 ms]
+</code></pre>
+<ul>
+<li>Code Root Fixup、Code Root Purge 和 Clear CT 是与代码根修复、清理相关的操作，这些操作通常会发生在 GC 后阶段，用来修复对象引用、清理无用的对象等。</li>
+</ul>
+<pre><code>[Other: 0.3 ms]
+   [Choose CSet: 0.0 ms]
+   [Ref Proc: 0.2 ms]
+   [Ref Enq: 0.0 ms]
+   [Redirty Cards: 0.1 ms]
+   [Humongous Register: 0.0 ms]
+   [Humongous Reclaim: 0.0 ms]
+   [Free CSet: 0.0 ms]
+</code></pre>
+<ul>
+<li>Other：这些是与 GC 过程中的其他步骤相关的时间。
+<ul>
+<li>Choose CSet: 选择回收集（CSet）所需的时间。</li>
+<li>Ref Proc: 引用处理（处理引用对象）。</li>
+<li>Ref Enq: 引用排队（将引用加入队列）。</li>
+<li>Redirty Cards: 清理脏卡（Dirty Card）。</li>
+<li>Humongous Register 和 Humongous Reclaim: 与 humongous 对象（大对象）的注册和回收相关的时间。</li>
+</ul>
+</li>
+</ul>
+<h3 id="堆信息">堆信息</h3>
+<pre><code>[Eden: 0.0B(2048.0K)-&gt;0.0B(2048.0K) Survivors: 0.0B-&gt;0.0B Heap: 1064.4K(8192.0K)-&gt;1064.4K(8192.0K)]
+</code></pre>
+<ul>
+<li>Eden: Eden 区的大小变化，表示分配的新对象的区域。这里显示 Eden 区没有变化。</li>
+<li>Survivors: 存活区的变化，表示从 Eden 区转移到 Survivor 区的对象数量。</li>
+<li>Heap: 堆内存的变化情况，表示整个堆的使用情况。这里的总堆内存为 8192KB，总使用了 1064.4KB。</li>
+</ul>
+<h2 id="为什么-stw-时间比-gc-总时间长">为什么 STW 时间比 GC 总时间长？</h2>
+<h3 id="1-stw时间与gc时间的区别">1. STW时间与GC时间的区别</h3>
+<ul>
+<li>GC 总时间：指的是整个垃圾收集过程的执行时间，包括所有的垃圾回收操作，例如：标记、扫描、清理、复制等。</li>
+<li>STW 时间：指的是在垃圾收集期间，应用线程被暂停的时间。换句话说，就是所有应用线程在垃圾收集期间不可用的时间。</li>
+</ul>
+<p>假设有以下日志记录：</p>
+<pre><code>0.210: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0007130 secs]
+   [Parallel Time: 0.3 ms, GC Workers: 8]
+   [Times: user=0.00 sys=0.00, real=0.01 secs]
+</code></pre>
+<p>在这个日志中：</p>
+<ul>
+<li>GC 总时间 是 0.0007130 秒，表示垃圾回收操作的实际执行时间。</li>
+<li>STW时间 是 0.01 秒（real=0.01 secs），表示应用线程的暂停时间。</li>
+</ul>
+<h3 id="2-gc时间包括并行工作">2. GC时间包括并行工作</h3>
+<p>GC 的总时间不仅包括 STW 时间，还包括多个垃圾回收线程并行工作的时间。这些并行工作的时间通常不涉及应用线程的暂停，而是在垃圾回收器内部进行的。例如，标记、扫描、清理等操作是通过多个并行线程来完成的，它们不会阻塞应用线程。GC 总时间是这些操作的总时间。如果 GC 总时间较长，但 STW 时间较短，这通常意味着垃圾收集器在后台有大量的并行工作，而应用线程的暂停时间很短。</p>
+<h3 id="3-gc调度和线程切换">3. GC调度和线程切换</h3>
+<p>在实际的垃圾回收过程中，可能存在线程的切换、调度等待等情况。即使GC已经完成了一部分工作，仍然可能会有一些额外的等待时间（比如多个GC线程之间的协调或同步，或者等待特定资源的释放等）。这种情况下，尽管GC操作已经完成，应用线程仍然会等待或被阻塞，这就会导致STW时间比GC的总时间长。</p>
+<h3 id="4-虚拟机的细节">4. 虚拟机的细节</h3>
+<ul>
+<li>GC暂停时间：有时候GC的暂停时间（即STW时间）包括了GC的多次小暂停和一些间歇性的操作。例如，在G1垃圾回收器中，标记和清理可能会分成多个阶段执行，而这些阶段可能不完全同步。这可能导致某些STW时间出现在GC的某些阶段，但GC的所有操作并不需要在每个暂停阶段中完成。</li>
+<li>JVM的垃圾回收调度：JVM的垃圾回收器（特别是G1和CMS）有时会对垃圾收集操作进行分阶段的调度，使得在不同的阶段可能存在不完全同步的现象，进而影响STW时间的计算。</li>
+</ul>
+<h3 id="5-可能的原因">5. 可能的原因</h3>
+<ul>
+<li>
+<p>GC 的并行性：在 G1 垃圾回收器中，GC的并行性非常高。日志中提到的 [Parallel Time: 0.3 ms, GC Workers: 8] 表明，GC 的并行工作时间非常短，并且有多个 GC 线程并行执行任务。由于这些线程是并行工作的，它们并不占用应用线程的时间，GC 总时间仅包括并行线程的工作时间，但并不包括在GC期间应用线程的暂停时间（STW 时间）。</p>
+</li>
+<li>
+<p>GC 的异步操作：某些 GC 操作（如标记、扫描、复制、清理等）是异步进行的，而应用线程必须等待这些操作完成才能恢复运行。这些操作中的一些可能会在GC期间进行，但可能不会完全同步。因此，尽管 GC 操作本身的时间很短，应用线程在 GC 过程中的停顿时间（STW时间）却较长。</p>
+</li>
+<li>
+<p>STW 时间大于 GC 时间可能是由于 GC 操作虽然执行时间短，但应用线程在 GC 期间需要等待、暂停或同步，GC 线程与应用线程调度消耗，这些操作导致了额外的停顿，例如，在标记和清理过程中，可能会有对某些资源的争用，导致应用线程被额外暂停，造成STW时间增加。</p>
+</li>
+<li>
+<p>日志统计延迟：垃圾回收的内部日志统计可能并不会立即反映所有的细节操作。比如，GC过程中有些操作可能会延后记录，而这些操作的延时可能导致应用线程的额外暂停，而GC总时间则只计算了实际的工作时间。</p>
+</li>
+<li>
+<p>“ [Times: user=0.00 sys=0.00, real=0.01 secs]” 日志报告的进度不够（real=0.01 secs），而 GC 时间精度（0.0007130 secs）更高，导致比较失衡。</p>
+</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w502024-dian-xin-hao-zhuan-bian-wei-wang-luo-zheng-de-guo-cheng/">
+              <h3 class="post-title">
+                下一篇：【W50/2024】电信号转变为网络帧的过程
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

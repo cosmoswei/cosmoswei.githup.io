@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W02/2024】火焰图（ChatGPT） | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W02/2024】火焰图（ChatGPT）</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-01-07</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>如何查看 Java 程序运行时的火焰图，看完这篇博客，相信你会有答案。</p>
+<!-- more -->
+<p>使用 <code>async-profiler</code> 工具为例，来获取Java程序的方法执行火焰图：</p>
+<ol>
+<li>
+<p><strong>安装 <code>async-profiler</code>：</strong> 首先，你需要下载并安装 <code>async-profiler</code> 工具。你可以从 <a href="https://github.com/jvm-profiling-tools/async-profiler">async-profiler GitHub 页面</a> 获取最新版本的下载链接和安装说明。</p>
+</li>
+<li>
+<p><strong>启动目标程序：</strong> 在终端中，使用 Java 命令启动你的目标 Java 程序。例如：</p>
+<pre><code class="language-sh">java -jar YourApp.jar
+</code></pre>
+</li>
+<li>
+<p><strong>获取 Java 进程 ID：</strong> 打开另一个终端窗口，使用以下命令获取你的 Java 程序的进程 ID：</p>
+<pre><code class="language-sh">jps
+</code></pre>
+<p>这将列出当前运行的 Java 进程以及对应的进程 ID。</p>
+</li>
+<li>
+<p><strong>采集方法执行数据：</strong> 在第一个终端窗口中，使用以下命令运行 <code>async-profiler</code> 工具，以开始采集方法执行数据：</p>
+<pre><code class="language-sh">./profiler.sh -d &lt;duration&gt; -f &lt;output-file&gt; &lt;pid&gt;
+./profiler.sh -d 30s -f profile_data.txt 20808
+./profiler.sh -d 30 -f ./flamegraph/flamegraph.html 21228 # 有用，直接生成HTML
+</code></pre>
+<ul>
+<li><code>&lt;duration&gt;</code>：采集的持续时间，例如 30s 表示采集30秒。</li>
+<li><code>&lt;output-file&gt;</code>：保存火焰图数据的文件名，例如 <code>profile_data.txt</code>。</li>
+<li><code>&lt;pid&gt;</code>：Java 进程的进程 ID。</li>
+</ul>
+</li>
+<li>
+<p><strong>生成火焰图：</strong> 在终端中运行以下命令，使用 <code>async-profiler</code> 工具生成火焰图：</p>
+<pre><code class="language-sh">./flamegraph.pl &lt;output-file&gt; &gt; flamegraph.svg
+./flamegraph.pl profile_data.txt &gt; flamegraph.svg
+</code></pre>
+<ul>
+<li><code>&lt;output-file&gt;</code>：之前指定的保存火焰图数据的文件名。</li>
+<li><code>flamegraph.svg</code>：生成的火焰图文件。</li>
+</ul>
+</li>
+<li>
+<p><strong>查看火焰图：</strong> 使用浏览器或图片查看器打开生成的 <code>flamegraph.svg</code> 文件，即可查看 Java 程序的方法执行火焰图。</p>
+</li>
+</ol>
+<p>请注意，以上步骤仅是示例，并且可能会因工具版本和系统环境而有所不同。在实际使用中，请参考 <code>async-profiler</code> 的官方文档和相关指南，以获得更详细的操作说明。同样，也可以考虑使用其他性能分析工具（如 Java Mission Control、YourKit 等）来获取方法执行火焰图。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w22024-yan-shi-shuang-shan-yu-shuang-chong-jian-ce-suo-mo-shi/">
+              <h3 class="post-title">
+                下一篇：【W02/2024】延时双删与双重检测锁模式
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

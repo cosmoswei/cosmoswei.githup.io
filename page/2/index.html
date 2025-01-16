@@ -1,0 +1,328 @@
+
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        
+        
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w262024-redis-di-ceng-shu-ju-jie-gou/">
+        <h2 class="post-title">【W26/2024】Redis 底层数据结构</h2>
+      </a>
+      <div class="post-abstract">
+        <p>Redis的高效离不开它底层的数据结构设计，本文对其做一个简单的汇总。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-06-25</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w262024-mysqlandes-shen-fan-ye/">
+        <h2 class="post-title">【W26/2024】MySQL&amp;ES 深翻页</h2>
+      </a>
+      <div class="post-abstract">
+        <p>在数据库中，深翻页问题一直是程序运行中的性能杀手，本文将简要分析深翻页的原因，以及如何避免深翻页问题。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-06-25</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w232024-java-zhong-de-xian-cheng-tong-bu/">
+        <h2 class="post-title">【W23/2024】Java 中的线程同步</h2>
+      </a>
+      <div class="post-abstract">
+        <p>Java 中的线程同步方式令人眼花撩乱，JDK提供的工具与方法学习与使用起来容易混淆，本文通过Object、Thread、Lock、Lock Support几个类类帮你梳理这些概念，希望对你有帮助。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-06-05</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/mo-pai-ge-chong-gui-ze-yin-qing/">
+        <h2 class="post-title">【W20/2024】摸排各种“规则“引擎</h2>
+      </a>
+      <div class="post-abstract">
+        <p>作为一个开发者，在架构设计与代码优化中，可能会听到一些高大上的名词，比如说规则引擎，流程引擎，工作流程引擎等，我被这些技术弄的眼花缭乱，这几种引擎是做什么的？它们有什么区别？有这些问题，我马上去网上查找资料，去问 ChatGPT，但是网上的博客也只是对这几个“引擎”做了分别介绍，没有做一个统一的归纳，本文就是对这些概念做一次梳理，并指出它们的的设计理念与背后的设计模式，希望对你在学习规则引擎的时候有帮助。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-05-18</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w202024-rpc-diao-yong-zhong-de-xu-lie-hua-wen-ti/">
+        <h2 class="post-title">【W20/2024】RPC调用中的序列化问题</h2>
+      </a>
+      <div class="post-abstract">
+        <p>在使用 SpringBoot 的默认序列化方式 Jackson 时，如果在执行 RPC，并且参数中含有 Map 类型的字段时，如果不做特别的处理，会抛出异常，提示参数不能是 LinkedHashMap，这遍文章将探寻报错的原因与解决方法。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-05-18</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/satb-he-tlab/">
+        <h2 class="post-title">【W18/2024】SATB 和 TLAB</h2>
+      </a>
+      <div class="post-abstract">
+        <p>在学习JVM 的过程中，会出现两个长的很像的概念 SATB（Snapshot At The Beginning）和 TLAB（Thread Local Allocation Buffer），但是它们却有不同的功能，为了更好地理解它们，让我们对这两个概念进行详细的梳理和记录。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-05-01</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/java-wang-luo-bian-cheng-zhong-de-yi-xie-gai-nian/">
+        <h2 class="post-title">【W08/2024】Java 网络编程中的一些概念</h2>
+      </a>
+      <div class="post-abstract">
+        <p>这篇文章简单介绍一些在 Java 网络编程中，经常遇到的一些概念，比如 Socket、Select、Selector 等，避免在具体使用它们的时候，混淆它们的作用。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-02-22</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w72024-dubbo-diao-yong-liu-cheng-shu-li-cao-gao/">
+        <h2 class="post-title">【W07/2024】Dubbo 调用流程源码简要梳理</h2>
+      </a>
+      <div class="post-abstract">
+        <p>最近在梳理 Dubbo 是怎么跟 Netty 结合在一起，响应来自客户端的网络请求的，针对 Dubbo 3.3 版本的 Triple 协议做了一个简要分析。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-02-18</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w022024-nio-zhong-de-bytebuffer-shu-li/">
+        <h2 class="post-title">【W02/2024】NIO 中的 ByteBuffer 梳理</h2>
+      </a>
+      <div class="post-abstract">
+        <p>在学习和使用 Netty 框架时，许多资料都会指出 Netty 的 ByteBuf 相较于Java 原生的 ByteBuffer，有不少优化和性能提升，但是一般是片面的指出其中几点，没有对它们之间的差异做全知全貌的解释，这篇博客，就带你完整得认识它们的不同。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-01-12</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w022024-huo-yan-tu-chatgpt/">
+        <h2 class="post-title">【W02/2024】火焰图（ChatGPT）</h2>
+      </a>
+      <div class="post-abstract">
+        <p>如何查看 Java 程序运行时的火焰图，看完这篇博客，相信你会有答案。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-01-07</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/w22024-yan-shi-shuang-shan-yu-shuang-chong-jian-ce-suo-mo-shi/">
+        <h2 class="post-title">【W02/2024】延时双删与双重检测锁模式</h2>
+      </a>
+      <div class="post-abstract">
+        <p>标题的这两个概念相信你都听过，延时双删与双重检测锁模式。然而，由于它们的名称相似，可能导致对它们的概念混淆。现在让我们集中梳理一下这两个概念。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-01-07</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+<section class="post-item">
+    <div class="content">
+      <a href="https://cosmoswei.github.io/xiao-xi-dui-lie-de-gao-ke-yong-jia-gou/">
+        <h2 class="post-title">【W01/2024】消息队列的高可用架构</h2>
+      </a>
+      <div class="post-abstract">
+        <p>消息队列是我们在日常业务开发中频繁使用的中间件，我们对它的使用方式、功能特性和基本原理都有一定的了解。但是消息队列服务端身为一个分布式系统，它也就一定满足CAP理论，我们也不得不考虑它运行时的可用性与可靠性，接下来就介绍一下各大主流消息队列中间件在可用性这方面的取舍。</p>
+
+      </div>
+      <div class="post-info">
+        <span><i class="icon icon-calendar-outline"></i> 2024-01-01</span>
+        
+      </div>
+    </div>
+    
+  </section>
+
+
+<div class="pagination-container">
+  
+    <a href="https://cosmoswei.github.io/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
+  
+  
+</div>
+
+
+      </div>
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

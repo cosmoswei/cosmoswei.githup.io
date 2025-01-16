@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【W26/2024】MySQL&amp;ES 深翻页 | cosmoswei go</title>
+<meta name="description" content="真言一张纸">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://cosmoswei.github.io/favicon.ico?v=1737028684734">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://cosmoswei.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://cosmoswei.github.io">
+        <img class="avatar" src="https://cosmoswei.github.io/images/avatar.png?v=1737028684734" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://cosmoswei.github.io">
+        <h1 class="site-title">cosmoswei go</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            博客
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://cosmoswei.github.io/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【W26/2024】MySQL&amp;ES 深翻页</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2024-06-25</span>
+            
+          </div>
+          <div class="post-content" v-pre>
+            <p>在数据库中，深翻页问题一直是程序运行中的性能杀手，本文将简要分析深翻页的原因，以及如何避免深翻页问题。</p>
+<!-- more -->
+<h3 id="mysql深翻页问题">MySQL深翻页问题</h3>
+<p>在 MySQL 中，当查询结果集非常大时（例如，需要获取第10000页的数据，每页显示10条记录），会导致深翻页问题。这是因为 MySQL 需要扫描和跳过大量数据才能到达指定的偏移量，导致性能下降。</p>
+<h4 id="问题描述">问题描述</h4>
+<p>假设有一个分页查询：</p>
+<pre><code class="language-sql">SELECT * FROM table_name ORDER BY id LIMIT 10000, 10;
+</code></pre>
+<p>这个查询会让 MySQL 扫描前 10000 条记录，并跳过它们，然后返回接下来的 10 条记录。随着 OFFSET 值的增加，扫描和跳过的数据量也会增加，导致查询变慢。</p>
+<h4 id="解决方案">解决方案</h4>
+<ol>
+<li>
+<p><strong>子查询优化</strong>：<br>
+通过使用索引列来优化查询，避免全表扫描。例如：</p>
+<pre><code class="language-sql">SELECT * FROM table_name WHERE id &gt; (
+    SELECT id FROM table_name ORDER BY id LIMIT 10000, 1
+) ORDER BY id LIMIT 10;
+</code></pre>
+<p>这种方法利用子查询先确定起始位置，再获取后续数据，从而减少扫描的数据量。</p>
+</li>
+<li>
+<p><strong>覆盖索引</strong>：<br>
+使用覆盖索引来减少数据扫描。例如，如果只需要部分列，可以利用索引来加快查询速度：</p>
+<pre><code class="language-sql">SELECT id, column1, column2 FROM table_name FORCE INDEX (index_name) ORDER BY id LIMIT 10000, 10;
+</code></pre>
+</li>
+<li>
+<p><strong>延迟关联（Deferred Join）</strong>：<br>
+先查询主键，再关联查询所需列：</p>
+<pre><code class="language-sql">SELECT a.* FROM table_name a
+JOIN (SELECT id FROM table_name ORDER BY id LIMIT 10000, 10) b
+ON a.id = b.id;
+</code></pre>
+</li>
+<li>
+<p><strong>使用标记记录（Markers）</strong>：<br>
+通过记录上次查询的最后一条记录的标记，下次从该记录之后开始查询：</p>
+<pre><code class="language-sql">SELECT * FROM table_name WHERE id &gt; last_seen_id ORDER BY id LIMIT 10;
+</code></pre>
+</li>
+</ol>
+<h3 id="elasticsearch深翻页问题">Elasticsearch深翻页问题</h3>
+<p>在 Elasticsearch 中，深翻页问题是因为 ES 在处理深度分页时需要保持大量的数据在内存中，从而导致性能下降和内存占用问题。</p>
+<h4 id="问题描述-2">问题描述</h4>
+<p>假设有一个分页查询：</p>
+<pre><code class="language-json">GET /index_name/_search
+{
+  &quot;from&quot;: 10000,
+  &quot;size&quot;: 10,
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  }
+}
+</code></pre>
+<p>当 <code>from</code> 值很大时，ES 需要保留大量的文档在内存中，以便跳过前面的文档。</p>
+<h4 id="解决方案-2">解决方案</h4>
+<ol>
+<li>
+<p><strong>Scroll API</strong>：<br>
+Scroll API 适用于处理大量数据的场景，允许通过游标逐步获取结果：</p>
+<pre><code class="language-json">GET /index_name/_search?scroll=1m
+{
+  &quot;size&quot;: 100,
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  }
+}
+</code></pre>
+<p>通过滚动上下文，ES 会保存搜索上下文并返回批量数据，直到所有数据被取出。</p>
+</li>
+<li>
+<p><strong>Search After</strong>：<br>
+<code>search_after</code> 基于排序字段来实现高效的深度分页，适用于实时性要求较高的查询：</p>
+<pre><code class="language-json">GET /index_name/_search
+{
+  &quot;size&quot;: 10,
+  &quot;sort&quot;: [
+    {&quot;timestamp&quot;: &quot;asc&quot;},
+    {&quot;_id&quot;: &quot;asc&quot;}
+  ],
+  &quot;search_after&quot;: [1625190653000, &quot;id_value&quot;]
+}
+</code></pre>
+<p><code>search_after</code> 的值是上一次查询结果的最后一个文档的排序值。</p>
+</li>
+<li>
+<p><strong>Point in Time (PIT)</strong>：<br>
+PIT 用于在长时间运行的搜索中确保一致性：</p>
+<pre><code class="language-json">POST /index_name/_pit?keep_alive=1m
+{
+  &quot;query&quot;: {
+    &quot;match_all&quot;: {}
+  },
+  &quot;pit&quot;: {
+    &quot;id&quot;: &quot;PIT_ID&quot;
+  },
+  &quot;sort&quot;: [
+    {&quot;timestamp&quot;: &quot;asc&quot;},
+    {&quot;_id&quot;: &quot;asc&quot;}
+  ],
+  &quot;size&quot;: 10,
+  &quot;search_after&quot;: [1625190653000, &quot;id_value&quot;]
+}
+</code></pre>
+<p>这种方法结合 <code>search_after</code> 使用，确保分页查询的一致性和效率。</p>
+</li>
+</ol>
+<p>通过上述方法，MySQL 和 Elasticsearch 都能够有效地解决深翻页问题，提高查询性能和系统稳定性。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://cosmoswei.github.io/w232024-java-zhong-de-xian-cheng-tong-bu/">
+              <h3 class="post-title">
+                下一篇：【W23/2024】Java 中的线程同步
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">真言一张纸</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  <a href="https://prickly-collar-dbd.notion.site/Notion-beaa442c149347998a5bdffd5e87ca30?pvs=4" target="_blank">Go Notion</a> | <a class="rss" href="https://cosmoswei.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
